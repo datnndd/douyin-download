@@ -1,0 +1,104 @@
+
+# Required
+link:
+  # Test: user homepage download (known to work)
+#  - https://v.douyin.com/4hZpjnndDGM/
+#  - https://www.douyin.com/user/MS4wLjABAAAAqADI2dBVccOTOojOZI9spn3ygn6a1oQKr-lgsprvUt0?from_tab_name=main&vid=7537625405721677099
+  - https://www.douyin.com/user/MS4wLjABAAAAm_kLk3csLErzzbZtjBpWy7hs6Wuy1_xWeuzmddGs9kI?from_tab_name=main&vid=7488893440932039970
+  # Test: single video download
+  # - https://v.douyin.com/iRGu2mBL/
+  # - https://v.douyin.com/kVefc81/
+  # - https://v.douyin.com/kVdkdxY/
+  # - https://v.douyin.com/kVdMcrr/
+  # - https://v.douyin.com/iRGukBBk/
+  # - https://v.douyin.com/iRGuJcW8/
+  # - https://v.douyin.com/iRGHQY5t/
+
+# Download save location, default is current file location
+# Required
+path: ./Downloaded/
+
+# Whether to download the music from the video (True/False), default is True
+# Optional
+music: True
+
+# Whether to download the video cover (True/False), default is True, effective when downloading videos
+# Optional
+cover: True
+
+# Whether to download the author’s avatar (True/False), default is True
+# Optional
+avatar: True
+
+# Whether to save the retrieved data (True/False), default is True
+# Optional
+json: True
+
+# Download time range (leave empty for no restriction)
+start_time: "2025-01-01"
+end_time: ""
+
+folderstyle: True # True -> each video is stored in its own folder; False -> all videos in one folder
+# Example when True:
+# user_xxx_xxx
+#   - like/post/mix
+#       - 2022-11-28 13.09.56_xxx
+#         - 2022-11-28 13.09.56_xxx.mp4
+#       - 2022-11-29 12.09.56_xxx
+#         - 2022-11-29 12.09.56_xxx.mp4
+
+# Example when False:
+# user_xxx_xxx
+#   - like/post/mix
+#       - 2022-11-28 13.09.56_xxx.mp4
+#       - 2022-11-29 12.09.56_xxx.mp4
+
+# When link is a personal homepage, choose to download posted works (post), liked works (like), or all user collections (mix). Default is post, multiple modes allowed.
+# Optional
+mode:
+  - post
+
+# Settings for number of works to download
+# Optional
+number:
+  post: 10     # Number of posts to download from homepage, default 0 = download all
+  like: 0     # Number of liked works to download from homepage, default 0 = download all
+  allmix: 1   # Number of collections to download from homepage, default 0 = download all
+  mix: 1      # Number of works to download from a single collection, default 0 = download all
+  music: 1    # Number of works to download from music (original sound), default 0 = download all
+
+database: True # If database is disabled, incremental updates will not be available
+
+# Incremental download: download works from the latest Douyin work to the latest local work;
+# if no local videos exist for the link, download all
+# Can be used together with the "number" option
+# Case 1: number=5 + increase=True (creator posted 3 new works not downloaded locally) → fetch 5 works and download
+# Case 2: number=5 + increase=True (creator posted 6 new works not downloaded locally) → fetch 6 works and download
+# Case 3: number=5 + increase=True (no local videos for this creator) → fetch all works
+# Case 4: When fetching all mixes from homepage (mode=mix), number(allmix) controls how many collections to download, increase(allmix) controls incremental updates per collection
+# Optional
+increase:
+  post: False     # Enable incremental download for homepage posts (True/False), default False
+  like: False     # Enable incremental download for homepage likes (True/False), default False
+  allmix: False   # Enable incremental download for homepage collections (True/False), default False
+  mix: False      # Enable incremental download for works in a single collection (True/False), default False
+  music: False    # Enable incremental download for works under music (original sound) (True/False), default False
+
+# Number of threads to use, default is 5
+# Optional
+thread: 5
+
+
+cookies:
+  msToken: 710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==
+  ttwid: 1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0
+  odin_tt: a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8
+  passport_csrf_token: c2a7091feddce96551be4436e03ca3f3
+  sid_guard: 5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT
+
+# Cookie: log in to Douyin web and check using F12
+# Either "cookies" or "cookie" can be used. To use this format, comment out the above "cookies" section and all its key-value pairs
+# When this is set, the above "cookies" option is automatically disabled. This option takes higher priority.
+# Format: "name1=value1; name2=value2;" (note the semicolon)
+# Keys inside the semicolon are not limited to those listed; add more if Douyin requires
+# cookie: "UIFID_TEMP=04334f0...; msToken=...; ..."
