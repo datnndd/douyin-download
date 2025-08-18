@@ -17,13 +17,33 @@ from src.douyin.douyinapi import DouyinApi
 from src.douyin.download import Download
 from src.douyin import douyin_headers
 from src.common import utils
+from logging.config import dictConfig
 
 
 # ------------------------------ Logging ---------------------------------------
 
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-log = logging.getLogger("Douyin")
+dictConfig({
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "rich": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s %(filename)s:%(lineno)d %(funcName)s | %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "rich",
+            "level": "INFO"
+        }
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO"
+    },
+})
 
+log = logging.getLogger("Douyin")
 
 # ------------------------------ Config ----------------------------------------
 
@@ -176,7 +196,6 @@ def safe_name(value: str, fallback: str) -> str:
 # ------------------------------ Core client -----------------------------------
 
 class DouyinClient:
-    """High-level orchestration for processing links and downloading."""
 
     def __init__(self, cfg: Config):
         self.cfg = cfg

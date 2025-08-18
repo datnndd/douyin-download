@@ -2,19 +2,19 @@
 # Required
 link:
   # Test: user homepage download (known to work)
-#  - https://v.douyin.com/4hZpjnndDGM/
-#  - https://www.douyin.com/user/MS4wLjABAAAAqADI2dBVccOTOojOZI9spn3ygn6a1oQKr-lgsprvUt0?from_tab_name=main&vid=7537625405721677099
 #  - https://www.douyin.com/user/MS4wLjABAAAAm_kLk3csLErzzbZtjBpWy7hs6Wuy1_xWeuzmddGs9kI?from_tab_name=main&vid=7488893440932039970
+#  - https://v.douyin.com/iWhQezyaUco/
   # Test: single video download
-  # - https://v.douyin.com/iRGu2mBL/
-  # - https://v.douyin.com/kVefc81/
-  # - https://v.douyin.com/kVdkdxY/
-  # - https://v.douyin.com/kVdMcrr/
-  # - https://v.douyin.com/iRGukBBk/
-  # - https://v.douyin.com/iRGuJcW8/
-  # - https://v.douyin.com/iRGHQY5t/
-  - https://www.douyin.com/video/7528021023397023039?modeFrom=
-  - https://www.douyin.com/video/7510887107130707259
+#  - https://v.douyin.com/gvot66pRB54/
+
+  # Test MixAlbum
+#  - https://v.douyin.com/1EbUZjNsZCE/
+
+  # Test get video from Music
+#  - https://v.douyin.com/FiTeq7RWAd0/
+
+  # Test Livestream
+#  - https://live.douyin.com/669067451826
 
 # Download save location, default is current file location
 # Required
@@ -59,15 +59,16 @@ folderstyle: True # True -> each video is stored in its own folder; False -> all
 # Optional
 mode:
   - post
+  - like
 
 # Settings for number of works to download
 # Optional
 number:
-  post: 10     # Number of posts to download from homepage, default 0 = download all
+  post: 5     # Number of posts to download from homepage, default 0 = download all
   like: 0     # Number of liked works to download from homepage, default 0 = download all
-  allmix: 1   # Number of collections to download from homepage, default 0 = download all
-  mix: 1      # Number of works to download from a single collection, default 0 = download all
-  music: 1    # Number of works to download from music (original sound), default 0 = download all
+  allmix: 0   # Number of collections to download from homepage, default 0 = download all
+  mix: 5      # Number of works to download from a single collection, default 0 = download all
+  music: 5    # Number of works to download from music (original sound), default 0 = download all
 
 database: True # If database is disabled, incremental updates will not be available
 

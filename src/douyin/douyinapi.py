@@ -9,6 +9,8 @@ import requests
 import json
 import time
 import copy
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 from src.common.abogus import ABogus
 from src.douyin import douyin_headers
@@ -16,7 +18,9 @@ from src.douyin.database import Database
 from src.douyin.urls import Urls
 from src.douyin.result import Result
 from src.common import utils
-from src.logger.logger import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DouyinApi(object):
     def __init__(self, database_path: str | None = "data.db" ):
@@ -24,6 +28,17 @@ class DouyinApi(object):
         self.result = Result()
         self.timeout = 10
         self.database = Database(database_path) if database_path else None
+
+        self.session = requests.Session()
+        retries = Retry(
+            total=5,  # số lần thử lại
+            backoff_factor=0.3,  # thời gian chờ giữa các lần thử (0.3, 0.6, 1.2s...)
+            status_forcelist=[500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS"]
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
 
     # Extract URL from share link
     def getShareLink(self, string):
@@ -37,8 +52,9 @@ class DouyinApi(object):
         key_type = None
 
         try:
-            r = requests.get(url=url, headers=douyin_headers)
+            r = self.session.get(url=url, headers=douyin_headers)
         except Exception as e:
+            logger.error(f"Error in getKey: {str(e)}")
             print('[  Error  ]: Invalid link!\r')
             return key_type, key
 
@@ -129,16 +145,17 @@ class DouyinApi(object):
 
                 jx_url = self.urls.POST_DETAIL + f"{urlencode(detail_params)}&a_bogus={quote(a_bogus, safe='')}"
 
-                response = requests.get(url=jx_url, headers=douyin_headers, timeout=10)
+                response = self.session.get(url=jx_url, headers=douyin_headers, timeout=10)
 
                 if len(response.text)==0:
-                    logger.warn("Single API Video return an empty response")
+                    logger.warning("Single API Video return an empty response")
                     return {}
 
                 datadict = json.loads(response.text)
                 if datadict is not None and datadict["status_code"] == 0:
                     break
             except Exception as e:
+                logger.error(f"Error in getAwemeInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
                     return None
@@ -151,7 +168,7 @@ class DouyinApi(object):
         try:
             if datadict['aweme_detail']["images"] is not None:
                 awemeType = 1
-        except Exception as e:
+        except Exception:
             logger.warning("No 'images' field found in the API response")
 
         # Convert the data into custom format
@@ -192,19 +209,19 @@ class DouyinApi(object):
                 else:
                     return None
 
-                res = requests.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
                 if len(res.text) == 0:
-                    logger.warn("User Get Post/Favorite API return an empty response")
+                    logger.warning("User Get Post/Favorite API return an empty response")
                     return awemeList
 
                 datadict = json.loads(res.text)
 
                 if datadict is None or datadict["status_code"] != 0:
-                    logger.warn(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
+                    logger.warning(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
                     break
 
                 if "aweme_list" not in datadict:
-                    logger.warn("No aweme_list in API response")
+                    logger.warning("No aweme_list in API response")
                     break
 
                 current_count = len(datadict["aweme_list"])
@@ -250,7 +267,7 @@ class DouyinApi(object):
                 logger.error(f"Error in getUserInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warn("Timeout reached")
+                    logger.warning("Timeout reached")
                     break
 
                 continue
@@ -278,17 +295,17 @@ class DouyinApi(object):
                 )
                 live_api = self.urls.LIVE + utils.getXbogus(detail_params)
 
-                response = requests.get(live_api, headers=douyin_headers, timeout=10)
+                response = self.session.get(live_api, headers=douyin_headers, timeout=10)
                 if len(response.text)==0:
-                    logger.warn("Livestream API return an empty response")
+                    logger.warning("Livestream API return an empty response")
                     return {}
 
                 live_json = json.loads(response.text)
-                if live_json is None or live_json['status_code'] != 0:
-                    logger.warn(f"API returned error status: {live_json.get('status_code') if live_json else 'None'}")
+                if live_json is not None and live_json['status_code'] == 0:
                     break
 
             except Exception as e:
+                logger.error(f"Error in getLiveApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
                     return None
@@ -324,7 +341,7 @@ class DouyinApi(object):
             self.result.liveDict["partition"] = live_json['data']['partition_road_map']['partition']['title']
             self.result.liveDict["sub_partition"] = \
                 live_json['data']['partition_road_map']['sub_partition']['partition']['title']
-        except Exception as e:
+        except Exception:
             self.result.liveDict["partition"] = 'None'
             self.result.liveDict["sub_partition"] = 'None'
 
@@ -349,24 +366,24 @@ class DouyinApi(object):
                 mix_params = f'mix_id={mix_id}&cursor={cursor}&count={count}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
                 url = self.urls.USER_MIX + utils.getXbogus(mix_params)
 
-                res = requests.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
 
                 if res.status_code != 200:
-                    logger.warn(f"Mix API HTTP request failed: {res.status_code}")
+                    logger.warning(f"Mix API HTTP request failed: {res.status_code}")
                     break
 
                 if len(res.text) == 0:
-                    logger.warn("Mix API returned an empty response")
+                    logger.warning("Mix API returned an empty response")
                     return awemeList
 
                 datadict = json.loads(res.text)
 
                 if datadict is None or datadict.get("status_code", -1) != 0:
-                    logger.warn(f"Mix API returned error status: {datadict.get('status_code') if datadict else 'None'}")
+                    logger.warning(f"Mix API returned error status: {datadict.get('status_code') if datadict else 'None'}")
                     break
 
                 if "aweme_list" not in datadict or not datadict["aweme_list"]:
-                    logger.warn("No aweme_list in Mix API response or empty list")
+                    logger.warning("No aweme_list in Mix API response or empty list")
                     break
 
                 current_count = len(datadict["aweme_list"])
@@ -407,7 +424,7 @@ class DouyinApi(object):
                 logger.error(f"Error in getMixInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warn("Timeout reached in getMixInfoApi")
+                    logger.warning("Timeout reached in getMixInfoApi")
                     break
                 continue
 
@@ -434,14 +451,14 @@ class DouyinApi(object):
                 mix_list_params = f'sec_user_id={sec_uid}&count={count}&cursor={cursor}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
                 url = self.urls.USER_MIX_LIST + utils.getXbogus(mix_list_params)
 
-                res = requests.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
 
                 if res.status_code != 200:
-                    logger.warn(f"Mix List API HTTP request failed: {res.status_code}")
+                    logger.warning(f"Mix List API HTTP request failed: {res.status_code}")
                     break
 
                 if len(res.text) == 0:
-                    logger.warn("Mix API returned an empty response")
+                    logger.warning("Mix API returned an empty response")
                     return mixDict
 
                 try:
@@ -450,11 +467,11 @@ class DouyinApi(object):
                     raise
 
                 if datadict is None or datadict.get("status_code", -1) != 0:
-                    logger.warn(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
+                    logger.warning(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
                     break
 
                 if "mix_infos" not in datadict or not datadict["mix_infos"]:
-                    logger.warn("No mix_infos in API response")
+                    logger.warning("No mix_infos in API response")
                     break
 
                 for mix in datadict["mix_infos"]:
@@ -476,7 +493,7 @@ class DouyinApi(object):
                 logger.error(f"Error in getUserInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warn("Timeout reached")
+                    logger.warning("Timeout reached")
                     break
 
                 continue
@@ -502,24 +519,24 @@ class DouyinApi(object):
                 music_params = f'music_id={music_id}&cursor={cursor}&count={count}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
                 url = self.urls.MUSIC + utils.getXbogus(music_params)
 
-                res = requests.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
 
                 if res.status_code != 200:
-                    logger.warn(f"Music API HTTP request failed: {res.status_code}")
+                    logger.warning(f"Music API HTTP request failed: {res.status_code}")
                     break
 
                 if len(res.text) == 0:
-                    logger.warn("Music API returned an empty response")
+                    logger.warning("Music API returned an empty response")
                     return awemeList
 
                 datadict = json.loads(res.text)
 
                 if datadict is None or datadict.get("status_code", -1) != 0:
-                    logger.warn(f"Music API returned error status: {datadict.get('status_code') if datadict else 'None'}")
+                    logger.warning(f"Music API returned error status: {datadict.get('status_code') if datadict else 'None'}")
                     break
 
                 if "aweme_list" not in datadict or not datadict["aweme_list"]:
-                    logger.warn("No aweme_list in Music API response or empty list")
+                    logger.warning("No aweme_list in Music API response or empty list")
                     break
 
                 current_count = len(datadict["aweme_list"])
@@ -559,7 +576,7 @@ class DouyinApi(object):
                 logger.error(f"Error in getMixInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warn("Timeout reached in getMixInfoApi")
+                    logger.warning("Timeout reached in getMixInfoApi")
                     break
 
                 continue
@@ -570,6 +587,4 @@ class DouyinApi(object):
         return awemeList
 
 if __name__ == "__main__":
-    douyinapi = DouyinApi()
-    aweme_id = "7522750580238929187"
-    print(douyinapi.getAwemeInfoApi(aweme_id))
+    pass

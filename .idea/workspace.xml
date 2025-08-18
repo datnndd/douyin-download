@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d519d334-f5fe-45fb-8bed-6b78236fe1d8" name="Changes" comment="" />
+    <list default="true" id="d519d334-f5fe-45fb-8bed-6b78236fe1d8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.db" beforeDir="false" afterPath="$PROJECT_DIR$/data.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/douyinCommand.py" beforeDir="false" afterPath="$PROJECT_DIR$/douyinCommand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/douyin/douyinapi.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/douyin/douyinapi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/douyin/download.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/douyin/download.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logger/logger.py" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

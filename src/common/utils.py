@@ -10,8 +10,9 @@ import hashlib
 import base64
 import time
 import src
-from src.logger.logger import logger
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Utils(object):
     def __init__(self):
