@@ -284,7 +284,7 @@ class DouyinApi(object):
                     return {}
 
                 live_json = json.loads(response.text)
-                if live_json is not None and live_json['status_code'] == 0:
+                if live_json is None or live_json['status_code'] != 0:
                     logger.warn(f"API returned error status: {live_json.get('status_code') if live_json else 'None'}")
                     break
 

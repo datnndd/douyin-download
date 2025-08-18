@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d519d334-f5fe-45fb-8bed-6b78236fe1d8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/common/abogus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.db" beforeDir="false" afterPath="$PROJECT_DIR$/data.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/douyin/douyinapi.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/douyin/douyinapi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/douyin/result.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/douyin/result.py" afterDir="false" />
-    </list>
+    <list default="true" id="d519d334-f5fe-45fb-8bed-6b78236fe1d8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
