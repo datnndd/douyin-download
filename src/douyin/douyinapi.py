@@ -3,13 +3,14 @@
 
 
 import re
+from urllib.parse import quote, urlencode
 
 import requests
 import json
 import time
 import copy
 
-
+from src.common.abogus import ABogus
 from src.douyin import douyin_headers
 from src.douyin.database import Database
 from src.douyin.urls import Urls
@@ -86,10 +87,50 @@ class DouyinApi(object):
         start = time.time()
         while True:
             try:
-                detail_params = f'aweme_id={aweme_id}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&update_version_code=170400'
-                jx_url = self.urls.POST_DETAIL + utils.getXbogus(detail_params)
+                detail_params = {
+                    "aweme_id": aweme_id,
+                    "device_platform": "webapp",
+                    "aid": "6383",
+                    "channel": "channel_pc_web",
+                    "pc_client_type": 1,
+                    "version_code": "290100",
+                    "version_name": "29.1.0",
+                    "cookie_enabled": "true",
+                    "screen_width": 1920,
+                    "screen_height": 1080,
+                    "browser_language": "zh-CN",
+                    "browser_platform": "Win32",
+                    "browser_name": "Chrome",
+                    "browser_version": "130.0.0.0",
+                    "browser_online": "true",
+                    "engine_name": "Blink",
+                    "engine_version": "130.0.0.0",
+                    "os_name": "Windows",
+                    "os_version": "10",
+                    "cpu_core_num": 12,
+                    "device_memory": 8,
+                    "platform": "PC",
+                    "downlink": "10",
+                    "effective_type": "4g",
+                    "from_user_page": "1",
+                    "locate_query": "false",
+                    "need_time_list": "1",
+                    "pc_libra_divert": "Windows",
+                    "publish_video_strategy_type": "2",
+                    "round_trip_time": "0",
+                    "show_live_replay_strategy": "1",
+                    "time_list_query": "0",
+                    "whale_cut_token": "",
+                    "update_version_code": "170400",
+                    "msToken": ""
+                }
+
+                a_bogus = ABogus().get_value(detail_params)
+
+                jx_url = self.urls.POST_DETAIL + f"{urlencode(detail_params)}&a_bogus={quote(a_bogus, safe='')}"
 
                 response = requests.get(url=jx_url, headers=douyin_headers, timeout=10)
+
                 if len(response.text)==0:
                     logger.warn("Single API Video return an empty response")
                     return {}
@@ -157,8 +198,6 @@ class DouyinApi(object):
                     return awemeList
 
                 datadict = json.loads(res.text)
-                print(datadict)
-                print("++++++++++++++++++++++++++++++++++++++++++++")
 
                 if datadict is None or datadict["status_code"] != 0:
                     logger.warn(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
@@ -531,4 +570,6 @@ class DouyinApi(object):
         return awemeList
 
 if __name__ == "__main__":
-    pass
+    douyinapi = DouyinApi()
+    aweme_id = "7522750580238929187"
+    print(douyinapi.getAwemeInfoApi(aweme_id))

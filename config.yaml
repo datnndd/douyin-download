@@ -4,7 +4,7 @@ link:
   # Test: user homepage download (known to work)
 #  - https://v.douyin.com/4hZpjnndDGM/
 #  - https://www.douyin.com/user/MS4wLjABAAAAqADI2dBVccOTOojOZI9spn3ygn6a1oQKr-lgsprvUt0?from_tab_name=main&vid=7537625405721677099
-  - https://www.douyin.com/user/MS4wLjABAAAAm_kLk3csLErzzbZtjBpWy7hs6Wuy1_xWeuzmddGs9kI?from_tab_name=main&vid=7488893440932039970
+#  - https://www.douyin.com/user/MS4wLjABAAAAm_kLk3csLErzzbZtjBpWy7hs6Wuy1_xWeuzmddGs9kI?from_tab_name=main&vid=7488893440932039970
   # Test: single video download
   # - https://v.douyin.com/iRGu2mBL/
   # - https://v.douyin.com/kVefc81/
@@ -13,6 +13,8 @@ link:
   # - https://v.douyin.com/iRGukBBk/
   # - https://v.douyin.com/iRGuJcW8/
   # - https://v.douyin.com/iRGHQY5t/
+  - https://www.douyin.com/video/7528021023397023039?modeFrom=
+  - https://www.douyin.com/video/7510887107130707259
 
 # Download save location, default is current file location
 # Required

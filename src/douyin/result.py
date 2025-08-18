@@ -15,7 +15,13 @@ class Result(object):
                 "url_list": [],
                 "width": ""
             },
-            "avatar": {  # Large avatar
+            "avatar": { # Large Avatar
+                "height": "",
+                "uri": "",
+                "url_list": [],
+                "width": ""
+            },
+            "cover_url": {
                 "height": "",
                 "uri": "",
                 "url_list": [],
@@ -29,6 +35,7 @@ class Result(object):
             "following_count": "",
             # Nickname
             "nickname": "",
+            "prevent_download": "",
             # User's sec_uid
             "sec_uid": "",
             # Whether account is private
@@ -64,6 +71,18 @@ class Result(object):
                 "url_list": [],
                 "width": ""
             },
+            "cover_large": {
+                "height": "",
+                "uri": "",
+                "url_list": [],
+                "width": ""
+            },
+            "cover_medium": {
+                "height": "",
+                "uri": "",
+                "url_list": [],
+                "width": ""
+            },
             "cover_thumb": {
                 "height": "",
                 "uri": "",
@@ -94,6 +113,12 @@ class Result(object):
                 "url_list": [],
             },
             "cover_original_scale": {
+                "height": "",
+                "uri": "",
+                "url_list": [],
+                "width": ""
+            },
+            "dynamic_cover": {
                 "height": "",
                 "uri": "",
                 "url_list": [],
