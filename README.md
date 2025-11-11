@@ -1,3 +1,7 @@
+**Convert to n8n** for autodownload video and schedule post to social media. Demo:
+[https://youtu.be/XSQflGR09gA](https://youtu.be/L1PkjuMZFUI)
+ 
+ 
  📥 douyin-download  
 
 **douyin-download** is a tool for **scraping and downloading** videos, images, livestreams, and more from **Douyin (抖音)**.  
