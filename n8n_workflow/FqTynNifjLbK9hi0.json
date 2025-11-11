@@ -1,0 +1,3649 @@
+{
+  "active": true,
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Video Upload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Get ID Post Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Upload": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Array": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID Post Image": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Video Upload1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to Array1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Get ID Post Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Array1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID Post Image1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Upload1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Video Upload2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to Array2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Get ID Post Image2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Upload2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Array2": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID Post Image2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        []
+      ]
+    },
+    "Limit3": {
+      "main": [
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Video Upload3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert to Array3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Get ID Post Image3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Video Upload3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Array3": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ID Post Image3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Aggregate3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate3": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        []
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-28T09:30:57.458Z",
+  "id": "FqTynNifjLbK9hi0",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Facebook_Upload",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status_Facebook",
+              "lookupValue": "Ready to publish"
+            },
+            {
+              "lookupColumn": "FB_Post",
+              "lookupValue": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1616,
+        256
+      ],
+      "id": "c616c0f2-7336-4471-af11-3807e523b10a",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8a14259c-c132-45bc-b315-c7e7e5a982f6"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "312e3628-1b2d-431b-af0e-39af34e21b10",
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -496,
+        -32
+      ],
+      "id": "92a321e9-9426-48f3-b55b-06841476c6ae",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['Video/Image_URL']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "1bfe8532-d840-428e-8079-af4ad4c96b2d",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $json.FB_Page_ID }}",
+        "edge": "videos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "title",
+                "value": "={{ $json.Title }}"
+              },
+              {
+                "name": "file_url",
+                "value": "={{ $json['Video/Image_URL'] }}"
+              },
+              {
+                "name": "description",
+                "value": "={{ $json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -192
+      ],
+      "id": "4e79734b-92df-4035-9b95-99bed2377ec6",
+      "name": "Video Upload",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "10tgxRKL6uYk0csN",
+          "name": "votutruongphai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f66ab06-c7ee-4369-a8a1-a725a0e3d356",
+              "name": "Video/Image_URL",
+              "value": "={{ $json['Video/Image_URL'] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "c6502ffd-ed97-4961-bdd7-448cdf7a4fdb",
+      "name": "Convert to Array"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch').item.json.FB_Page_ID }}",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "url",
+                "value": "={{ $json['[\\'Video/Image_URL\\']'] }}"
+              },
+              {
+                "name": "published",
+                "value": "false"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        304,
+        -32
+      ],
+      "id": "14864677-6819-4555-9835-73aa754b233a",
+      "name": "Get ID Post Image",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "10tgxRKL6uYk0csN",
+          "name": "votutruongphai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02cfa863-22cf-4cb7-ad22-cb5969e5b75e",
+              "name": "media_fbid",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        128
+      ],
+      "id": "04a14f87-813b-4668-8c66-65320800f365",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        208,
+        128
+      ],
+      "id": "e3e9bbaf-54a7-48e5-8de7-f8d18457a82b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch').item.json.FB_Page_ID }}",
+        "edge": "feed",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Switch').item.json.Title }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              },
+              {
+                "name": "attached_media",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Switch').item.json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        416,
+        128
+      ],
+      "id": "80858a9b-c9a2-4b32-86e6-87726c32485b",
+      "name": "Facebook Graph API",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "10tgxRKL6uYk0csN",
+          "name": "votutruongphai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get row(s) in sheet').item.json.Aweme_id }}",
+            "Status_Facebook": "Published"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        784,
+        16
+      ],
+      "id": "a1ecd13c-d4ac-4870-9df4-b37e811a7ae4",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Discord_ID }}",
+                    "rightValue": "1415874586242977904",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9c022531-c14b-4a6d-a464-2dd82f8f906b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5e4ed923-35e7-4e48-b3f1-8a317f37b8ec",
+                    "leftValue": "={{ $json.Discord_ID }}",
+                    "rightValue": "1415607041636175912",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "281c93eb-277d-4b75-a382-922c4eb8996a",
+                    "leftValue": "={{ $json.Discord_ID }}",
+                    "rightValue": "1393078657702170624",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "449e63fe-a1b9-4acc-a0b7-74d1b02c0c97",
+                    "leftValue": "={{ $json.Discord_ID }}",
+                    "rightValue": "1415706867430195200",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1136,
+        272
+      ],
+      "id": "113a193d-36f5-4f5a-b31c-17671d69b087",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -880,
+        -32
+      ],
+      "id": "3489addc-0356-44e9-95ad-d64088be840b",
+      "name": "Limit"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        304
+      ],
+      "id": "b4093e3d-1fd9-4503-818c-7b8ee33008e5",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8a14259c-c132-45bc-b315-c7e7e5a982f6"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "312e3628-1b2d-431b-af0e-39af34e21b10",
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -512,
+        304
+      ],
+      "id": "42bf4d4a-0278-41ec-b2f2-a7382f7ea8c0",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['Video/Image_URL']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        432
+      ],
+      "id": "3c1000c2-3bed-444b-9345-bb8f0ca268cb",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $json.FB_Page_ID }}",
+        "edge": "videos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "title",
+                "value": "={{ $json.Title }}"
+              },
+              {
+                "name": "file_url",
+                "value": "={{ $json['Video/Image_URL'] }}"
+              },
+              {
+                "name": "description",
+                "value": "={{ $json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        192,
+        272
+      ],
+      "id": "ecfa0382-b8f4-402f-a5be-b465fdcd7818",
+      "name": "Video Upload1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "8uqRRkYmMbgSz9sa",
+          "name": "goal90s"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f66ab06-c7ee-4369-a8a1-a725a0e3d356",
+              "name": "Video/Image_URL",
+              "value": "={{ $json['Video/Image_URL'] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -256,
+        432
+      ],
+      "id": "443c73cf-03d4-497d-a9a9-435fec222fea",
+      "name": "Convert to Array1"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch2').item.json.FB_Page_ID }}",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "url",
+                "value": "={{ $json['[\\'Video/Image_URL\\']'] }}"
+              },
+              {
+                "name": "published",
+                "value": "false"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        64,
+        432
+      ],
+      "id": "d0c6f74d-55bb-4623-bc63-c741dbb4daf7",
+      "name": "Get ID Post Image1",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "8uqRRkYmMbgSz9sa",
+          "name": "goal90s"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02cfa863-22cf-4cb7-ad22-cb5969e5b75e",
+              "name": "media_fbid",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        608
+      ],
+      "id": "38b0b7ef-5166-474e-9d08-d9700231141c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        96,
+        608
+      ],
+      "id": "e6eecbb8-48bd-46c3-92b6-7a4256fe758e",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch2').item.json.FB_Page_ID }}",
+        "edge": "feed",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Switch2').item.json.Title }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              },
+              {
+                "name": "attached_media",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Switch2').item.json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        304,
+        608
+      ],
+      "id": "03e2fd13-f8ff-46dd-a223-a80676df83e5",
+      "name": "Facebook Graph API1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "8uqRRkYmMbgSz9sa",
+          "name": "goal90s"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=Published 1 video to Facebook: {{ $('Switch').item.json.Fanpage }}\nRow: {{ $('Switch').item.json.row_number }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        0
+      ],
+      "id": "c5c1ba5e-115a-449c-973c-5634c5137333",
+      "name": "Send a message",
+      "webhookId": "d5cf61f5-f207-4cc3-b7e2-27e091cfddb5",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=Published 1 video to Facebook: {{ $('Switch2').item.json.Fanpage }}\nRow: {{ $('Switch2').item.json.row_number }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        976,
+        432
+      ],
+      "id": "bbfd8363-b426-4c17-a8cd-47057da3169f",
+      "name": "Send a message1",
+      "webhookId": "d5cf61f5-f207-4cc3-b7e2-27e091cfddb5",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get row(s) in sheet').item.json.Aweme_id }}",
+            "Status_Facebook": "Published"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        432
+      ],
+      "id": "95a321be-c218-470a-b5ad-0e46c152dde9",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 16,
+              "triggerAtMinute": 30
+            },
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            },
+            {
+              "triggerAtHour": 20,
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1856,
+        256
+      ],
+      "id": "5713134c-d3e3-40d3-a4ef-c64f6217ef12",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "476bc9fe-ddab-4925-87c3-ec7da567281b",
+              "leftValue": "={{ $json.Source }}",
+              "rightValue": "Facebook",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1408,
+        256
+      ],
+      "id": "cc9092ef-2cb7-461d-ba61-004ab845f060",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $json.Aweme_id }}",
+            "Status_Facebook": "Published"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1184,
+        80
+      ],
+      "id": "ab6ffa3a-a17b-4e15-9c23-b88ea1cc0270",
+      "name": "Update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        816
+      ],
+      "id": "4d3b1504-2a65-4bd2-beb5-9d6affbb6ab9",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8a14259c-c132-45bc-b315-c7e7e5a982f6"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "312e3628-1b2d-431b-af0e-39af34e21b10",
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -512,
+        816
+      ],
+      "id": "f47689c6-6138-4986-8e0a-2fd01afdf9fc",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['Video/Image_URL']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        176,
+        944
+      ],
+      "id": "e944af95-25c3-433f-a959-35abd8993fe8",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $json.FB_Page_ID }}",
+        "edge": "videos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "title",
+                "value": "={{ $json.Title }}"
+              },
+              {
+                "name": "file_url",
+                "value": "={{ $json['Video/Image_URL'] }}"
+              },
+              {
+                "name": "description",
+                "value": "={{ $json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        176,
+        800
+      ],
+      "id": "ccdfc6cc-58f3-49cd-9b89-a07df61b1949",
+      "name": "Video Upload2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "iqngIvbcdnd9fMOK",
+          "name": "hupvoivaibat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f66ab06-c7ee-4369-a8a1-a725a0e3d356",
+              "name": "Video/Image_URL",
+              "value": "={{ $json['Video/Image_URL'] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        944
+      ],
+      "id": "f1b0d6f2-ba0e-433f-af0f-84b22ab61674",
+      "name": "Convert to Array2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch3').item.json.FB_Page_ID }}",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "url",
+                "value": "={{ $json['[\\'Video/Image_URL\\']'] }}"
+              },
+              {
+                "name": "published",
+                "value": "false"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        384,
+        944
+      ],
+      "id": "9014b682-16a4-4cdc-9d4d-ada460f721bb",
+      "name": "Get ID Post Image2",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "iqngIvbcdnd9fMOK",
+          "name": "hupvoivaibat"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02cfa863-22cf-4cb7-ad22-cb5969e5b75e",
+              "name": "media_fbid",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        1104
+      ],
+      "id": "74c2f271-7361-465e-9297-16d0fabdf885",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1104
+      ],
+      "id": "a32a8a73-6540-4fad-a989-711c18670d62",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch3').item.json.FB_Page_ID }}",
+        "edge": "feed",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Switch3').item.json.Title }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              },
+              {
+                "name": "attached_media",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Switch3').item.json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        384,
+        1104
+      ],
+      "id": "73a8fd31-7eec-428c-8a24-0ec09bf12925",
+      "name": "Facebook Graph API2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "iqngIvbcdnd9fMOK",
+          "name": "hupvoivaibat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=Published 1 video to Facebook: {{ $('Switch3').item.json.Fanpage }}\nRow: {{ $('Switch3').item.json.row_number }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        848
+      ],
+      "id": "68892f01-4ee6-472f-8fa0-5b7470aa2177",
+      "name": "Send a message2",
+      "webhookId": "d5cf61f5-f207-4cc3-b7e2-27e091cfddb5",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get row(s) in sheet').item.json.Aweme_id }}",
+            "Status_Facebook": "Published"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        800,
+        848
+      ],
+      "id": "2ae7b82b-6458-43e6-9d4a-5b6d18339194",
+      "name": "Update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        1312
+      ],
+      "id": "83bc43e9-f82b-4f3c-8a57-dcda3152183b",
+      "name": "Limit3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8a14259c-c132-45bc-b315-c7e7e5a982f6"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "312e3628-1b2d-431b-af0e-39af34e21b10",
+                    "leftValue": "={{ $json.Type }}",
+                    "rightValue": "Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -528,
+        1312
+      ],
+      "id": "6f4eda02-0fab-40d4-a39c-2214c5e5c9b4",
+      "name": "Switch4"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "['Video/Image_URL']",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        160,
+        1440
+      ],
+      "id": "b5e1352b-fbad-4397-8c53-95fde44193e4",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $json.FB_Page_ID }}",
+        "edge": "videos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "title",
+                "value": "={{ $json.Title }}"
+              },
+              {
+                "name": "file_url",
+                "value": "={{ $json['Video/Image_URL'] }}"
+              },
+              {
+                "name": "description",
+                "value": "={{ $json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1280
+      ],
+      "id": "8ae8e39f-800c-4fb6-a400-3abec85decf0",
+      "name": "Video Upload3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "TpWnEu6bkFP8W4NL",
+          "name": "meophade"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2f66ab06-c7ee-4369-a8a1-a725a0e3d356",
+              "name": "Video/Image_URL",
+              "value": "={{ $json['Video/Image_URL'] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1440
+      ],
+      "id": "88000bd7-b0bc-4faa-ac2f-30d5695ad754",
+      "name": "Convert to Array3"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch4').item.json.FB_Page_ID }}",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "url",
+                "value": "={{ $json['[\\'Video/Image_URL\\']'] }}"
+              },
+              {
+                "name": "published",
+                "value": "false"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        368,
+        1440
+      ],
+      "id": "facfdd43-c569-4956-986e-4dd3735801c1",
+      "name": "Get ID Post Image3",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "TpWnEu6bkFP8W4NL",
+          "name": "meophade"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "02cfa863-22cf-4cb7-ad22-cb5969e5b75e",
+              "name": "media_fbid",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        1600
+      ],
+      "id": "3566db60-1688-47a4-af92-5e684c519ddb",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        1600
+      ],
+      "id": "e972a87a-1e3a-42ad-9ab7-2d56455d992c",
+      "name": "Aggregate3"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Switch4').item.json.FB_Page_ID }}",
+        "edge": "feed",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $('Switch4').item.json.Title }}"
+              },
+              {
+                "name": "published",
+                "value": "true"
+              },
+              {
+                "name": "attached_media",
+                "value": "={{ $json.data }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Switch4').item.json.Tags_edited }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        368,
+        1600
+      ],
+      "id": "fbfbfab9-d3d6-4041-9a2c-055a6f253ed5",
+      "name": "Facebook Graph API3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "TpWnEu6bkFP8W4NL",
+          "name": "meophade"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=Published 1 video to Facebook: {{ $('Switch4').item.json.Fanpage }}\nRow: {{ $('Switch4').item.json.row_number }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1344
+      ],
+      "id": "f343b68f-433d-4d64-b17d-988bf2a7ab29",
+      "name": "Send a message3",
+      "webhookId": "d5cf61f5-f207-4cc3-b7e2-27e091cfddb5",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get row(s) in sheet').item.json.Aweme_id }}",
+            "Status_Facebook": "Published"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        1344
+      ],
+      "id": "7ce86e5d-1d28-42a2-b22d-4c7157f7e451",
+      "name": "Update row in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-28T09:30:57.461Z",
+      "updatedAt": "2025-10-28T09:30:57.461Z",
+      "role": "workflow:owner",
+      "workflowId": "FqTynNifjLbK9hi0",
+      "projectId": "8KGMznsTX2ygCfnB"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger1": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-02T02:43:10.000Z",
+  "versionId": "22b99d53-3e02-4dd1-95cb-5727167e1dee"
+}

@@ -1,0 +1,980 @@
+{
+  "active": true,
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-28T09:31:28.231Z",
+  "id": "xHWxMXGEnkH4DF5P",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Rewrite Caption",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a **video marketing expert** specializing in creating catchy, viral titles and tags for social media platforms (TikTok, YouTube, Facebook Reels, Instagram Reels).\n\nInput description:\n\"{{ $json.Desc_raw }}\"\n\nYour task:\nAnalyze the input and return **a single valid JSON object only** — no explanations, no markdown, no additional text.\n\n### Expected JSON format:\n{\n  \"title\": \"Video title\",\n  \"tags\": \"tag1, tag2, tag3, tag4\"\n}\n\n### Processing rules:\n\n1. **Language:**\n   - If the original description is in **Chinese**, translate it into **natural Vietnamese**, not literal or robotic.\n   - If in another language, keep it as English or Vietnamese, whichever fits the main content better.\n\n2. **Title:**\n   - Rewrite the title naturally and concisely, aiming for strong emotion or curiosity.\n   - Make it engaging, under 12 words, and suitable for social media virality.\n   - Avoid ALL-CAPS, special symbols, or generic phrasing.\n\n3. **Tags:**\n   - Generate 3–4 popular and relevant tags for social media discovery.\n   - Use **lowercase English words**, separated by a comma (# symbols).\n   - Prioritize high-engagement keywords such as: funny, trend, challenge, lifestyle, vlog, reaction, emotional, food, travel.\n   - If unclear topic → use default tags: `viral trend video`.\n\n4. **Output rules:**\n   - Return a **valid JSON object only**, no commentary or markdown.\n   - If data is missing, return empty strings `\"\"` for missing fields.\n\n### Example output:\n{\n  \"title\": \"Unexpected street food reactions\",\n  \"tags\": \"food, reaction, trend, viral\"\n}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a professional creative marketing expert who specializes in crafting viral, high-converting titles for social media platforms such as Facebook, TikTok, YouTube, and Instagram. Your goal is to write short, powerful, and emotionally engaging titles that instantly capture attention and spark curiosity. Blend modern, trendy, and natural language with marketing insight to make each title clear, memorable, and algorithm-friendly. Focus on clarity, rhythm, and emotional resonance while ensuring every title aligns with user search intent and boosts discoverability. Use impactful keywords that drive engagement and match viral trends. When relevant, you may produce multiple variations of the title (e.g., viral-focused, emotional, or humorous). The ultimate goal is to transform each idea into a modern, scroll-stopping title that resonates with audiences and performs strongly across all platforms."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        160
+      ],
+      "id": "975da24d-4922-4e76-a27b-310be15c5ff7",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.9
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        352
+      ],
+      "id": "49495e41-a9f5-4880-aa55-0a95ea3e73e5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "EjFG7mbt0QOOnZ8j",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5650070a-126d-4a19-8ba7-bcc61dc9e3e4",
+              "leftValue": "={{ $json.Desc_raw }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        80
+      ],
+      "id": "d3e44d14-743b-4dd9-9610-7898225ddc67",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"title\": { \"type\": \"string\" },\n    \"tags\": { \"type\": \"string\" }\n  },\n  \"required\": [\"title\", \"tags\"]\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        944,
+        352
+      ],
+      "id": "8729ffa7-882c-4c29-b65e-687d0c158358",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('If').item.json.Aweme_id }}",
+            "Rewrite ": "Done",
+            "Title": "={{ $json.output.title }}",
+            "Tags": "={{ $json.output.tags }}",
+            "Status_Youtube": "Ready to publish",
+            "Status_Facebook": "Ready to publish",
+            "Status_Tiktok": "Ready to publish"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1072,
+        64
+      ],
+      "id": "58531ce5-3a24-4b42-8d79-efbcf9657b06",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('If').item.json.Aweme_id }}",
+            "Rewrite ": "=Done",
+            "Status_Youtube": "Ready to publish",
+            "Status_Facebook": "Ready to publish",
+            "Status_Tiktok": "Ready to publish"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "8538a3ee-b6a3-479f-812c-3b9bafc7bc09",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=AI Translate Error: {{ $json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        240
+      ],
+      "id": "65017d66-0dd5-4b56-88ce-f1dd177ce250",
+      "name": "Send a message",
+      "webhookId": "46c0a434-ed0a-4579-bd7a-41dfbbb000df",
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        288,
+        160
+      ],
+      "id": "a282add9-0c9a-40dd-934d-9ee3d8d959e3",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Rewrite ",
+              "lookupValue": "Not Done"
+            },
+            {
+              "lookupColumn": "Source",
+              "lookupValue": "Douyin"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        80
+      ],
+      "id": "616bd199-bc8f-4608-ade0-68c7392254f6",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        80
+      ],
+      "id": "de408497-5963-4eb4-aaf5-c4b4e34fdf95",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-28T09:31:28.233Z",
+      "updatedAt": "2025-10-28T09:31:28.233Z",
+      "role": "workflow:owner",
+      "workflowId": "xHWxMXGEnkH4DF5P",
+      "projectId": "8KGMznsTX2ygCfnB"
+    }
+  ],
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+      "sheetId": 0,
+      "lastIndexChecked": 22,
+      "lastRevision": 2923,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4&revision=2923&exportFormat=xlsx"
+    },
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        10
+      ]
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-03T02:26:57.000Z",
+  "versionId": "4af87fb9-0f56-4f92-a0b2-f6a4c07ee784"
+}

@@ -1,0 +1,4218 @@
+{
+  "active": true,
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Get aweme list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get aweme list": {
+      "main": [
+        [
+          {
+            "node": "Get metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get metadata": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Share folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "xbogus_func": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Create folder5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "xbogus_func",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "abogus_func",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "abogus_func": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Get metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetMusic": {
+      "main": [
+        [
+          {
+            "node": "Upload file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file4": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video1": {
+      "main": [
+        [
+          {
+            "node": "Upload file4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GetMusic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "GetAweme",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder5": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetAweme": {
+      "main": [
+        [
+          {
+            "node": "Upload file5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file3": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Send a message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Send a message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share folder": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetChannelID": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "GetChannelID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Send a message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-28T09:29:37.424Z",
+  "id": "Ncbua0utdXVGbYJk",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "download-video",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://www.douyin.com/aweme/v1/web/aweme/post/?{{ $json.xbogus_result }}",
+        "sendHeaders": true,
+        "specifyHeaders": "=json",
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        64
+      ],
+      "id": "9258bb43-981a-4aed-8c2d-4d4c6bdf90f1",
+      "name": "HTTP Request",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d603d4ea-1ece-446a-9d06-209c98c98c25",
+              "name": "aweme_list",
+              "value": "={{ $json.aweme_list }}",
+              "type": "array"
+            },
+            {
+              "id": "471d173b-68ee-4821-bfb9-8935b8ca23b4",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1728,
+        64
+      ],
+      "id": "b3f5de8f-dcca-46f6-a6b2-c6b1dae7a54b",
+      "name": "Get aweme list"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import datetime as dt\nimport re\n\n# --- helpers ---\ndef sanitize(s: str) -> str:\n    s = re.sub(r'[<>:\"/\\\\|?*]', '_', (s or ''))\n    return s[:100].strip()\n\ndef to_date(ts) -> str:\n    try:\n        return dt.datetime.fromtimestamp(int(ts)).strftime(\"%Y-%m-%d\")\n    except Exception:\n        return dt.datetime.now().strftime(\"%Y-%m-%d\")\n\ndef first(lst):\n    try:\n        return (lst or [None])[0]\n    except Exception:\n        return None\n\ndef parse_aweme(a: dict) -> dict:\n    author_name = ((a.get(\"author\") or {}).get(\"nickname\") or \"\")\n    aweme_id = str(a.get(\"aweme_id\", \"\")) or \"\"\n    created = to_date(a.get(\"create_time\", 0))\n    desc = a.get(\"desc\") or \"\"\n\n    # music url (an toàn None)\n    music = a.get(\"music\") or {}\n    music_play = music.get(\"play_url\") or {}\n    music_url = first(music_play.get(\"url_list\", []))\n\n    # image / video\n    images = a.get(\"images\") or []\n    if images:\n      aweme_type_text = \"Image\"\n      preferred_urls = []\n  \n      for img in images:\n          img = img or {}\n  \n          # --- clip (nếu ảnh có 'video' kèm theo) ---\n          v = img.get(\"video\") or {}\n          brs = v.get(\"bit_rate\") or []\n          play_addr = (brs[0].get(\"play_addr\") if brs else None) or v.get(\"play_addr\") or {}\n          clip_url = first((play_addr or {}).get(\"url_list\", []))\n  \n          # --- ảnh tĩnh (fallback) ---\n          static_url = first(img.get(\"url_list\", [])) or first(img.get(\"download_url_list\", []))\n  \n          # --- ưu tiên clip, nếu không có thì dùng ảnh ---\n          preferred_urls.append(clip_url or static_url)\n  \n      image_urls = [u for u in preferred_urls if u] or None\n      video_url = None\n    else:\n        aweme_type_text = \"Video\"\n        v = a.get(\"video\") or {}\n        brs = v.get(\"bit_rate\") or []\n        # ưu tiên bit_rate[0] nếu có, fallback sang play_addr\n        play_addr = (brs[0].get(\"play_addr\") if brs else None) or v.get(\"play_addr\") or {}\n        video_url = first(play_addr.get(\"url_list\", []))\n        image_urls = None\n\n    filename = sanitize(\n        f\"{created}_{aweme_type_text}_{desc}\" if desc else f\"{created}_aweme_{aweme_type_text}\"\n    )\n\n    return {\n        \"author_name\": author_name,\n        \"aweme_id\": aweme_id,\n        \"aweme_type\": aweme_type_text,\n        \"create_time\": created,\n        \"desc\": desc,\n        \"music_url\": music_url,\n        \"video_url\": video_url,\n        \"image_urls\": image_urls,\n        \"filename\": filename,\n    }\n\n# --- main ---\ntry:\n    data = (items[0].get(\"json\") or {})\n    # Chấp nhận cả aweme_list lẫn aweme_detail\n    aweme_list = data.get(\"aweme_list\") or []\n    if not aweme_list:\n        ad = data.get(\"aweme_detail\") or {}\n        if ad:\n            aweme_list = [ad]\n\n    if not aweme_list:\n        return [{\"json\": {\"error\": \"No aweme data found\", \"awemes\": []}}]\n\n    out = []\n    for i, a in enumerate(aweme_list, 1):\n        try:\n            out.append(parse_aweme(a or {}))\n        except Exception as e:\n            # fallback một item lỗi nhưng vẫn trả về cấu trúc đầy đủ\n            out.append({\n                \"author_name\": ((a or {}).get(\"author\") or {}).get(\"nickname\") or \"\",\n                \"aweme_id\": str((a or {}).get(\"aweme_id\", f\"error_{i}\")),\n                \"aweme_type\": \"error\",\n                \"create_time\": to_date(None),\n                \"desc\": f\"Error processing item {i}: {e}\",\n                \"music_url\": None,\n                \"video_url\": None,\n                \"image_urls\": None,\n                \"filename\": f\"error_{i}\",\n            })\n\n    # author_name dùng của item đầu tiên (nếu có)\n    top_author = out[0].get(\"author_name\", \"\") if out else \"\"\n\n    return [{\"json\": {\"author_name\": top_author, \"awemes\": out}}]\n\nexcept Exception as e:\n    return [{\"json\": {\"error\": str(e), \"awemes\": []}}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        160
+      ],
+      "id": "990af80e-d546-40a9-9a3c-abc6983d89dc",
+      "name": "Get metadata"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=user_{{ $json.author_name }}",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "https://drive.google.com/drive/folders/1cQR4T8Axxbj3ykB-_rrSMw2q46wSlkY6",
+            "mode": "url"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        736,
+        384
+      ],
+      "id": "ae0be192-a920-4bc4-94df-0b12ea4eb5c2",
+      "name": "Search files and folders",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.folder_need_create }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1cQR4T8Axxbj3ykB-_rrSMw2q46wSlkY6",
+          "mode": "url"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1552,
+        400
+      ],
+      "id": "37aa09a6-6990-42d2-9e3d-520858b34c12",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "071f4f61-f062-4dde-8f89-b6e7c2c6606b",
+              "leftValue": "={{ $json.exit_status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        384
+      ],
+      "id": "ac37eac3-acd6-4aae-99a6-e88b761134b7",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "from urllib.parse import urlencode\nimport hashlib\nimport base64\nimport time\nimport logging\n\n\n\ndef getXbogus(payload, form: str = '', ua: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36') -> str:\n    \"\"\"Trả về chuỗi \"payload&X-Bogus=...\".\n\n    Giữ nguyên tham số đầu vào như bản gốc.\n    \"\"\"\n    xbogus = get_xbogus(payload, ua, form)\n    params = payload + \"&X-Bogus=\" + xbogus\n    return params\n\n\ndef get_xbogus(payload: str, ua: str, form: str) -> str:\n    \"\"\"Sinh giá trị X-Bogus từ payload, UA và form.\"\"\"\n    short_str = \"Dkdpgh4ZKsQB80/Mfvw36XI1R25-WUAlEi7NLboqYTOPuzmFjJnryx9HVGcaStCe=\"\n    arr2 = get_arr2(payload, ua, form)\n    garbled_string = get_garbled_string(arr2)\n\n    xbogus = \"\"\n    for i in range(0, 21, 3):\n        char_code_num0 = garbled_string[i]\n        char_code_num1 = garbled_string[i + 1]\n        char_code_num2 = garbled_string[i + 2]\n        base_num = char_code_num2 | (char_code_num1 << 8) | (char_code_num0 << 16)\n        str1 = short_str[(base_num & 16515072) >> 18]\n        str2 = short_str[(base_num & 258048) >> 12]\n        str3 = short_str[(base_num & 4032) >> 6]\n        str4 = short_str[base_num & 63]\n        xbogus += str1 + str2 + str3 + str4\n\n    return xbogus\n\n\ndef get_garbled_string(arr2: list) -> list:\n    \"\"\"Sắp xếp & mã hoá arr2 theo mẫu cụ thể, trả về mảng số độ dài 21.\"\"\"\n    p = [\n        arr2[0], arr2[10], arr2[1], arr2[11], arr2[2], arr2[12], arr2[3], arr2[13], arr2[4], arr2[14],\n        arr2[5], arr2[15], arr2[6], arr2[16], arr2[7], arr2[17], arr2[8], arr2[18], arr2[9],\n    ]\n\n    char_array = [chr(i) for i in p]\n    f = []\n    f.extend([2, 255])\n    tmp = ['ÿ']\n    bytes_ = _0x30492c(tmp, \"\".join(char_array))\n\n    for b in bytes_:\n        f.append(b)\n\n    return f\n\n\nessential_len = 19  # chỉ để chú thích; không dùng ở nơi khác\n\n\ndef get_arr2(payload: str, ua: str, form: str) -> list:\n    \"\"\"Sinh arr2 từ payload, ua, form (double MD5 + RC4-like) và timestamp.\"\"\"\n    # Tạo muối từ payload, form\n    salt_payload_bytes = hashlib.md5(hashlib.md5(payload.encode()).digest()).digest()\n    salt_payload = [byte for byte in salt_payload_bytes]\n\n    salt_form_bytes = hashlib.md5(hashlib.md5(form.encode()).digest()).digest()\n    salt_form = [byte for byte in salt_form_bytes]\n\n    # Muối từ UA\n    ua_key = ['\\u0000', '\\u0001', '\\u000e']\n    salt_ua_bytes = hashlib.md5(base64.b64encode(_0x30492c(ua_key, ua))).digest()\n    salt_ua = [byte for byte in salt_ua_bytes]\n\n    timestamp = int(time.time())\n    canvas = 1489154074\n\n    arr1 = [\n        64,  # fixed\n        0,   # fixed\n        1,   # fixed\n        14,  # fixed\n        salt_payload[14],\n        salt_payload[15],\n        salt_form[14],\n        salt_form[15],\n        salt_ua[14],\n        salt_ua[15],\n        (timestamp >> 24) & 255,\n        (timestamp >> 16) & 255,\n        (timestamp >> 8) & 255,\n        (timestamp >> 0) & 255,\n        (canvas >> 24) & 255,\n        (canvas >> 16) & 255,\n        (canvas >> 8) & 255,\n        (canvas >> 0) & 255,\n        64,  # checksum (xored phía dưới)\n    ]\n\n    # Tính checksum bằng XOR tất cả phần tử (trừ đầu & cuối)\n    for i in range(1, len(arr1) - 1):\n        arr1[18] ^= arr1[i]\n\n    # Sắp xếp lại thành arr2\n    arr2 = [\n        arr1[0], arr1[2], arr1[4], arr1[6], arr1[8], arr1[10], arr1[12], arr1[14], arr1[16], arr1[18],\n        arr1[1], arr1[3], arr1[5], arr1[7], arr1[9], arr1[11], arr1[13], arr1[15], arr1[17],\n    ]\n\n    return arr2\n\n\ndef _0x30492c(a: list, b: str) -> bytearray:\n    \"\"\"Thuật toán giống RC4: KSA + PRGA, key là chuỗi a, dữ liệu là b.\"\"\"\n    d = [i for i in range(256)]\n    c = 0\n    result = bytearray(len(b))\n\n    # Key Scheduling Algorithm (KSA)\n    for i in range(256):\n        c = (c + d[i] + ord(a[i % len(a)])) % 256\n        e = d[i]\n        d[i] = d[c]\n        d[c] = e\n\n    # Pseudo-Random Generation Algorithm (PRGA)\n    t = 0\n    c = 0\n    for i in range(len(b)):\n        t = (t + 1) % 256\n        c = (c + d[t]) % 256\n        e = d[t]\n        d[t] = d[c]\n        d[c] = e\n        result[i] = ord(b[i]) ^ d[(d[t] + d[c]) % 256]\n\n    return result\n\n\n\n\nparams = {\n  \"sec_user_id\": str(items[0].json.key),\n  \"count\": \"35\",\n  \"max_cursor\": \"0\",\n  \"device_platform\": \"webapp\",\n  \"aid\": \"6383\",\n  \"channel\": \"channel_pc_web\",\n  \"pc_client_type\": \"1\",\n  \"version_code\": \"170400\",\n  \"version_name\": \"17.4.0\",\n  \"cookie_enabled\": \"true\",\n  \"screen_width\": \"1920\",\n  \"screen_height\": \"1080\",\n  \"browser_language\": \"zh-CN\",\n  \"browser_platform\": \"MacIntel\",\n  \"browser_name\": \"Chrome\",\n  \"browser_version\": \"122.0.0.0\",\n  \"browser_online\": \"true\",\n  \"engine_name\": \"Blink\",\n  \"engine_version\": \"122.0.0.0\",\n  \"os_name\": \"Mac\",\n  \"os_version\": \"10.15.7\",\n  \"cpu_core_num\": \"8\",\n  \"device_memory\": \"8\",\n  \"platform\": \"PC\",\n  \"downlink\": \"10\",\n  \"effective_type\": \"4g\",\n  \"round_trip_time\": \"50\"\n}\npayload = urlencode(params)\nresult = getXbogus(payload)\nreturn [{\"json\": {\"xbogus_result\": result}}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        64
+      ],
+      "id": "f69c7420-aa8e-4116-9410-e792742da70a",
+      "name": "xbogus_func"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "search_json = (items[0].get(\"json\") if items else {}) or {}\nexit_status = bool(search_json.get(\"id\"))\n\nreturn [{\n  \"json\": {\n    \"search_json\": search_json,\n    \"exit_status\": exit_status\n  }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        384
+      ],
+      "id": "cdfbef5c-2240-4122-b543-a2617e47b376",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "48f1d581-3293-4a89-91b4-60b13b53fb9f",
+              "name": "id ",
+              "value": "={{ $json.search_json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c64bde54-5738-456c-9249-93677e9dabc2",
+              "name": "awemes",
+              "value": "={{ $('Get metadata').item.json.awemes }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1952,
+        368
+      ],
+      "id": "08aceed5-5644-4631-86bb-a025ca7194c5",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fba4c676-3291-4d8d-9413-e3e36ec72e9e",
+              "name": "search_json",
+              "value": "={{ $json.search_json }}",
+              "type": "object"
+            },
+            {
+              "id": "5d718fea-c042-45ef-857f-779fff47aec1",
+              "name": "exit_status",
+              "value": "={{ $json.exit_status }}",
+              "type": "boolean"
+            },
+            {
+              "id": "b24592ee-d019-46f2-ae1a-4fd73b073d3d",
+              "name": "folder_need_create",
+              "value": "=user_{{ $('Get metadata').item.json.author_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        384
+      ],
+      "id": "82d71cc1-52f2-4ee6-956b-083f4d3f55fc",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "awemes",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        368
+      ],
+      "id": "9f9806ee-5b8f-42e2-a735-243e799cd93f",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "HEAD",
+        "url": "={{ $json.share_link }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        80
+      ],
+      "id": "29d2cfa1-f091-4f09-b542-f41234b2e857",
+      "name": "HTTP Request2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\n\nurlstr = items[0].json.headers.location\nkey = None\nkey_type = None\nif \"/user/\" in urlstr:\n  # Get sec_uid\n  key = re.findall(r'user/([\\d\\D]*?)(?:\\?|$)', urlstr)[0]\n  key_type = \"user\"\nelif \"/video/\" in urlstr:\n  # Get aweme_id\n  key = re.findall(r'video/(\\d+)?', urlstr)[0]\n  key_type = \"aweme\"\nelif \"/note/\" in urlstr:\n  key = re.findall(r'note/(\\d+)?', urlstr)[0]\n  key_type = \"aweme\"\nelif \"/slides/\" in urlstr:\n  key = re.findall(r'slides/(\\d+)?', urlstr)[0]\n  key_type = \"aweme\"\n\nreturn [{\"json\": {\"key_type\": key_type, \"key\": key}}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        80
+      ],
+      "id": "8e3a85c0-2246-4359-9440-27ef9e248b9a",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Aweme_id",
+              "lookupValue": "={{ $json.awemes.aweme_id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2272,
+        464
+      ],
+      "id": "a852366b-0212-4384-8be1-e551b4770012",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "awemes.aweme_id",
+              "field2": "Aweme_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2448,
+        384
+      ],
+      "id": "0fca4801-5092-4c8b-8ae5-1acb444703c8",
+      "name": "Merge5",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const itemsFromPrev = $('Merge5').all() || [];\n\nif (itemsFromPrev.length === 0 || \n    itemsFromPrev.every(item => !item.json || Object.keys(item.json).length === 0)) {\n  \n  throw new Error('All data already have in Sheet');\n}\n\nreturn itemsFromPrev;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        384
+      ],
+      "id": "0145a5ce-51b7-4075-a448-2025ad5cf81f",
+      "name": "Code5",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.douyin.com/aweme/v1/web/aweme/detail/?{{ $json.result }}",
+        "sendHeaders": true,
+        "specifyHeaders": "=json",
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        240
+      ],
+      "id": "409850f6-7b49-4631-83cc-d1b44ea17062",
+      "name": "HTTP Request3",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.key_type }}",
+                    "rightValue": "user",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e77c1515-194a-4336-8ab0-d0d32945b7b1"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ef81fa48-76d0-4ad4-b539-98bf391dba07",
+                    "leftValue": "={{ $json.key_type }}",
+                    "rightValue": "aweme",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1104,
+        80
+      ],
+      "id": "b9007ba9-9c9d-43f1-b3e2-da5228a2f8f4",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import struct\nimport urllib.parse\nfrom typing import List, Union, Optional\n\n\n\n# Constants\nARGUMENTS = [0, 1, 14]\nUA_KEY = \"\\u0000\\u0001\\u000e\"\nEND_STRING = \"cus\"\nVERSION = [1, 0, 1, 5]\nREG = [\n    1937774191, 1226093241, 388252375, 3666478592,\n    2842636476, 372324522, 3817729613, 2969243214\n]\nSTR_MAP = {\n    \"s0\": \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\",\n    \"s1\": \"Dkdpgh4ZKsQB80/Mfvw36XI1R25+WUAlEi7NLboqYTOPuzmFjJnryx9HVGcaStCe=\",\n    \"s2\": \"Dkdpgh4ZKsQB80/Mfvw36XI1R25-WUAlEi7NLboqYTOPuzmFjJnryx9HVGcaStCe=\",\n    \"s3\": \"ckdp1h4ZKsUB80/Mfvw36XIgR25+WQAlEi7NLboqYTOPuzmFjJnry79HVGcaStCe\",\n    \"s4\": \"Dkdpgh2ZmsQB80/MfvV36XI1R45-WUAlEixNLwoqYTOPuzKFjJnry79HbGcaStCe\"\n}\n\n# Fixed UA code\nUA_CODE = [\n    76, 98, 15, 131, 97, 245, 224, 133, 122, 199, 241, 166, 79, 34, 90, 191,\n    128, 126, 122, 98, 66, 11, 14, 40, 49, 110, 110, 173, 67, 96, 138, 252\n]\n\n\ndef random_list(a: Optional[float] = None, b: int = 170, c: int = 85, \n                d: int = 0, e: int = 0, f: int = 0, g: int = 0) -> List[int]:\n    \"\"\"Generate random list based on parameters\"\"\"\n    import random\n    r = a if a is not None else random.random() * 10000\n    v = [r, int(r) & 255, int(r) >> 8]\n    return [\n        v[1] & b | d,\n        v[1] & c | e,\n        v[2] & b | f,\n        v[2] & c | g\n    ]\n\n\ndef list1(random_num: Optional[float] = None) -> List[int]:\n    \"\"\"Generate list 1\"\"\"\n    return random_list(random_num, 170, 85, 1, 2, 5, 45 & 170)\n\n\ndef list2(random_num: Optional[float] = None) -> List[int]:\n    \"\"\"Generate list 2\"\"\"\n    return random_list(random_num, 170, 85, 1, 0, 0, 0)\n\n\ndef list3(random_num: Optional[float] = None) -> List[int]:\n    \"\"\"Generate list 3\"\"\"\n    return random_list(random_num, 170, 85, 1, 0, 5, 0)\n\n\ndef generate_string1(random_num1: Optional[float] = None, \n                    random_num2: Optional[float] = None, \n                    random_num3: Optional[float] = None) -> str:\n    \"\"\"Generate string 1 from three random lists\"\"\"\n    chars = []\n    chars.extend(chr(x) for x in list1(random_num1))\n    chars.extend(chr(x) for x in list2(random_num2))\n    chars.extend(chr(x) for x in list3(random_num3))\n    return ''.join(chars)\n\n\ndef left_rotate(value: int, amount: int) -> int:\n    \"\"\"Left rotation for 32-bit integers\"\"\"\n    amount %= 32\n    return ((value << amount) | (value >> (32 - amount))) & 0xFFFFFFFF\n\n\ndef pe(e: int) -> int:\n    \"\"\"SM3 constant function\"\"\"\n    return 2043430169 if e < 16 else 2055708042\n\n\ndef he(e: int, r: int, t: int, n: int) -> int:\n    \"\"\"Boolean function for SM3\"\"\"\n    if e < 16:\n        return (r ^ t ^ n) & 0xFFFFFFFF\n    elif e < 64:\n        return ((r & t) | (r & n) | (t & n)) & 0xFFFFFFFF\n    raise ValueError('Invalid e for he function')\n\n\ndef ve(e: int, r: int, t: int, n: int) -> int:\n    \"\"\"Boolean function for SM3\"\"\"\n    if e < 16:\n        return (r ^ t ^ n) & 0xFFFFFFFF\n    elif e < 64:\n        return ((r & t) | (~r & n)) & 0xFFFFFFFF\n    raise ValueError('Invalid e for ve function')\n\n\ndef generate_f(data: List[int]) -> List[int]:\n    \"\"\"Generate F array for SM3\"\"\"\n    r = [0] * 132\n    \n    # First 16 words\n    for t in range(16):\n        r[t] = ((data[4 * t] << 24) | (data[4 * t + 1] << 16) | \n                (data[4 * t + 2] << 8) | data[4 * t + 3]) & 0xFFFFFFFF\n    \n    # Extension\n    for n in range(16, 68):\n        a = r[n - 16] ^ r[n - 9] ^ left_rotate(r[n - 3], 15)\n        a = a ^ left_rotate(a, 15) ^ left_rotate(a, 23)\n        r[n] = (a ^ left_rotate(r[n - 13], 7) ^ r[n - 6]) & 0xFFFFFFFF\n    \n    for n in range(68, 132):\n        r[n] = (r[n - 68] ^ r[n - 64]) & 0xFFFFFFFF\n    \n    return r\n\n\ndef compress(reg: List[int], data: List[int]) -> List[int]:\n    \"\"\"SM3 compression function\"\"\"\n    f = generate_f(data)\n    i = reg.copy()\n    \n    for o in range(64):\n        c = left_rotate(i[0], 12) + i[4] + left_rotate(pe(o), o)\n        c = c & 0xFFFFFFFF\n        c = left_rotate(c, 7)\n        s = (c ^ left_rotate(i[0], 12)) & 0xFFFFFFFF\n        \n        u = he(o, i[0], i[1], i[2])\n        u = (u + i[3] + s + f[o + 68]) & 0xFFFFFFFF\n        \n        b = ve(o, i[4], i[5], i[6])\n        b = (b + i[7] + c + f[o]) & 0xFFFFFFFF\n        \n        i[3] = i[2]\n        i[2] = left_rotate(i[1], 9)\n        i[1] = i[0]\n        i[0] = u\n        \n        i[7] = i[6]\n        i[6] = left_rotate(i[5], 19)\n        i[5] = i[4]\n        i[4] = (b ^ left_rotate(b, 9) ^ left_rotate(b, 17)) & 0xFFFFFFFF\n    \n    return [(reg[l] ^ i[l]) & 0xFFFFFFFF for l in range(8)]\n\n\ndef pad_array(arr: List[int], length: int = 60) -> List[int]:\n    \"\"\"Pad array to specified length\"\"\"\n    result = arr.copy()\n    while len(result) < length:\n        result.append(0)\n    return result\n\n\ndef fill_chunk(chunk: List[int], size: int, length: int = 60) -> List[int]:\n    \"\"\"Fill chunk with padding\"\"\"\n    bit_size = 8 * size\n    result = chunk.copy()\n    result.append(128)\n    result = pad_array(result, length)\n    \n    for i in range(4):\n        result.append((bit_size >> (8 * (3 - i))) & 255)\n    \n    return result\n\n\ndef reg_to_array(reg: List[int]) -> List[int]:\n    \"\"\"Convert register to byte array\"\"\"\n    result = [0] * 32\n    for i in range(8):\n        c = reg[i]\n        result[4 * i + 3] = c & 255\n        c >>= 8\n        result[4 * i + 2] = c & 255\n        c >>= 8\n        result[4 * i + 1] = c & 255\n        c >>= 8\n        result[4 * i] = c & 255\n    return result\n\n\ndef char_code_at(s: str) -> List[int]:\n    \"\"\"Convert string to char codes\"\"\"\n    return [ord(char) for char in s]\n\n\ndef decode_string(url_string: str) -> str:\n    \"\"\"Decode URL string\"\"\"\n    return urllib.parse.unquote(url_string)\n\n\ndef split_array(arr: List[int], chunk_size: int = 64) -> List[List[int]]:\n    \"\"\"Split array into chunks\"\"\"\n    return [arr[i:i + chunk_size] for i in range(0, len(arr), chunk_size)]\n\n\ndef sm3_hash(data: Union[str, List[int]], length: int = 60) -> List[int]:\n    \"\"\"SM3 hash function\"\"\"\n    reg = REG.copy()\n    \n    if isinstance(data, str):\n        data = decode_string(data)\n        data = char_code_at(data)\n    \n    size = len(data)\n    \n    if len(data) <= 64:\n        chunk = data.copy()\n    else:\n        chunks = split_array(data, 64)\n        for i in range(len(chunks) - 1):\n            reg = compress(reg, chunks[i])\n        chunk = chunks[-1]\n    \n    chunk = fill_chunk(chunk, size, length)\n    reg = compress(reg, chunk)\n    \n    return reg_to_array(reg)\n\n\ndef generate_method_code(method: str = \"GET\") -> List[int]:\n    \"\"\"Generate method code using SM3\"\"\"\n    return sm3_hash(sm3_hash(method + END_STRING))\n\n\ndef generate_params_code(params: str) -> List[int]:\n    \"\"\"Generate params code using SM3\"\"\"\n    return sm3_hash(sm3_hash(params + END_STRING))\n\n\ndef list4(a: int, b: int, c: int, d: int, e: int, f: int, g: int, h: int,\n          i: int, j: int, k: int, m: int, n: int, o: int, p: int, q: int, r: int) -> List[int]:\n    \"\"\"Generate list 4\"\"\"\n    return [\n        44, a, 0, 0, 0, 0, 24, b, n, 0, c, d, 0, 0, 0, 1, 0, 239, e, o, f, g, 0, 0, 0, 0, h, 0, 0, 14,\n        i, j, 0, k, m, 3, p, 1, q, 1, r, 0, 0, 0\n    ]\n\n\ndef end_check_num(arr: List[int]) -> int:\n    \"\"\"Calculate end check number\"\"\"\n    result = 0\n    for i in arr:\n        result ^= i\n    return result\n\n\ndef generate_browser_info(platform: str = \"Win32\") -> str:\n    \"\"\"Generate browser info string\"\"\"\n    import random\n    \n    inner_width = random.randint(1280, 1920)\n    inner_height = random.randint(720, 1080)\n    outer_width = random.randint(inner_width, 1920)\n    outer_height = random.randint(inner_height, 1080)\n    screen_x = 0\n    screen_y = 0 if random.random() < 0.5 else 30\n    \n    value_list = [\n        inner_width, inner_height, outer_width, outer_height,\n        screen_x, screen_y, 0, 0, outer_width, outer_height,\n        outer_width, outer_height, inner_width, inner_height,\n        24, 24, platform\n    ]\n    \n    return '|'.join(map(str, value_list))\n\n\ndef generate_string2_list(url_params: str, method: str = \"GET\", \n                         start_time: int = 0, end_time: int = 0,\n                         browser_info: Optional[str] = None) -> List[int]:\n    \"\"\"Generate string 2 list\"\"\"\n    import time\n    import random\n    \n    if start_time == 0:\n        start_time = int(time.time() * 1000)\n    if end_time == 0:\n        end_time = start_time + random.randint(4, 8)\n    \n    if browser_info is None:\n        browser_info = generate_browser_info()\n    \n    browser_len = len(browser_info)\n    \n    params_array = generate_params_code(url_params)\n    method_array = generate_method_code(method)\n    \n    return list4(\n        (end_time >> 24) & 255,\n        params_array[21],\n        UA_CODE[23],\n        (end_time >> 16) & 255,\n        params_array[22],\n        UA_CODE[24],\n        (end_time >> 8) & 255,\n        (end_time >> 0) & 255,\n        (start_time >> 24) & 255,\n        (start_time >> 16) & 255,\n        (start_time >> 8) & 255,\n        (start_time >> 0) & 255,\n        method_array[21],\n        method_array[22],\n        end_time // (256 ** 4),\n        start_time // (256 ** 4),\n        browser_len\n    )\n\n\ndef rc4_encrypt(plaintext: str, key: str) -> str:\n    \"\"\"RC4 encryption\"\"\"\n    s = list(range(256))\n    j = 0\n    \n    for i in range(256):\n        j = (j + s[i] + ord(key[i % len(key)])) % 256\n        s[i], s[j] = s[j], s[i]\n    \n    i = j = 0\n    cipher = []\n    \n    for k in range(len(plaintext)):\n        i = (i + 1) % 256\n        j = (j + s[i]) % 256\n        s[i], s[j] = s[j], s[i]\n        t = (s[i] + s[j]) % 256\n        cipher.append(chr(s[t] ^ ord(plaintext[k])))\n    \n    return ''.join(cipher)\n\n\ndef generate_string2(url_params: str, method: str = \"GET\", \n                    start_time: int = 0, end_time: int = 0,\n                    browser_info: Optional[str] = None) -> str:\n    \"\"\"Generate string 2\"\"\"\n    if browser_info is None:\n        browser_info = generate_browser_info()\n    \n    browser_code = char_code_at(browser_info)\n    \n    a = generate_string2_list(url_params, method, start_time, end_time, browser_info)\n    e = end_check_num(a)\n    a.extend(browser_code)\n    a.append(e)\n    \n    combined_chars = ''.join(chr(x) for x in a)\n    return rc4_encrypt(combined_chars, \"y\")\n\n\ndef generate_result(s: str, e: str = \"s4\") -> str:\n    \"\"\"Generate base64-like result\"\"\"\n    r = []\n    \n    for i in range(0, len(s), 3):\n        if i + 2 < len(s):\n            n = (ord(s[i]) << 16) | (ord(s[i + 1]) << 8) | ord(s[i + 2])\n        elif i + 1 < len(s):\n            n = (ord(s[i]) << 16) | (ord(s[i + 1]) << 8)\n        else:\n            n = ord(s[i]) << 16\n        \n        shifts = [18, 12, 6, 0]\n        masks = [0xFC0000, 0x03F000, 0x0FC0, 0x3F]\n        \n        for j in range(4):\n            if shifts[j] == 6 and i + 1 >= len(s):\n                break\n            if shifts[j] == 0 and i + 2 >= len(s):\n                break\n            r.append(STR_MAP[e][(n & masks[j]) >> shifts[j]])\n    \n    padding = (4 - len(r) % 4) % 4\n    r.extend('=' * padding)\n    return ''.join(r)\n\n\ndef get_value(url_params: Union[str, dict], method: str = \"GET\", \n              start_time: int = 0, end_time: int = 0,\n              random_num1: Optional[float] = None, \n              random_num2: Optional[float] = None, \n              random_num3: Optional[float] = None,\n              platform: str = \"Win32\") -> str:\n    \"\"\"\n    Main function to generate ABogus value\n    \n    Args:\n        url_params: URL parameters as string or dict\n        method: HTTP method (default: \"GET\")\n        start_time: Start time in milliseconds (default: 0, will use current time)\n        end_time: End time in milliseconds (default: 0, will be calculated)\n        random_num1, random_num2, random_num3: Random numbers for string1 generation\n        platform: Platform string (default: \"Win32\")\n    \n    Returns:\n        Generated ABogus signature string\n    \"\"\"\n    # Convert dict to string if needed\n    if isinstance(url_params, dict):\n        url_params = urllib.parse.urlencode(url_params)\n    \n    # Generate browser info\n    browser_info = generate_browser_info(platform)\n    \n    # Generate components\n    string1 = generate_string1(random_num1, random_num2, random_num3)\n    string2 = generate_string2(url_params, method, start_time, end_time, browser_info)\n    combined_string = string1 + string2\n    \n    # Generate final result\n    return generate_result(combined_string, \"s4\")\n\n\n  \n# Example usage\ndetail_params = {\n  \"aweme_id\": str(items[0].json.key),\n  \"device_platform\": \"webapp\",\n  \"aid\": \"6383\",\n  \"channel\": \"channel_pc_web\",\n  \"pc_client_type\": 1,\n  \"version_code\": \"290100\",\n  \"version_name\": \"29.1.0\",\n  \"cookie_enabled\": \"true\",\n  \"screen_width\": 1920,\n  \"screen_height\": 1080,\n  \"browser_language\": \"zh-CN\",\n  \"browser_platform\": \"Win32\",\n  \"browser_name\": \"Chrome\",\n  \"browser_version\": \"130.0.0.0\",\n  \"browser_online\": \"true\",\n  \"engine_name\": \"Blink\",\n  \"engine_version\": \"130.0.0.0\",\n  \"os_name\": \"Windows\",\n  \"os_version\": \"10\",\n  \"cpu_core_num\": 12,\n  \"device_memory\": 8,\n  \"platform\": \"PC\",\n  \"downlink\": \"10\",\n  \"effective_type\": \"4g\",\n  \"from_user_page\": \"1\",\n  \"locate_query\": \"false\",\n  \"need_time_list\": \"1\",\n  \"pc_libra_divert\": \"Windows\",\n  \"publish_video_strategy_type\": \"2\",\n  \"round_trip_time\": \"0\",\n  \"show_live_replay_strategy\": \"1\",\n  \"time_list_query\": \"0\",\n  \"whale_cut_token\": \"\",\n  \"update_version_code\": \"170400\",\n  \"msToken\": \"\"\n}\npayload = urllib.parse.urlencode(detail_params)\na_bogus = get_value(payload)\nresult = payload + f\"&a_bogus={a_bogus}\"\nreturn [{\"json\": {\"result\": result}}]\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1376,
+        240
+      ],
+      "id": "7aae3d7e-375f-4b9e-be25-c24c9da51353",
+      "name": "abogus_func"
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3488,
+        400
+      ],
+      "id": "757f29ef-4e0f-4873-8c12-488c627c8fbe",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.awemes.music_url }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4560,
+        592
+      ],
+      "id": "657a5cf5-04ac-4bb3-842f-560b473d7d04",
+      "name": "GetMusic",
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "name": "=music",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "simplifyOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4832,
+        592
+      ],
+      "id": "0316b06d-f48e-450d-a396-b7f0ba4268bf",
+      "name": "Upload file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.awemes.video_url }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "options": {
+          "batching": {
+            "batch": {}
+          },
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4128,
+        368
+      ],
+      "id": "15a59aae-4e23-4047-a544-a36f9f5af536",
+      "name": "Get Video1",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Code5').item.json.awemes.aweme_type }}",
+                    "rightValue": "Video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "580b87a0-a569-4c56-b9b2-0d735c61cbce"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0fd0d7ce-11d2-498e-84c4-e33e8b07ba8a",
+                    "leftValue": "={{ $('Code5').item.json.awemes.aweme_type }}",
+                    "rightValue": "Image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3216,
+        432
+      ],
+      "id": "851de158-e541-4a9a-92bc-b33e851dfedf",
+      "name": "Switch2",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.awemes.filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "simplifyOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4336,
+        368
+      ],
+      "id": "63f4d01d-0d0c-4d50-ae08-8b18d04b190e",
+      "name": "Upload file4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $json.awemes.aweme_id }}",
+            "Author ": "={{ $json.awemes.author_name }}",
+            "Type": "={{ $json.awemes.aweme_type }}",
+            "Desc_raw": "={{ $json.awemes.desc }}",
+            "Source": "Douyin",
+            "Rewrite ": "Not Done",
+            "Discord_ID": "={{ $('GetChannelID').item.json.body.channel.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2768,
+        144
+      ],
+      "id": "37c76534-b13b-44b5-9cfd-039937fcfafc",
+      "name": "Append row in sheet",
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3456,
+        720
+      ],
+      "id": "6719e7a7-2151-479a-86d9-662c346535db",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "awemes.image_urls",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "id, awemes.aweme_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3808,
+        736
+      ],
+      "id": "582e3760-c500-4bbf-a986-6726fdcd15f2",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.awemes.filename }}",
+        "driveId": {
+          "__rl": true,
+          "value": "=My Drive",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json['id '] }}",
+          "mode": "id"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2864,
+        304
+      ],
+      "id": "d4203d1d-f5f9-4a19-8352-bd4abb36fa5e",
+      "name": "Create folder5",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $itemIndex }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "simplifyOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        4288,
+        736
+      ],
+      "id": "0ee1981e-bec2-4073-bcca-d7386bd1c7aa",
+      "name": "Upload file5",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['awemes.image_urls'] }}",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4032,
+        736
+      ],
+      "id": "06db29bf-4640-4534-86d0-3e850223ba64",
+      "name": "GetAweme",
+      "retryOnFail": true,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3024,
+        432
+      ],
+      "id": "5daf3b04-fd23-40b6-b4bd-e03f69809576",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('GetAweme').first().json['awemes.aweme_id'] }}",
+            "Video/Image_URL": "={{ $json.image_link }}"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5040,
+        736
+      ],
+      "id": "069a0e30-b5f4-4692-b543-338e038df107",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get Video1').item.json.awemes.aweme_id }}",
+            "Video/Image_URL": "=https://drive.usercontent.google.com/uc?id={{ $json.id }}&export=download&confirm=t"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4608,
+        368
+      ],
+      "id": "7850606f-a604-45a5-991f-47812b9b9b2b",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst totalCount = items.length;\n\nconst out = $input.first();   \nout.json.totalCount = totalCount;\nout.json.awemeType = \"video\";\nout.json.idchat = $('GetChannelID').first().json.body.channel.id\n\nreturn [out];                  \n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3712,
+        240
+      ],
+      "id": "55d9ba99-6824-43a7-bbd9-dd55015fe090",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst totalCount = items.length;\n\nconst out = $input.first();   \nout.json.totalCount = totalCount;\nout.json.awemeType = \"image\";\nout.json.idchat = $('GetChannelID').first().json.body.channel.id\n\nreturn [out];                  \n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3664,
+        608
+      ],
+      "id": "71de42a4-084d-4035-848b-89e88ee6a668",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('GetMusic').item.json.awemes.aweme_id }}",
+            "Music_url": "=https://drive.usercontent.google.com/uc?id={{ $json.id }}&export=download&confirm=t"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5072,
+        592
+      ],
+      "id": "92229dff-dca4-4e1d-8394-20dea80b9d6e",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b9b1ce1b-79f0-410e-bc21-668fd9d9bebd",
+              "name": "image_link",
+              "value": "=https://drive.usercontent.google.com/uc?id={{ $json.id }}&export=download",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4576,
+        736
+      ],
+      "id": "848e5d18-ea63-4754-9f4e-5650a7aad4f2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "image_link"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        4816,
+        736
+      ],
+      "id": "e51b950b-4a86-4326-bfb7-89691acd75e8",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        400
+      ],
+      "id": "f56eeb3b-260f-4853-aa2b-87a7dc857e61",
+      "name": "Share folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('GetChannelID').item.json.body.channel.id }}",
+          "mode": "id"
+        },
+        "content": "={{ $json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        288,
+        160
+      ],
+      "id": "c31dfd92-a003-4402-8959-65f4ac654176",
+      "name": "Send a message",
+      "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('GetChannelID').item.json.body.channel.id }}",
+          "mode": "id"
+        },
+        "content": "={{ $json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        496
+      ],
+      "id": "68f8da94-9953-4876-b178-f03185554a95",
+      "name": "Send a message1",
+      "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('GetChannelID').item.json.body.channel.id }}",
+          "mode": "id"
+        },
+        "content": "=Done: {{ $json.totalCount }} {{ $json.awemeType }}.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        5200,
+        -592
+      ],
+      "id": "1e3a57e1-dbb8-4292-9f79-1002832a9fc4",
+      "name": "Send a message4",
+      "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import re\nfrom urllib.parse import urlparse # <-- Thêm thư viện này\n\ndef get_platform_from_domain(netloc):\n    \"\"\"\n    Hàm phụ trợ để xác định platform từ tên miền (netloc).\n    Ví dụ: 'www.facebook.com' -> 'facebook'\n    \"\"\"\n    netloc = netloc.lower() # Chuẩn hóa về chữ thường\n\n    # Các trường hợp đặc biệt và phổ biến\n    if 'facebook.com' in netloc or 'fb.me' in netloc:\n        return 'facebook'\n    if 'youtube.com' in netloc or 'youtu.be' in netloc:\n        return 'youtube'\n    if 'tiktok.com' in netloc: # Bao gồm cả vm.tiktok.com, vt.tiktok.com\n        return 'tiktok'\n    if 'instagram.com' in netloc:\n        return 'instagram'\n    if 'douyin.com' in netloc:\n        return 'douyin'\n    \n    # Logic dự phòng: Cố gắng lấy tên miền chính\n    # Ví dụ: 'www.google.com' -> ['www', 'google', 'com']\n    parts = netloc.split('.')\n    \n    if len(parts) > 2 and parts[0] == 'www':\n        # Nếu có 'www' (ví dụ: 'www.google.com'), lấy phần tử thứ 2\n        return parts[1]\n    if len(parts) >= 2:\n        # Nếu không có 'www' (ví dụ: 'google.com'), lấy phần tử đầu tiên\n        # Hoặc (ví dụ: 'youtu.be'), lấy 'youtu'\n        return parts[-2] \n    \n    # Nếu không phân tích được, trả về chính nó hoặc 'unknown'\n    return netloc if netloc else 'unknown'\n\ndef get_link_and_platform(text_content):\n    \"\"\"\n    Tìm link đầu tiên trong text và xác định platform của nó.\n    Trả về (share_link, platform)\n    \"\"\"\n    # 1. Tìm link (Giống code của bạn)\n    # Sử dụng regex của bạn\n    matches = re.findall(r'https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+', text_content)\n    \n    if not matches:  # Nếu không tìm thấy link nào\n        raise ValueError(\"No valid link found in the text\")\n    \n    share_link = matches[0] # Link đầu tiên tìm được\n\n    # 2. Phân tích link để lấy domain (netloc)\n    try:\n        parsed_uri = urlparse(share_link)\n        netloc = parsed_uri.netloc # Ví dụ: 'www.facebook.com' hoặc 'youtu.be'\n    except Exception:\n        # Nếu link không hợp lệ (dù regex tìm thấy)\n        return share_link, 'unknown' \n\n    # 3. Xác định platform từ domain\n    platform = get_platform_from_domain(netloc)\n    \n    # 4. Trả về cả link và platform\n    return share_link, platform\n\n# --- Logic thực thi của bạn --\ntry:\n    # Lấy text từ input\n    text = items[0][\"json\"][\"body\"][\"content\"][\"text\"]\n    \n    # Gọi hàm mới, nó sẽ trả về 2 giá trị\n    share_link, platform = get_link_and_platform(text)\n    \n    # Trả về cấu trúc JSON mong muốn\n    return [{\"json\": {\"share_link\": share_link, \"platform\": platform}}]\n\nexcept ValueError as e:\n    # Lỗi nếu không tìm thấy link\n    raise Exception(f\"Link validation failed: {str(e)}\")\nexcept IndexError:\n    # Lỗi nếu không có 'text' (items[0]... không tồn tại)\n    raise Exception(\"No message text found to extract link\")\nexcept Exception as e:\n    # Bắt các lỗi chung khác\n    raise Exception(f\"An error occurred: {str(e)}\")"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        32
+      ],
+      "id": "15ec6dd3-ebd0-4bb7-aac6-c2a84f808312",
+      "name": "Code1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vuivui-ngaungau",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        -64
+      ],
+      "id": "aa76c848-728a-48ea-b9a6-c9652961f740",
+      "name": "Webhook",
+      "webhookId": "b7bd603a-4e69-4467-8bbc-322c1937ddd7"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "animals-fun",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        128
+      ],
+      "id": "a95091bd-eff3-41d0-bb11-dc98ce810826",
+      "name": "Webhook1",
+      "webhookId": "b7bd603a-4e69-4467-8bbc-322c1937ddd7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5deade52-5887-4499-88d5-29d8e5add3d9",
+              "name": "body.content.text",
+              "value": "={{ $json.body.content.text }}",
+              "type": "string"
+            },
+            {
+              "id": "54b8d818-06e8-4ea9-8c61-d187a8140e43",
+              "name": "body.channel.id",
+              "value": "={{ $json.body.channel.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        32
+      ],
+      "id": "b717d0f7-f63e-4596-86d2-86961b36ba9b",
+      "name": "GetChannelID"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "food",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        304
+      ],
+      "id": "c08a9f2d-7cdc-42c4-92d6-3aab6069114f",
+      "name": "Webhook2",
+      "webhookId": "b7bd603a-4e69-4467-8bbc-322c1937ddd7"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "football",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        496
+      ],
+      "id": "51070a0f-8ff0-4159-a53e-b52da1fb45ac",
+      "name": "Webhook3",
+      "webhookId": "b7bd603a-4e69-4467-8bbc-322c1937ddd7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "402291d0-188d-49c9-92d3-026413743df3",
+              "leftValue": "={{ $json.body.author.username }}",
+              "rightValue": "doanda1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        48
+      ],
+      "id": "437d2f7f-93a7-472c-8d43-6864d7bc1091",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.platform }}",
+                    "rightValue": "facebook",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "dc619209-8f1b-457e-a6fe-dd1f06a33211"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ea420902-157b-4fe0-ae5a-6f8fd9eaa230",
+                    "leftValue": "={{ $json.platform }}",
+                    "rightValue": "douyin",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        480,
+        16
+      ],
+      "id": "b30365e0-7a25-45ed-beda-7852838eee92",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "command": "=yt-dlp -J \"{{ $json.share_link }}\" | jq '{id: .id, title: .title, author: .uploader, webpage_url: .webpage_url}'\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -560
+      ],
+      "id": "bf7a2315-238f-40ab-909e-e13f1dfaa661",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json.stdout;\nreturn [ { json: JSON.parse(input) } ];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        -560
+      ],
+      "id": "cf914bcf-9404-448b-a78b-7276641a4db8",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data[0].url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1824,
+        -592
+      ],
+      "id": "53b02214-8ddc-4011-be8e-bd599c4d61a6",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.instantdp.com/igdl",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"url\": \"{{ $json.webpage_url }}\"\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1616,
+        -592
+      ],
+      "id": "049f5506-88c5-4514-8581-db95ae3561ca",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Aweme_id",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -464
+      ],
+      "id": "cbaf3372-48f2-4ee5-a426-354f81ac7f1b",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const itemsFromPrev = $('Merge').all() || [];\n\nif (itemsFromPrev.length === 0 || \n    itemsFromPrev.every(item => !item.json || Object.keys(item.json).length === 0)) {\n  \n  throw new Error('All data already have in Sheet');\n}\n\nreturn itemsFromPrev;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        -544
+      ],
+      "id": "e696579b-c123-419f-bbb1-c0f00458ee64",
+      "name": "Code7",
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('GetChannelID').item.json.body.channel.id }}",
+          "mode": "id"
+        },
+        "content": "={{ $json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        -416
+      ],
+      "id": "8e2940e4-93a8-4a02-bd7f-f871799a1e59",
+      "name": "Send a message2",
+      "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "awemes.aweme_id",
+              "field2": "Aweme_id"
+            }
+          ]
+        },
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1168,
+        -544
+      ],
+      "id": "240b8616-e6a4-4273-abf5-bf84e4bcb375",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $json.id }}",
+            "Author ": "={{ $json.author }}",
+            "Type": "=Video",
+            "Source": "Facebook",
+            "Rewrite ": "Done",
+            "Discord_ID": "={{ $('GetChannelID').item.json.body.channel.id }}",
+            "Title": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1584,
+        -768
+      ],
+      "id": "2c2310c8-02ca-4cd9-b3e3-f5e90e016c79",
+      "name": "Append row in sheet1",
+      "executeOnce": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Code4').item.json.id }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=https://drive.google.com/drive/folders/1-2qenFNQq8R1ju13_4zprrc9OCBE2uUK?usp=drive_link",
+          "mode": "url"
+        },
+        "options": {
+          "simplifyOutput": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2064,
+        -592
+      ],
+      "id": "7eeb5f88-7907-4bed-af96-f37a6b147762",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iZAUuMZ1fszW0dzW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $json.name }}",
+            "Video/Image_URL": "=https://drive.usercontent.google.com/uc?id={{ $json.id }}&export=download&confirm=t",
+            "Status_Youtube": "Ready to publish",
+            "Status_Facebook": "Ready to publish",
+            "Status_Tiktok": "Ready to publish"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2320,
+        -592
+      ],
+      "id": "41b75529-c1bc-40e7-bfaa-641a230ad71a",
+      "name": "Append or update row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "OL1jwU1jKBHthASq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Download video facebook\n",
+        "height": 544,
+        "width": 2128,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        -768
+      ],
+      "typeVersion": 1,
+      "id": "b60165fa-431b-45cc-934a-355dbe114872",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Download douyin all type\n",
+        "height": 928,
+        "width": 4800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        32
+      ],
+      "typeVersion": 1,
+      "id": "beddc9a7-656c-477e-b311-1f7da10b9c91",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('GetChannelID').item.json.body.channel.id }}",
+          "mode": "id"
+        },
+        "content": "=Done.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2832,
+        -592
+      ],
+      "id": "6c755aff-347c-48d5-8d5b-9ed821641f49",
+      "name": "Send a message5",
+      "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "discordBotApi": {
+          "id": "AxRpWXsXRmyxC1sZ",
+          "name": "Discord Bot account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.postiznguyendoandat.click",
+            "user-agent": "axios/1.8.4",
+            "content-length": "1512",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "via": "1.1 Caddy",
+            "x-forwarded-for": "208.77.246.49",
+            "x-forwarded-host": "n8n.postiznguyendoandat.click",
+            "x-forwarded-proto": "https"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_type": "message_create",
+            "timestamp": 1762009475457,
+            "content": {
+              "text": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/",
+              "type": "message_create"
+            },
+            "author": {
+              "id": "898880888488726558",
+              "username": "doanda1",
+              "discriminator": "0"
+            },
+            "channel": {
+              "id": "1415874586242977904",
+              "name": "vuivui-ngaungau",
+              "type": "text"
+            },
+            "guild": {
+              "id": "1393074976516608160",
+              "name": "n8n"
+            },
+            "message_id": "1434196431094157333",
+            "original_message": {
+              "channelId": "1415874586242977904",
+              "guildId": "1393074976516608160",
+              "id": "1434196431094157333",
+              "createdTimestamp": 1762009475254,
+              "type": 0,
+              "system": false,
+              "content": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/",
+              "authorId": "898880888488726558",
+              "pinned": false,
+              "tts": false,
+              "nonce": "1434196431689744384",
+              "embeds": [],
+              "components": [],
+              "attachments": [],
+              "stickers": [],
+              "position": null,
+              "roleSubscriptionData": null,
+              "resolved": null,
+              "editedTimestamp": null,
+              "mentions": {
+                "everyone": false,
+                "users": [],
+                "roles": [],
+                "crosspostedChannels": [],
+                "repliedUser": null,
+                "members": [],
+                "channels": []
+              },
+              "webhookId": null,
+              "groupActivityApplicationId": null,
+              "applicationId": null,
+              "activity": null,
+              "flags": 0,
+              "reference": null,
+              "interactionMetadata": null,
+              "interaction": null,
+              "poll": null,
+              "messageSnapshots": [],
+              "call": null,
+              "cleanContent": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/"
+            }
+          },
+          "webhookUrl": "https://n8n.postiznguyendoandat.click/webhook/vuivui-ngaungau",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-28T09:29:37.427Z",
+      "updatedAt": "2025-10-28T09:29:37.427Z",
+      "role": "workflow:owner",
+      "workflowId": "Ncbua0utdXVGbYJk",
+      "projectId": "8KGMznsTX2ygCfnB"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 4,
+  "updatedAt": "2025-11-01T15:06:34.000Z",
+  "versionId": "b48615f1-6f57-4ed6-a55b-eaa6e7b30bb6"
+}

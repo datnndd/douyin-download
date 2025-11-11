@@ -1,0 +1,280 @@
+{
+  "active": false,
+  "connections": {
+    "Globals": {
+      "main": [
+        [
+          {
+            "node": "Get all files in given path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split the result": {
+      "main": [
+        [
+          {
+            "node": "Get file content from GitHub",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert files to JSON": {
+      "main": [
+        [
+          {
+            "node": "Restore n8n Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all files in given path": {
+      "main": [
+        [
+          {
+            "node": "Split the result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get file content from GitHub": {
+      "main": [
+        [
+          {
+            "node": "Convert files to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Globals",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-11-03T03:24:46.533Z",
+  "id": "YIuFcDeRfySsfgYU",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Restore your workflows from GitHub",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8077061a-d5c3-430e-a0af-0f2ca254b61a",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        304,
+        80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6cf546c5-5737-4dbd-851b-17d68e0a3780",
+              "name": "repo.owner",
+              "type": "string",
+              "value": "datnndd"
+            },
+            {
+              "id": "452efa28-2dc6-4ea3-a7a2-c35d100d0382",
+              "name": "repo.name",
+              "type": "string",
+              "value": "n8n-backup"
+            },
+            {
+              "id": "81c4dc54-86bf-4432-a23f-22c7ea831e74",
+              "name": "repo.path",
+              "type": "string",
+              "value": "workflows"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bce0b4be-bcc5-47b1-baf3-fe95b1137bfe",
+      "name": "Globals",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        496,
+        80
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## Restore from GitHub \nThis workflow will restore all instance workflows from GitHub backups.\n\n\n### Setup\nOpen `Globals` node and update the values below 👇\n\n- **repo.owner:** your Github username\n- **repo.name:** the name of your repository\n- **repo.path:** the folder to use within the repository.\n\n\nIf your username was `john-doe` and your repository was called `n8n-backups` and you wanted the workflows to go into a `workflows` folder you would set:\n\n- repo.owner - john-doe\n- repo.name - n8n-backups\n- repo.path - workflows/\n",
+        "height": 420,
+        "width": 320
+      },
+      "id": "800f277f-357b-43da-a86b-3e243f372f2b",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        -48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Edit this node 👇",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "id": "e7b0f52a-e6df-4890-9084-89e0e4ee203c",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        432,
+        -48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.repo.owner }}/{{ $json.repo.name }}/contents/{{ $json.repo.path }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {}
+      },
+      "id": "4cb114e4-162a-4dce-a32a-f4193b5bc01a",
+      "name": "Get all files in given path",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        336,
+        400
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "githubApi": {
+          "id": "1qate2hJX2J5bgbs",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "path",
+        "options": {}
+      },
+      "id": "28ef8d49-25d6-4fe2-9546-fe1ba1223e41",
+      "name": "Split the result",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        576,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": {
+          "__rl": true,
+          "mode": "name",
+          "value": "BeyondspaceStudio"
+        },
+        "repository": {
+          "__rl": true,
+          "mode": "name",
+          "value": "n8n-backup"
+        },
+        "filePath": "={{ $('Get all files in given path').item.json.path }}",
+        "additionalParameters": {}
+      },
+      "id": "0bc7e407-11e2-4e3a-bddb-aa446190e28b",
+      "name": "Get file content from GitHub",
+      "type": "n8n-nodes-base.github",
+      "position": [
+        800,
+        400
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "webhookId": "3e8f757b-f534-4a11-a072-a2f9289f487f",
+      "credentials": {
+        "githubApi": {
+          "id": "1qate2hJX2J5bgbs",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "id": "6bf1646d-8949-4f06-a02b-929142710f59",
+      "name": "Convert files to JSON",
+      "type": "n8n-nodes-base.extractFromFile",
+      "position": [
+        1024,
+        400
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "workflowObject": "={{ JSON.stringify($json.data) }}",
+        "requestOptions": {}
+      },
+      "id": "dd028a61-4a5f-4fa3-92f6-a0068cc0eaef",
+      "name": "Restore n8n Workflows",
+      "type": "n8n-nodes-base.n8n",
+      "position": [
+        1232,
+        400
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "n8nApi": {
+          "id": "PJsx0jIzzYYtYLfN",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-11-03T03:24:46.536Z",
+      "updatedAt": "2025-11-03T03:24:46.536Z",
+      "role": "workflow:owner",
+      "workflowId": "YIuFcDeRfySsfgYU",
+      "projectId": "8KGMznsTX2ygCfnB"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-03T03:24:46.533Z",
+  "versionId": "c06ee792-d1d7-45bf-a212-d26ef89d947c"
+}
