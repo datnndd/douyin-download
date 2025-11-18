@@ -1,4 +1,4 @@
-services:
+services: 
   n8n:
     build:
       context: .
@@ -6,48 +6,65 @@ services:
     image: n8n-datnd:latest
     container_name: n8n-container
     restart: always
+
     env_file:
       - .env
+
     environment:
-      # === Chuyển DB sang Postgres ===
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      # === Database: Supabase Postgres ===
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=your-host
       - DB_POSTGRESDB_PORT=5432
       - DB_POSTGRESDB_DATABASE=postgres
       - DB_POSTGRESDB_USER=your-user
       - DB_POSTGRESDB_PASSWORD=your-password
+      - DB_POSTGRESDB_SSL=true
       - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
 
+      # === Binary data: S3-compatible storage ===
       - N8N_BINARY_DATA_MODE=s3
       - N8N_S3_BUCKET=your-bucket
-      - N8N_S3_REGION=ap-southeast-1
-      - N8N_S3_ACCESS_KEY_ID=your-id
-      - N8N_S3_SECRET_ACCESS_KEY=your-secret
-      - N8N_S3_ENDPOINT=your-endpoint
+      - N8N_S3_REGION=your-region
+      - N8N_S3_ACCESS_KEY_ID=your-access-key-id
+      - N8N_S3_SECRET_ACCESS_KEY=your-secret-access-key
+      - N8N_S3_ENDPOINT=https://your-endpoint.storage.supabase.co/storage/v1/s3
       - N8N_S3_FORCE_PATH_STYLE=true
-      
+
+      # === Executions & housekeeping ===
       - N8N_EXECUTIONS_DATA_PRUNE=true
-      - N8N_EXECUTIONS_DATA_MAX_AGE=168           
+      - N8N_EXECUTIONS_DATA_MAX_AGE=168            # 7 ngày (giờ)
       - N8N_EXECUTIONS_DATA_PRUNE_MAX_COUNT=5000
       - N8N_EXECUTIONS_DATA_SAVE_ON_DISK=false
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      
+
+      # === Bảo mật & runners ===
       - N8N_RUNNERS_ENABLED=true
       - N8N_BLOCK_ENV_ACCESS_IN_NODE=true
       - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+
+      # === Timezone & host ===
       - TZ=Asia/Bangkok
-      - N8N_HOST=n8n.postiznguyendoandat.click
-      - WEBHOOK_URL=https://n8n.postiznguyendoandat.click/
+      - N8N_HOST=your-domain
+      - WEBHOOK_URL=your-webhook-url(domain)
 
     volumes:
+      # Volume cho config n8n (encryption key, settings, v.v.)
       - n8n_data:/home/node/.n8n           
+
+      # Thư mục files chung bạn đã dùng trước
       - ./files:/data/files                
+
+      # 🔥 Thư mục Python trên host: /home/node/video_process
+      # -> Trong container: /data/video_process
+      - /home/ubuntu/video_process:/data/video_process
 
     networks:
       - n8n_network
 
   caddy:
     image: caddy:2
+    container_name: caddy
     restart: always
     ports:
       - "80:80"
@@ -69,3 +86,4 @@ volumes:
   n8n_data:
   caddy_data:
   caddy_config:
+
