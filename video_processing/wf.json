@@ -1,0 +1,1553 @@
+{
+  "name": "translate_video",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        304,
+        576
+      ],
+      "id": "0cd72de9-3224-4f5a-aadb-97e6ae200216",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1omz7lh5SC7hgNvt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        432,
+        576
+      ],
+      "id": "40329897-dea5-4194-8cec-00f00e07d45a",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1omz7lh5SC7hgNvt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "cd /data/video_process/src && python3 build_out.py"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        592
+      ],
+      "id": "913ea101-6551-48e6-98d8-a476bf64c5a3",
+      "name": "Execute Command4"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/video_process/src/out.mp4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        592
+      ],
+      "id": "0f2e7d82-18c4-40b5-a45c-68a25aa448db",
+      "name": "Read/Write Files from Disk5"
+    },
+    {
+      "parameters": {
+        "name": "={{ $now.format('yyyy-MM-dd')}}_{{ $('Get row(s) in sheet').item.json.row_number }}_{{ $('Get row(s) in sheet').item.json.Aweme_id }}_translated",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1kIbKxuJWeUJ4SsXwWk2ERkARjE41VAjf",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1984,
+        592
+      ],
+      "id": "a5bc5e98-f451-4ce9-a15a-6c11bca9c508",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "bDurVCQfDdQLdLxq",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Process the following transcription and produce a Vietnamese SRT file.\n\nSTRICT REQUIREMENTS:\n1. Remove ALL parenthesized content (sound effects, notes, etc.)\n2. Split long segments to maintain 2-3 second subtitle duration\n3. Translate to natural Vietnamese\n4. Preserve proper names exactly as instructed\n5. Use context_text ONLY for disambiguation - do NOT copy from it\n6. Output ONLY pure SRT format (no JSON, no Markdown, no explanations)\n\nINPUT:\n\nTRANSCRIPTION JSON:\n{{ JSON.stringify($json.edit, null, 2) }}\n\nOUTPUT (pure SRT only):\n",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are a professional subtitle localization expert specializing in Chinese→Vietnamese, English→Vietnamese, Korean→Vietnamese, and Japanese→Vietnamese translation with precise timing control.\n\nYour goal is to translate each subtitle segment exactly as given, maintaining meaning and readability within the provided time range (`start` → `end`).\n\n====================================\nINPUT FORMAT\n====================================\nYou will receive:\n1. A JSON array `\"transcription\"` where each object contains:\n   * `\"index\"`: segment number\n   * `\"start\"`: timestamp string `\"HH:MM:SS,mmm\"`\n   * `\"end\"`: timestamp string `\"HH:MM:SS,mmm\"`\n   * `\"text\"`: source text (Chinese/English/Korean/Japanese)\n2. An optional `\"context_text\"`: full transcript used only for disambiguation or understanding tone/meaning.\n\nExample:\n```json\n{\n  \"transcription\": [\n    {\n      \"index\": 1,\n      \"start\": \"00:00:02,000\",\n      \"end\": \"00:00:05,200\",\n      \"text\": \"我从小就梦想成为一名医生。\"\n    },\n    {\n      \"index\": 2,\n      \"start\": \"00:00:05,200\",\n      \"end\": \"00:00:08,000\",\n      \"text\": \"现在，我终于实现了这个愿望。\"\n    }\n  ],\n  \"context_text\": \"我从小就梦想成为一名医生。现在终于实现了。\"\n}\n```\n\n====================================\nPROCESSING RULES\n====================================\n\nRULE 1: REMOVE ALL PARENTHESIZED CONTENT & RENUMBER\n* Delete all sound effects or non-speech content inside parentheses: (音效), (笑), (Âm thanh), (background music), (sighs), etc.\n* If a segment becomes completely empty after removal → skip that segment entirely in the output.\n* RENUMBER all remaining segments sequentially starting from 1.\n* Do NOT leave gaps in numbering (e.g., 1, 3, 5... is WRONG).\n\nExample:\nInput indices: 1, 2, 3, 4, 5\nSegment 2 and 4 contain only \"(笑)\" and \"(music)\"\nOutput indices: 1, 2, 3 (renumbered continuously)\n\nRULE 2: CLEAN & NORMALIZE TEXT\n* Fix minor ASR or punctuation errors.\n* Rebuild the text into a natural, grammatically correct sentence.\n* Preserve the exact original meaning and tone.\n* Do NOT merge multiple transcription segments.\n* Maintain readability matching the natural speaking rate of a normal human reading aloud for the duration (`end - start`).\n\nRULE 3: TIMING CONSTRAINTS (CRITICAL)\nFor each segment:\n* Keep original `start` and `end` timestamps EXACTLY as provided.\n* Do NOT modify, split, or adjust timestamps under any circumstances.\n* Do NOT merge or rearrange segments.\n* Focus on ensuring the translated text can be comfortably read aloud within `(end - start)` seconds by an average viewer.\n* Reading speed guideline: Aim for approximately 3-4 syllables per second for comfortable reading.\n\nRULE 4: DURATION-BASED TRANSLATION STRATEGY\nAdapt your translation based on available time:\n\n* **Very short duration (< 1 second)**:\n  - Use the shortest possible translation\n  - Single words or minimal phrases preferred\n  - Examples: \n    - \"好\" → \"OK\" (not \"Được rồi\")\n    - \"是的\" → \"Vâng\" (not \"Đúng vậy ạ\")\n    - \"走吧\" → \"Đi thôi\" (not \"Chúng ta hãy đi thôi\")\n\n* **Short duration (1-2 seconds)**:\n  - Prioritize conciseness while keeping natural flow\n  - Compress information without losing core meaning\n  - Example: \"我非常高兴见到大家\" → \"Rất vui được gặp mọi người\" (not \"Tôi vô cùng hạnh phúc được gặp gỡ tất cả mọi người\")\n\n* **Medium duration (2-4 seconds)**:\n  - Use natural, complete Vietnamese sentences\n  - Balance accuracy and readability\n\n* **Long duration (4+ seconds)**:\n  - Translate fully and naturally\n  - May use slightly more descriptive language if it fits comfortably\n\nRULE 5: VIETNAMESE TRANSLATION QUALITY\n* Translate accurately and fluently into Vietnamese.\n* Prioritize naturalness, clarity, and timing readability.\n* Maintain tone and emotional intent (formal, dramatic, humorous, etc.).\n* No literal or robotic translation.\n* No sound descriptions, commentary, or narrator notes.\n* Avoid overly formal or bookish Vietnamese unless the source material requires it.\n\nRULE 6: PROPER NAME HANDLING\n* Keep all proper names consistent throughout the entire subtitle file.\n\nFor Chinese names:\n* **ALWAYS use Vietnamese transliteration only**: \"Lý Minh\"\n* Do NOT write \"李明 (Lý Minh)\" or any format with original Chinese characters\n* Maintain consistency across all mentions\n\nFor Korean, Japanese, English names:\n* Use the most natural form for Vietnamese subtitles\n* Korean: \"Park Ji-sung\" or \"Bác Gi-sung\" (choose one and stay consistent)\n* Japanese: \"Tanaka\" (romanized form)\n* English: Keep original \"Dr. Smith\"\n* Add Vietnamese translation for titles only when needed: \"Bác sĩ Smith\"\n\nGeneral rules:\n* Translate titles, NOT names: \"Bác sĩ Lý Minh\" ✅ | \"Doctor Li Ming\" ❌\n* Historical figures → follow established Vietnamese conventions (e.g., \"Khổng Tử\", \"Mao Trạch Đông\")\n* Company/brand names → keep original unless Vietnamese version is standard\n* **Never include original script (Chinese characters, Hanja, Kanji) in the subtitle output**\n\nRULE 7: CONTEXT TEXT USAGE (CRITICAL)\nUse `\"context_text\"` ONLY for:\n* Understanding the overall topic or speaker's intent\n* Disambiguating homonyms or unclear references\n* Confirming tone (formal/casual, serious/humorous)\n* Identifying who is speaking in dialogue\n\n⚠️ STRICT PROHIBITIONS:\n* Do NOT copy sentences directly from `\"context_text\"` into your translation\n* Do NOT use `\"context_text\"` to fill in missing words from `\"transcription\"`\n* Do NOT invent or add new dialogue not present in the `\"transcription\"` segments\n* ONLY translate what exists in each segment's `\"text\"` field\n\nIf a segment's text is incomplete or unclear:\n→ Translate only what is present\n→ Do NOT supplement from context_text\n\n====================================\nOUTPUT FORMAT (STRICT)\n====================================\nOutput ONLY a valid SRT file format:\n1\n00:00:02,000 --> 00:00:05,200\nTừ nhỏ tôi đã mơ ước trở thành bác sĩ.\n\n2\n00:00:05,200 --> 00:00:08,000\nBây giờ, cuối cùng tôi cũng đã đạt được ước mơ ấy.\n\nREQUIREMENTS:\n* Sequential numbering starting from 1 (no gaps)\n* Timestamps preserved EXACTLY as input (`HH:MM:SS,mmm` format)\n* One blank line between subtitle blocks\n* No extra spacing, no overlapping timestamps\n* Output must be pure text, no Markdown formatting, no JSON\n* Start directly with \"1\" on the first line\n* No explanations, no code fences, no preambles\n\nDO NOT OUTPUT:\n✗ JSON format or objects\n✗ Markdown code fences (```srt or ```)\n✗ Explanations, reasoning, or comments\n✗ Any preamble like \"Here is the translation:\" or postscript\n✗ Debugging information or processing notes\n\n====================================\nPRE-OUTPUT VALIDATION CHECKLIST\n====================================\nBefore generating the final SRT output, verify:\n\n☑ **Timestamps unchanged**: Every timestamp matches input exactly (including milliseconds)\n\n☑ **Sequential numbering**: Indices are 1, 2, 3, 4... with no gaps\n\n☑ **No parenthesized content**: All (sound), (music), (笑) etc. have been removed\n\n☑ **Readability timing**: Each subtitle can be read comfortably in its duration\n   - Quick test: Count syllables in translation, divide by duration in seconds\n   - Should be approximately 3-4 syllables/second or less\n   - If faster than 5 syllables/second → translation is too long, compress it\n\n☑ **Proper name consistency**: All names follow the format rules and are consistent throughout\n   - NO Chinese characters, Hanja, or Kanji in output\n   - Vietnamese transliteration only\n\n☑ **Pure SRT format**: \n   - No code fences (```), no JSON, no explanations\n   - First line is \"1\"\n   - Blank lines between blocks\n   - No extra text before or after the SRT content\n\n☑ **Vietnamese naturalness**: Read through translations - do they sound natural when spoken aloud?\n\n====================================\nFINAL REMINDER\n====================================\nYour output should be ONLY the SRT file content, starting with \"1\" on the first line. Nothing else."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        288,
+        352
+      ],
+      "id": "ef998c0b-f603-4695-8cbf-c336af8a7aa7",
+      "name": "AI Agent1",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://audioconvert.ai/api/transcribe/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"audio_url\":\"{{ $json.Post_url }}\",\"language_code\":\"\",\"file_name\":\"output.mp3\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -832,
+        352
+      ],
+      "id": "9ec5e906-dbf4-4e48-ba29-54963c740fdb",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "url": "=https://audioconvert.ai/api/transcribe/{{ $json.data.id }} ",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 10000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -384,
+        272
+      ],
+      "id": "0500bf46-7009-4fd8-bf20-8c7ceb2fc21d",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy dữ liệu transcription từ node trước\nconst words = $input.first().json.data.transcription.words;\n\n// Hàm đổi giây thành SRT format\nfunction toSrtTime(sec) {\n  const ms = Math.floor((sec % 1) * 1000);\n  const total = Math.floor(sec);\n  const h = String(Math.floor(total / 3600)).padStart(2, '0');\n  const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');\n  const s = String(total % 60).padStart(2, '0');\n  return `${h}:${m}:${s},${String(ms).padStart(3, '0')}`;\n}\n\n// Gom segment theo dấu kết câu\nconst segments = [];\nlet current = {\n  start: null,\n  end: null,\n  text: '',\n};\n\nfor (const w of words) {\n  if (current.start === null) current.start = w.start;\n\n  current.end = w.end;\n  current.text += w.text;\n\n  const isPunctuation = /[。！？?!]/.test(w.text);\n\n  if (isPunctuation) {\n    segments.push({ ...current });\n    current = { start: null, end: null, text: '' };\n  }\n}\n\n// Nếu còn đoạn cuối chưa push\nif (current.start !== null && current.text.trim() !== '') {\n  segments.push(current);\n}\n\n// Xuất ra transcription chuẩn SRT\nreturn [\n  {\n    json: {\n      transcription: segments.map((seg, i) => ({\n        index: i + 1,\n        start: toSrtTime(seg.start),\n        end: toSrtTime(seg.end),\n        text: seg.text.trim(),\n      })),\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        352
+      ],
+      "id": "d9f16853-dbea-4ead-af8b-1580076cd2ee",
+      "name": "Code in JavaScript",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.ttsfree.online/convert",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"engine\":\"Google\",\n  \"data\":\n  {\n    \"text\":{{ JSON.stringify($json.text) }},\n    \"voice\":\"vi-VN\",\n    \"gender\":\"female\",\n    \"name\":\"vi-VN-Standard-A\",\n    \"captcha\":\"cfd492bde5e9eb3d7edfb46e80767880\",\n    \"user_captcha\":\"7057\"\n  }\n} ",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 10,
+              "batchInterval": 5000
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1312,
+        272
+      ],
+      "id": "bcf0415b-404e-4b09-93b5-950ed7dd7d14",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.ttsfree.online{{ $json.file }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1536,
+        272
+      ],
+      "id": "c5da87d6-f228-4b0f-bb95-5af66dfb43b9",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/video_process/src/audios/audio{{ $runIndex }}.pcm",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        1008
+      ],
+      "id": "562f1e93-b6d2-4930-b18c-e360009a38ab",
+      "name": "Read/Write Files from Disk3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "728bcaea-f5c8-442e-bdc2-9409cd46b457",
+              "name": "video_path",
+              "value": "={{ $('Get row(s) in sheet').item.json.Post_url }}",
+              "type": "string"
+            },
+            {
+              "id": "0fe59118-b80c-459c-81aa-b7ae20cf0c83",
+              "name": "subtitle_path",
+              "value": "subtitle.srt",
+              "type": "string"
+            },
+            {
+              "id": "c06859f6-cfad-4a49-a2ab-2e6f4db82a48",
+              "name": "segments",
+              "value": "={{ $json.segments }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        592
+      ],
+      "id": "a633ba46-fccf-4dc5-a5dd-1b829b3a9b13",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/video_process/src/config_video.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        592
+      ],
+      "id": "5da5aafe-d24e-4ea7-844e-6b003c8441e0",
+      "name": "Read/Write Files from Disk4"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        592
+      ],
+      "id": "f045952c-5674-4ab6-9172-c40000ed2d8b",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/data/video_process/src/subtitle.srt",
+        "dataPropertyName": "sub",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        864,
+        112
+      ],
+      "id": "8d1a8ef7-2ccc-46b9-911a-7f4d8222b4a8",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "binaryPropertyName": "sub",
+        "options": {
+          "fileName": "sub.srt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        112
+      ],
+      "id": "d65dec0b-db75-4fba-8158-e9f8b5a932cb",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1504,
+        352
+      ],
+      "id": "22c4f18f-cae5-4e29-9c55-ebfe6656a5fb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Translate_Status",
+              "lookupValue": "NotDone"
+            },
+            {
+              "lookupColumn": "Source",
+              "lookupValue": "Douyin"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1056,
+        352
+      ],
+      "id": "c0b140ca-f5f9-4dc0-a84e-02ba7e9e3e33",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "axW4sU6Os4kS4kW1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4",
+          "mode": "list",
+          "cachedResultName": "Douyin_Downloaded",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "MAIN",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1S8qISqGyZa66qW0szA3d8GkYHkGLRCLj0CCRifpVMS4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Aweme_id": "={{ $('Get row(s) in sheet').item.json.Aweme_id }}",
+            "Translate_Status": "Done",
+            "Edited_URL": "=https://drive.usercontent.google.com/uc?id={{ $json.id }}&export=download&confirm=t"
+          },
+          "matchingColumns": [
+            "Aweme_id"
+          ],
+          "schema": [
+            {
+              "id": "Aweme_id",
+              "displayName": "Aweme_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author ",
+              "displayName": "Author ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Type",
+              "displayName": "Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Video/Image_URL",
+              "displayName": "Video/Image_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Music_url",
+              "displayName": "Music_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Edited_URL",
+              "displayName": "Edited_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Desc_raw",
+              "displayName": "Desc_raw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Rewrite ",
+              "displayName": "Rewrite ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags_edited",
+              "displayName": "Tags_edited",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_Youtube",
+              "displayName": "Channel_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Fanpage",
+              "displayName": "Fanpage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Channel_TikTok",
+              "displayName": "Channel_TikTok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Post",
+              "displayName": "YT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "YT_Channel_ID",
+              "displayName": "YT_Channel_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Youtube",
+              "displayName": "Status_Youtube",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Post",
+              "displayName": "FB_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FB_Page_ID",
+              "displayName": "FB_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Facebook",
+              "displayName": "Status_Facebook",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Post",
+              "displayName": "TT_Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TT_Page_ID",
+              "displayName": "TT_Page_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status_Tiktok",
+              "displayName": "Status_Tiktok",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discord_ID",
+              "displayName": "Discord_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DONE",
+              "displayName": "DONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Post_url",
+              "displayName": "Post_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Translate_Status",
+              "displayName": "Translate_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Desc",
+              "displayName": "Desc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Final_URL",
+              "displayName": "Final_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2208,
+        592
+      ],
+      "id": "d7f87e1f-857b-421e-b17b-bd3b6a023b65",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "axW4sU6Os4kS4kW1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyAA1kBB7pSelNbbb3Fu2fHm9uN-7s6uz10"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=  {\n    \"contents\": [\n      {\n        \"parts\": [\n          {\n            \"text\": \"{{ String($json['text[0]'])\n  .replace(/\\\\/g, '\\\\\\\\')\n  .replace(/\\\"/g, '\\\\\\\"')\n}}\"\n          }\n        ]\n      }\n    ],\n    \"generationConfig\": {\n      \"responseModalities\": [\"AUDIO\"],\n      \"speechConfig\": {\n        \"voiceConfig\": {\n          \"prebuiltVoiceConfig\": {\n            \"voiceName\": \"Zephyr\"\n          }\n        }\n      }\n    },\n    \"model\": \"gemini-2.5-pro-preview-tts\"\n  }\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1280,
+        1008
+      ],
+      "id": "654ca59c-15bf-4eed-a571-7f6cbe6771a7",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "candidates[0].content.parts[0].inlineData.data",
+        "binaryPropertyName": "=data",
+        "options": {
+          "mimeType": "={{ $json.candidates[0].content.parts[0].inlineData.mimeType }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1056,
+        1008
+      ],
+      "id": "8250e4bb-0fb7-4ba5-996e-5d15ce0961b3",
+      "name": "Convert to File2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Helper: chuyển \"HH:MM:SS,mmm\" -> giây (number, ví dụ 3.56)\nfunction timecodeToSeconds(tc) {\n  const [h, m, rest] = tc.split(':');\n  const [s, ms] = rest.split(',');\n  return (\n    parseInt(h, 10) * 3600 +\n    parseInt(m, 10) * 60 +\n    parseInt(s, 10) +\n    parseInt(ms, 10) / 1000\n  );\n}\n\n// Escape text để không phá SSML\nfunction escapeForSSML(text) {\n  return text\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n}\n\n// ====== n8n Code node ======\n\n// SRT gốc dạng text\nconst srt = $input.first().json.output;   \n\n// Tham số gộp block\nconst MAX_BLOCK_DURATION = 20;   // tối đa ~20s / block (có thể chỉnh)\nconst MAX_GAP = 0.7;             // tối đa gap 0.7s giữa 2 câu để gộp chung\n\n// Giới hạn break (ms) để TTS không bị im lặng quá dài / quá ngắn\nconst MIN_BREAK_MS = 200;        // tối thiểu 200ms\nconst MAX_BREAK_MS = 2000;       // tối đa 2000ms\n\n// 1) Tách các block theo dòng trống\nconst rawBlocks = srt.split(/\\n\\s*\\n/);\n\n// 2) Parse từng block SRT thành entries: [{start,end,text}]\nconst entries = [];\n\nrawBlocks.forEach((block) => {\n  const lines = block.split('\\n').map(l => l.trim()).filter(Boolean);\n  if (lines.length < 3) return; // block lỗi thì bỏ\n\n  // dòng 0: số thứ tự, dòng 1: timecode, từ dòng 2 trở đi: text\n  const timeLine = lines[1];\n  const captionText = lines.slice(2).join(' ').trim();\n\n  const [startStr, endStr] = timeLine.split('-->');\n  if (!startStr || !endStr) return;\n\n  const start = timecodeToSeconds(startStr.trim());\n  const end = timecodeToSeconds(endStr.trim());\n\n  if (isNaN(start) || isNaN(end) || end <= start) return;\n\n  entries.push({\n    start,\n    end,\n    text: captionText,\n  });\n});\n\n// Đảm bảo entries theo thứ tự time\nentries.sort((a, b) => a.start - b.start);\n\n// 3) Gộp entries thành các group (block) theo MAX_BLOCK_DURATION & MAX_GAP\nconst groups = [];\nlet currentGroup = null;\n\nfor (let i = 0; i < entries.length; i++) {\n  const e = entries[i];\n\n  if (!currentGroup) {\n    // bắt đầu group mới\n    currentGroup = {\n      start: e.start,\n      end: e.end,\n      entries: [e], // lưu cả entry để còn tính gap\n    };\n    continue;\n  }\n\n  const lastEntry = currentGroup.entries[currentGroup.entries.length - 1];\n  const gap = e.start - lastEntry.end;            // khoảng nghỉ thực tế\n  const newDuration = e.end - currentGroup.start; // duration nếu gộp câu này vào\n\n  // Điều kiện để gộp: gap nhỏ & block không quá dài\n  if (gap <= MAX_GAP && newDuration <= MAX_BLOCK_DURATION) {\n    currentGroup.end = e.end;\n    currentGroup.entries.push(e);\n  } else {\n    // push group cũ, tạo group mới\n    groups.push(currentGroup);\n    currentGroup = {\n      start: e.start,\n      end: e.end,\n      entries: [e],\n    };\n  }\n}\nif (currentGroup) {\n  groups.push(currentGroup);\n}\n\n// 4) Đóng gói output: sinh SSML với <break time=\"...ms\"/> giữa các câu\nconst textObj = {};\nconst segments = [];\n\ngroups.forEach((g, index) => {\n  const textKey = `text${index}`;\n\n  // Build SSML: <speak> ... câu1 ... <break/> ... câu2 ... </speak>\n  const parts = [];\n  parts.push('<speak>');\n\n  g.entries.forEach((entry, i) => {\n    parts.push(escapeForSSML(entry.text));\n\n    // Nếu chưa phải câu cuối trong group thì chèn break\n    if (i < g.entries.length - 1) {\n      const next = g.entries[i + 1];\n      const gapSec = next.start - entry.end;\n      let breakMs = Math.round(gapSec * 1000);\n\n      // clamp trong khoảng [MIN_BREAK_MS, MAX_BREAK_MS]\n      if (breakMs < MIN_BREAK_MS) breakMs = MIN_BREAK_MS;\n      if (breakMs > MAX_BREAK_MS) breakMs = MAX_BREAK_MS;\n\n      parts.push(`<break time=\"${breakMs}ms\"/>`);\n    }\n  });\n\n  parts.push('</speak>');\n\n  textObj[textKey] = parts.join(' ');\n\n  segments.push({\n    path: `audios/audio${index}.pcm`,\n    start: g.start,\n    end: g.end,\n  });\n});\n\nconst output = {\n  text: [textObj],   // text[0].text0, text[0].text1, ... là SSML\n  segments,\n};\n\n// n8n yêu cầu return dạng [{ json: ... }]\nreturn [\n  {\n    json: output,\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1504,
+        -576
+      ],
+      "id": "ab53f3fb-58da-42ba-8f75-a46081fb3a5e",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1504,
+        1008
+      ],
+      "id": "e00b6cc4-eb39-4bad-8179-5e89b1fea2f5",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        1072
+      ],
+      "id": "c60d07eb-f036-4d7c-8254-a9d160ab0064"
+    },
+    {
+      "parameters": {
+        "amount": 25
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        1008
+      ],
+      "id": "cfab863a-67c6-4621-b9cb-84753c0ee184",
+      "name": "Wait1",
+      "webhookId": "da962cd7-d9fc-4de0-8796-cf0a67db3ca3"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1393074976516608160",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1393074976516608165",
+          "mode": "list",
+          "cachedResultName": "chung",
+          "cachedResultUrl": "https://discord.com/channels/1393074976516608160/1393074976516608165"
+        },
+        "content": "=Translate video row: {{ $('Get row(s) in sheet').item.json.row_number }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        592
+      ],
+      "id": "b977aa00-9198-44f6-9b98-0eb978eb4bd2",
+      "name": "Send a message",
+      "webhookId": "c94de485-93d3-44b5-997b-97524c9b8bb2",
+      "credentials": {
+        "discordBotApi": {
+          "id": "FLztLqm2b4yJQZQr",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "sh -c \"rm -rf /data/video_process/src/subtitle.srt /data/video_process/src/config_video.json /data/video_process/src/out.mp4 /data/video_process/src/audios/*\"\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        352
+      ],
+      "id": "72cb6566-9a79-43a9-9589-5ba9a6920c83",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1280,
+        816
+      ],
+      "id": "5451a1b2-92bc-438f-8246-8b2c28f40f98",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=/data/video_process/src/audios/audio{{ $('Loop Over Items1').item.json.index }}.mp3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        272
+      ],
+      "id": "5391caee-3f66-4d82-b2e0-a1f45cb26ec7",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        -32
+      ],
+      "id": "d068108f-2495-4b01-aef7-a2d52ae4ccb2",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1omz7lh5SC7hgNvt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1376,
+        -32
+      ],
+      "id": "8d56bfed-3b01-43fa-8b12-466b7d19fee5",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "1omz7lh5SC7hgNvt",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Below is the JSON input for Vietnamese TTS SSML enhancement.\n\nYour task:\n- Only rewrite the SSML strings inside `text[0]` (text0, text1, text2, …).\n- Improve prosody, emphasis, and emotional expression according to the System Prompt.\n- Preserve the original Vietnamese meaning and all proper names.\n- Do NOT change the JSON structure (no new keys, no removed keys).\n- Do NOT add or remove any items from the \"text\" array.\n- Do NOT output Markdown or explanations. Output ONLY the JSON object.\n\nINPUT JSON:\n{{ JSON.stringify($json.text, null, 2) }}\n",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are a senior Vietnamese dubbing director and SSML designer for text-to-speech.\n\nYou receive a JSON input that contains:\n- A \"text\" array.\n- Inside text[0] there is an object with keys like \"text0\", \"text1\", \"text2\", ...\n- Each value is a short Vietnamese subtitle line, often already wrapped in a simple <speak>...</speak> block, but SSML may be minimal.\n\nYour job is:\n- For every key text0, text1, text2, ... inside text[0], rewrite the value into better, more expressive SSML.\n- Preserve the original Vietnamese meaning.\n- Preserve all proper names of people / places / titles / dynasties.\n- Apply natural prosody, emphasis, and short breaks where appropriate.\n\nYou MUST:\n- Keep the same JSON structure and the same keys.\n  - text0 must stay text0, text1 stays text1, etc.\n- Only modify the string values (the SSML) for each textN.\n- Not add or remove any keys.\n- Not add extra top-level fields.\n\n====================================================\nINPUT FORMAT\n====================================================\n\nYou will receive JSON similar to:\n\n[\n  {\n    \"text\": [\n      {\n        \"text0\": \"<speak>Câu thoại 1...</speak>\",\n        \"text1\": \"<speak>Câu thoại 2...</speak>\",\n        \"text2\": \"<speak>Hả?</speak>\",\n        ...\n      }\n    ]\n  }\n]\n\nThere is NO timing information in this JSON. Do NOT invent or assume timing. You are only designing SSML for each individual line.\n\n====================================================\nRULE 1 — PRESERVE CONTENT & NAMES\n====================================================\n\n- Keep all proper names exactly as given:\n  Examples:\n  - \"Chu Dực Quân\", \"Lý Quý phi\", \"Trương Cư Chính\", \"Vạn Lịch\"\n  - \"Tokyo\", \"John\", \"Elizabeth\", \"New York\"\n- You may optionally add a very short phonetic hint once in Vietnamese in parentheses (e.g. \"John (John)\"), but never replace the original name with a different Vietnamese name.\n- Do not summarize or add new plot details.\n- Only fix:\n  - Spacing,\n  - Obvious punctuation / small grammar issues,\n  - Minor stylistic smoothing so speech sounds natural.\n\n====================================================\nRULE 2 — BASELINE SSML SHAPE\n====================================================\n\nFor every line, wrap the final result as:\n\n<speak>\n  <prosody pitch=\"+3st\" rate=\"108%\">\n    ...text...\n  </prosody>\n</speak>\n\nGuidelines:\n- Pitch typically between +2st and +4st.\n- Rate typically between 100% and 115%.\n- If the input already has a <speak> wrapper, you may rewrite it to match this pattern.\n- If the input is plain text without SSML, you MUST wrap it into this structure.\n- Escape SSML characters properly: \"&\", \"<\", \">\" must be encoded correctly if needed.\n\n====================================================\nRULE 3 — EMOTIONAL & SPECIAL LINES\n====================================================\n\nDetect typical patterns and adjust prosody/emphasis accordingly:\n\n1) Short interjections / exclamations (often ≤ 4–5 characters), e.g.:\n   - \"Hả?\", \"Hả?!\", \"Ủa?\", \"Ơ?\", \"Trời ơi!\", \"Ơ kìa?\"\n   → Use:\n   - Higher pitch (e.g. +5st to +7st),\n   - Slightly faster rate (110%–115%),\n   - Optional emphasis on the whole phrase.\n\n   Example:\n   <speak>\n     <prosody pitch=\"+6st\" rate=\"112%\">\n       <emphasis level=\"moderate\">Hả?</emphasis>\n     </prosody>\n   </speak>\n\n2) Strong emotional exclamations, e.g.:\n   - \"Không đời nào!\", \"Ta không đồng ý!\", \"Thật quá đáng!\"\n   → Use <emphasis> around key emotional words and slightly stronger prosody.\n\n3) Questions (ending with \"?\"):\n   - Slightly higher pitch towards the end of the sentence.\n   - Rate around 100%–110%.\n   - Example:\n     <prosody pitch=\"+3st\" rate=\"108%\">...</prosody>\n\n4) Soft / sad / introspective lines:\n   - \"Xin lỗi…\", \"Ta thật sự không biết phải làm sao.\", \"Ta đau thấu tâm can…\"\n   → Slightly lower pitch (around +1st to +2st) and slower rate (95%–100%).\n\n5) Laughter / fillers / onomatopoeia:\n   - \"Ha ha ha.\", \"Hừm.\", \"Ôi trời…\"\n   → Keep them short and natural, you may add a small <break time=\"200ms\"/> before or after.\n\n====================================================\nRULE 4 — BREAKS INSIDE A LINE\n====================================================\n\n- You may insert short <break> where Vietnamese naturally pauses:\n  - Often at commas, ellipses, or dramatic pause points.\n- Typical range: 150–400ms.\n- Do NOT insert very long breaks (over 800ms) inside a single short line.\n- Do NOT try to simulate the full video timing. Another system will handle timing.\n\nExamples of good usage:\n\n- \"Hoàng thượng, người phải giữ vững cơ nghiệp của tổ tông.\"\n  → \n  <speak>\n    <prosody pitch=\"+3st\" rate=\"108%\">\n      Hoàng thượng,<break time=\"220ms\"/> người phải giữ vững cơ nghiệp của tổ tông.\n    </prosody>\n  </speak>\n\n- \"Hả?\"\n  →\n  <speak>\n    <prosody pitch=\"+6st\" rate=\"112%\">\n      <emphasis level=\"moderate\">Hả?</emphasis>\n    </prosody>\n  </speak>\n\n====================================================\nOUTPUT FORMAT\n====================================================\n\nYou MUST return JSON with the exact same structure as the input, but with improved SSML strings:\n\n[\n  {\n    \"text\": [\n      {\n        \"text0\": \"<speak>...new SSML for line 0...</speak>\",\n        \"text1\": \"<speak>...new SSML for line 1...</speak>\",\n        \"text2\": \"<speak>...new SSML for line 2...</speak>\",\n        ...\n      }\n    ]\n  }\n]\n\nRules:\n- Do NOT wrap the JSON in Markdown code fences.\n- Do NOT add explanations or comments.\n- Do NOT add extra fields or change array shapes.\n- Keys must stay the same: text0 remains text0, text1 remains text1, etc.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -1504,
+        -256
+      ],
+      "id": "b93fad7b-091b-4579-8a86-376960efba52",
+      "name": "AI Agent",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Helper: chuyển \"HH:MM:SS,mmm\" -> giây (number, ví dụ 3.56)\nfunction timecodeToSeconds(tc) {\n  const [h, m, rest] = tc.split(':');\n  const [s, ms] = rest.split(',');\n  return (\n    parseInt(h, 10) * 3600 +\n    parseInt(m, 10) * 60 +\n    parseInt(s, 10) +\n    parseInt(ms, 10) / 1000\n  );\n}\n\n// Escape text để không phá SSML\nfunction escapeForSSML(text) {\n  return text\n    .replace(/&/g, '&amp;')\n    .replace(/</g, '&lt;')\n    .replace(/>/g, '&gt;');\n}\n\n// ====== n8n Code node ======\n\n// SRT gốc dạng text (output từ node trước)\nconst srt = $input.first().json.output;\n\n// 1) Tách các block theo dòng trống\nconst rawBlocks = srt.split(/\\n\\s*\\n/);\n\n// 2) Parse từng block SRT thành entries: [{start,end,text}]\nconst entries = [];\n\nrawBlocks.forEach((block) => {\n  const lines = block\n    .split('\\n')\n    .map((l) => l.trim())\n    .filter(Boolean);\n\n  if (lines.length < 3) return; // block lỗi thì bỏ\n\n  // dòng 0: số thứ tự, dòng 1: timecode, từ dòng 2 trở đi: text\n  const timeLine = lines[1];\n  const captionText = lines.slice(2).join(' ').trim();\n  if (!captionText) return;\n\n  const [startStr, endStr] = timeLine.split('-->');\n  if (!startStr || !endStr) return;\n\n  const start = timecodeToSeconds(startStr.trim());\n  const end = timecodeToSeconds(endStr.trim());\n\n  if (isNaN(start) || isNaN(end) || end <= start) return;\n\n  entries.push({\n    start,\n    end,\n    text: captionText,\n  });\n});\n\n// Đảm bảo entries theo thứ tự time\nentries.sort((a, b) => a.start - b.start);\n\n// 3) Không ghép nữa: mỗi entry => 1 SSML + 1 segment\nconst textObj = {};\nconst segments = [];\n\nentries.forEach((entry, index) => {\n  const textKey = `text${index}`;\n\n  // Ở đây mình tạo SSML đơn giản, baseline.\n  // Nếu bạn đã có node AI riêng để sinh SSML, có thể thay bằng chỉ raw text.\n  const ssml = `<speak><prosody pitch=\"+1.7st\" rate=\"115%\">${escapeForSSML(entry.text)}</prosody></speak>`;\n\n  textObj[textKey] = ssml;\n\n  segments.push({\n    path: `audios/audio${index}.mp3`,\n    start: entry.start,\n    end: entry.end,\n  });\n});\n\nconst output = {\n  // text[0].text0, text[0].text1, ... là SSML cho từng câu\n  text: [textObj],\n  segments,\n};\n\n// n8n yêu cầu return dạng [{ json: ... }]\nreturn [\n  {\n    json: output,\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        448
+      ],
+      "id": "08426037-4195-48f4-83e6-0cabb42a36a6",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// input: items[0].json.output is the long string\nconst raw = $input.first().json.output ?? \"\";\n\nfunction extractInnerJson(str) {\n  // Try direct parse first (in case it isn't fenced)\n  try { return JSON.parse(str); } catch {}\n\n  // Remove leading ```json / ``` and trailing ```\n  let s = str.trim();\n  s = s.replace(/^```json\\s*/i, \"\").replace(/```$/i, \"\").trim();\n\n  // If still noisy, grab the substring from the first \"[\" to the last \"]\"\n  const first = s.indexOf(\"[\");\n  const last  = s.lastIndexOf(\"]\");\n  if (first !== -1 && last !== -1 && last > first) {\n    s = s.slice(first, last + 1);\n  }\n  return JSON.parse(s);\n}\n\nconst inner = extractInnerJson(raw);     \nconst obj = Array.isArray(inner) ? inner[0] : inner;\n\n// Collect keys like \"text0\", \"text1\", ...\nconst keys = Object.keys(obj)\n  .filter(k => /^text\\d+$/.test(k))\n  .sort((a, b) => Number(a.slice(4)) - Number(b.slice(4)));\n\nreturn keys.map((k, i) => ({\n  json: {\n    index: i,                // 0-based order\n    ssml: obj[k],            // the SSML string\n  }\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1152,
+        -256
+      ],
+      "id": "4ab1b284-39a9-420a-b133-c2ee7918b5e3",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "batchSize": 30,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1088,
+        304
+      ],
+      "id": "a406f81a-113b-455d-b276-78d9e3d9fb7c",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1312,
+        80
+      ],
+      "id": "4855a1e7-5ed8-4ff5-b1cd-0a115dc0f5e5",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1984,
+        400
+      ],
+      "id": "763a1e6e-b356-41bf-a074-532587e8e59e",
+      "name": "Wait",
+      "webhookId": "dfa17322-7e39-4b48-bc0a-38bcfe3774e3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ad94152-31f0-49d8-a142-e578aafd0825",
+              "name": "edit.transcription",
+              "value": "={{ $json.transcription }}",
+              "type": "array"
+            },
+            {
+              "id": "40e5169f-5d97-4bb8-ad33-7f07de3db4cd",
+              "name": "edit.context_text",
+              "value": "={{ $('HTTP Request7').item.json.data.transcription.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        352
+      ],
+      "id": "b963a32d-13c7-43db-a884-72510bc38854",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "let counter = 0;\nconst blocks = $input.first().json.text ?? [];\n\nreturn blocks.flatMap(block => {\n  const keys = Object.keys(block)\n    .filter(k => k.startsWith('text') && /^\\d+$/.test(k.slice(4)))\n    .sort((a, b) => Number(a.slice(4)) - Number(b.slice(4)));\n\n  return keys.map(key => ({\n    json: {\n      index: counter++,\n      text: block[key],\n    },\n  }));\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        304
+      ],
+      "id": "bfaae9aa-02a3-4356-94a6-6d9872b2debe",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -608,
+        352
+      ],
+      "id": "2800ce28-ccb7-493e-849a-65cde97e2fb1",
+      "name": "Wait2",
+      "webhookId": "f7b2b3e0-8b26-4108-9b38-f6198e96aea9"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk3": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command4": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk5": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk4": {
+      "main": [
+        [
+          {
+            "node": "Execute Command4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        []
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c386b4d0-3b53-442e-aff3-c8269cc4fb9d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5e048ca825b8d8872494ffd00e23991c7449a20f22c35a18f532f52878747461"
+  },
+  "id": "qyW9esZB62gdQOPI",
+  "tags": []
+}
