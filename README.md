@@ -1,5 +1,6 @@
-**Convert to n8n** for autodownload video and schedule post to social media. Demo:
-[https://youtu.be/XSQflGR09gA](https://youtu.be/L1PkjuMZFUI)
+### **Convert to n8n** for autodownload video and schedule post to social media. Demo: [https://youtu.be/XSQflGR09gA](https://youtu.be/L1PkjuMZFUI)
+### Demo translate, voice-over video: [https://youtu.be/hOFfKV3Hjf4](https://youtu.be/hOFfKV3Hjf4)
+
 
 <img width="1635" height="621" alt="image" src="https://github.com/user-attachments/assets/bf0167c9-0965-4dc6-848d-ae6bb66c7e5f" />
 
