@@ -763,7 +763,7 @@
           "parameters": [
             {
               "name": "x-goog-api-key",
-              "value": "AIzaSyAA1kBB7pSelNbbb3Fu2fHm9uN-7s6uz10"
+              "value": "your-api"
             }
           ]
         },
