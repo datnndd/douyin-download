@@ -22,6 +22,13 @@ class Database:
         self._prepare()
         self.migrate()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
+
     def _prepare(self) -> None:
         cur = self.conn.cursor()
         # Pragmas: WAL for write concurrency, FK for integrity, faster sync for scrape workloads
@@ -294,7 +301,7 @@ class Database:
             is_user_post: bool = True,
             as_like_for_sec_uid: Optional[str] = None,
     ) -> None:
-        """Insert/update a single aweme and all related entities.
+        """Insert/update a single aweme and all related entities in ONE transaction.
         - If is_user_post: add to user_posts for its author.
         - If as_like_for_sec_uid: add to user_likes for that viewer.
         """
@@ -313,7 +320,9 @@ class Database:
         aweme_id = str(aweme.get("aweme_id"))
         statistics_json = _j(aweme.get("statistics"))
 
+        # Single transaction for aweme + images + video + associations
         with self.tx() as cur:
+            # 2.1) Fact aweme
             cur.execute(
                 """
                 INSERT INTO fact_aweme(
@@ -342,38 +351,35 @@ class Database:
                 ),
             )
 
-        # 3) Images (for photo posts)
-        images: List[Dict[str, Any]] = aweme.get("images") or []
-        if images:
-            with self.tx() as cur:
-                for idx, img in enumerate(images):
-                    cur.execute(
-                        """
-                        INSERT INTO aweme_images(aweme_id, idx, uri, width, height, url_list, mask_url_list)
-                        VALUES(?,?,?,?,?,?,?)
-                        ON CONFLICT(aweme_id, idx) DO UPDATE SET
-                            uri=excluded.uri,
-                            width=excluded.width,
-                            height=excluded.height,
-                            url_list=excluded.url_list,
-                            mask_url_list=excluded.mask_url_list;
-                        """,
-                        (
-                            aweme_id,
-                            idx,
-                            img.get("uri"),
-                            _int_or_none(img.get("width")),
-                            _int_or_none(img.get("height")),
-                            _j(img.get("url_list")),
-                            _j(img.get("mask_url_list")),
-                        ),
-                    )
+            # 3) Images (for photo posts)
+            images: List[Dict[str, Any]] = aweme.get("images") or []
+            for idx, img in enumerate(images):
+                cur.execute(
+                    """
+                    INSERT INTO aweme_images(aweme_id, idx, uri, width, height, url_list, mask_url_list)
+                    VALUES(?,?,?,?,?,?,?)
+                    ON CONFLICT(aweme_id, idx) DO UPDATE SET
+                        uri=excluded.uri,
+                        width=excluded.width,
+                        height=excluded.height,
+                        url_list=excluded.url_list,
+                        mask_url_list=excluded.mask_url_list;
+                    """,
+                    (
+                        aweme_id,
+                        idx,
+                        img.get("uri"),
+                        _int_or_none(img.get("width")),
+                        _int_or_none(img.get("height")),
+                        _j(img.get("url_list")),
+                        _j(img.get("mask_url_list")),
+                    ),
+                )
 
-        # 4) Video (for video posts)
-        video = aweme.get("video") or {}
-        play_addr = (video.get("play_addr") or {})
-        if video or play_addr:
-            with self.tx() as cur:
+            # 4) Video (for video posts) — only insert if there's actual play_addr data
+            video = aweme.get("video") or {}
+            play_addr = video.get("play_addr") or {}
+            if play_addr.get("uri"):
                 cur.execute(
                     """
                     INSERT INTO aweme_video(
@@ -398,9 +404,8 @@ class Database:
                     ),
                 )
 
-        # 5) Associations
-        if is_user_post and sec_uid:
-            with self.tx() as cur:
+            # 5) Associations
+            if is_user_post and sec_uid:
                 cur.execute(
                     """
                     INSERT INTO user_posts(sec_uid, aweme_id) VALUES(?,?)
@@ -408,8 +413,7 @@ class Database:
                     """,
                     (sec_uid, aweme_id),
                 )
-        if as_like_for_sec_uid:
-            with self.tx() as cur:
+            if as_like_for_sec_uid:
                 cur.execute(
                     """
                     INSERT INTO user_likes(sec_uid, aweme_id) VALUES(?,?)
@@ -431,23 +435,35 @@ class Database:
     # Simple getters for downstream ETL/exports
     def get_aweme(self, aweme_id: str) -> Optional[sqlite3.Row]:
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM fact_aweme WHERE aweme_id=?", (aweme_id,))
-        return cur.fetchone()
+        try:
+            cur.execute("SELECT * FROM fact_aweme WHERE aweme_id=?", (aweme_id,))
+            return cur.fetchone()
+        finally:
+            cur.close()
 
     def get_user(self, sec_uid: str) -> Optional[sqlite3.Row]:
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM dim_user WHERE sec_uid=?", (sec_uid,))
-        return cur.fetchone()
+        try:
+            cur.execute("SELECT * FROM dim_user WHERE sec_uid=?", (sec_uid,))
+            return cur.fetchone()
+        finally:
+            cur.close()
 
     def has_user_post(self, sec_uid: str, aweme_id: str) -> bool:
         cur = self.conn.cursor()
-        cur.execute("SELECT 1 FROM user_posts WHERE sec_uid=? AND aweme_id=? LIMIT 1", (sec_uid, aweme_id))
-        return cur.fetchone() is not None
+        try:
+            cur.execute("SELECT 1 FROM user_posts WHERE sec_uid=? AND aweme_id=? LIMIT 1", (sec_uid, aweme_id))
+            return cur.fetchone() is not None
+        finally:
+            cur.close()
 
     def has_user_like(self, sec_uid: str, aweme_id: str) -> bool:
         cur = self.conn.cursor()
-        cur.execute("SELECT 1 FROM user_likes WHERE sec_uid=? AND aweme_id=? LIMIT 1", (sec_uid, aweme_id))
-        return cur.fetchone() is not None
+        try:
+            cur.execute("SELECT 1 FROM user_likes WHERE sec_uid=? AND aweme_id=? LIMIT 1", (sec_uid, aweme_id))
+            return cur.fetchone() is not None
+        finally:
+            cur.close()
 
 
 # ---------------------------- Utils ---------------------------- #

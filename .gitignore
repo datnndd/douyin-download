@@ -1,0 +1,8 @@
+logs/
+__pycache__/
+*.pyc
+.venv/
+data.db
+config.yaml
+Downloaded/
+.idea/

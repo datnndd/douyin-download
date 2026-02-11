@@ -3,6 +3,9 @@
 
 import time
 import copy
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Result(object):
@@ -52,15 +55,6 @@ class Result(object):
             "unique_id": "",
             # Age
             "user_age": "",
-        }
-
-        # Image information of Album
-        self.picDict = {
-            "height": "",
-            "mask_url_list": "",
-            "uri": "",
-            "url_list": [],
-            "width": ""
         }
 
         # Music information
@@ -158,7 +152,7 @@ class Result(object):
             }
         }
 
-        # Post information
+        # Post information — use deepcopy to avoid shared mutable references
         self.awemeDict = {
             # Post creation time
             "create_time": "",
@@ -166,18 +160,18 @@ class Result(object):
             "awemeType": "",
             # Post ID
             "aweme_id": "",
-            # Author information
-            "author": self.authorDict,
+            # Author information — deep copy to avoid shared state
+            "author": copy.deepcopy(self.authorDict),
             # Description
             "desc": "",
             # Images
             "images": [],
-            # Music
-            "music": self.musicDict,
-            # Collection info
-            "mix_info": self.mixInfo,
-            # Video
-            "video": self.videoDict,
+            # Music — deep copy
+            "music": copy.deepcopy(self.musicDict),
+            # Collection info — deep copy
+            "mix_info": copy.deepcopy(self.mixInfo),
+            # Video — deep copy
+            "video": copy.deepcopy(self.videoDict),
             # Statistics
             "statistics": {
                 "admire_count": "",
@@ -238,10 +232,16 @@ class Result(object):
                 if item == "images":
                     if awemeType == 1:
                         for image in dataRaw[item]:
-                            for i in image:
-                                self.picDict[i] = image[i]
-                            # Deep copy dictionary
-                            self.awemeDict["images"].append(copy.deepcopy(self.picDict))
+                            # Create a fresh dict for each image instead of mutating shared picDict
+                            pic = {
+                                "height": image.get("height", ""),
+                                "mask_url_list": image.get("mask_url_list", ""),
+                                "uri": image.get("uri", ""),
+                                "url_list": copy.deepcopy(image.get("url_list", [])),
+                                "width": image.get("width", ""),
+                            }
+                            # FIX: append to dataNew["images"] instead of self.awemeDict["images"]
+                            dataNew["images"].append(pic)
                     continue
 
                 # If the parsed link is a video
@@ -254,12 +254,12 @@ class Result(object):
                 if item == "avatar":
                     for i in dataNew[item]:
                         if i == "url_list":
-                            for j in self.awemeDict["author"]["avatar_thumb"]["url_list"]:
+                            for j in dataNew.get("avatar_thumb", {}).get("url_list", []):
                                 dataNew[item][i].append(j.replace("100x100", "1080x1080"))
                         elif i == "uri":
-                            dataNew[item][i] = self.awemeDict["author"]["avatar_thumb"][i].replace("100x100", "1080x1080")
+                            dataNew[item][i] = dataNew.get("avatar_thumb", {}).get(i, "").replace("100x100", "1080x1080")
                         else:
-                            dataNew[item][i] = self.awemeDict["author"]["avatar_thumb"][i]
+                            dataNew[item][i] = dataNew.get("avatar_thumb", {}).get(i, "")
                     continue
 
                 # Original JSON is [{}], we use {}
@@ -267,13 +267,16 @@ class Result(object):
                     self.dataConvert(awemeType, dataNew[item], dataRaw[item][0])
                     continue
 
-                # Get 1080p video from URI
+                # Get 1080p video from URI - prefer bit_rate, fallback to play_addr
                 if item == "play_addr":
-                    dataNew[item]["uri"] = dataRaw["bit_rate"][0]["play_addr"]["uri"]
-                    # Alternative: use this API to get 1080p
-                    # dataNew[item]["url_list"] = "https://aweme.snssdk.com/aweme/v1/play/?video_id=%s&ratio=1080p&line=0" \
-                    #                             % dataNew[item]["uri"]
-                    dataNew[item]["url_list"] = copy.deepcopy(dataRaw["bit_rate"][0]["play_addr"]["url_list"])
+                    bit_rate = dataRaw.get("bit_rate") or []
+                    if bit_rate:
+                        play_addr_data = bit_rate[0].get("play_addr") or {}
+                    else:
+                        play_addr_data = dataRaw.get("play_addr") or {}
+                    
+                    dataNew[item]["uri"] = play_addr_data.get("uri", "")
+                    dataNew[item]["url_list"] = copy.deepcopy(play_addr_data.get("url_list", []))
                     continue
 
                 # Regular recursive dictionary traversal
@@ -282,9 +285,9 @@ class Result(object):
                 else:
                     # Assign value
                     dataNew[item] = dataRaw[item]
-            except Exception:
-                # Suppress this warning to avoid confusion
-                pass
+            except Exception as e:
+                # Log the error for debugging instead of silently suppressing
+                logger.debug(f"dataConvert skipped field '{item}': {e}")
 
     def clearDict(self, data):
         for item in data:

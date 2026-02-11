@@ -22,28 +22,46 @@ from logging.config import dictConfig
 
 # ------------------------------ Logging ---------------------------------------
 
-dictConfig({
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "rich": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s %(filename)s:%(lineno)d %(funcName)s | %(message)s"
-        }
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "rich",
-            "level": "INFO"
-        }
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO"
-    },
-})
+def setup_logging():
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+
+    dictConfig({
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "console": {
+                "format": "%(asctime)s [%(levelname)s] %(name)s %(filename)s:%(lineno)d %(funcName)s | %(message)s"
+            },
+            "file": {
+                "format": "%(asctime)s [%(levelname)s] %(name)s %(funcName)s | %(message)s"
+            }
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "console",
+                "level": "INFO"
+            },
+            "file": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "formatter": "file",
+                "filename": str(log_dir / "douyin.log"),
+                "maxBytes": 10_485_760,
+                "backupCount": 5,
+                "encoding": "utf-8",
+                "level": "DEBUG"
+            }
+        },
+        "root": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG"
+        },
+    })
 
 log = logging.getLogger("Douyin")
+
+DEFAULT_PAGE_SIZE = 35
 
 # ------------------------------ Config ----------------------------------------
 
@@ -51,7 +69,7 @@ log = logging.getLogger("Douyin")
 class Config:
     """All runtime options for the downloader."""
     link: List[str] = field(default_factory=list)
-    path: str = ""
+    path: Path = field(default_factory=Path.cwd)
 
     music: bool = True
     cover: bool = True
@@ -85,12 +103,15 @@ class Config:
                 y = yaml.safe_load(f) or {}
 
             simple_fields = [
-                "link", "path", "music", "cover", "avatar", "json",
+                "link", "music", "cover", "avatar", "json",
                 "start_time", "end_time", "folderstyle", "mode", "thread", "database"
             ]
             for key in simple_fields:
                 if key in y:
                     setattr(cfg, key, y[key])
+
+            if "path" in y:
+                cfg.path = Path(y["path"])
 
             # merge maps
             if "number" in y:
@@ -118,7 +139,7 @@ class Config:
         """Build config from CLI arguments."""
         return cls(
             link=args.link,
-            path=args.path,
+            path=Path(args.path) if args.path else Path.cwd(),
             music=args.music,
             cover=args.cover,
             avatar=args.avatar,
@@ -157,8 +178,8 @@ class Config:
             self.thread = 5
 
         # normalize path
-        self.path = str(Path(self.path or os.getcwd()).resolve())
-        Path(self.path).mkdir(parents=True, exist_ok=True)
+        self.path = self.path.resolve()
+        self.path.mkdir(parents=True, exist_ok=True)
         return True
 
 
@@ -199,7 +220,7 @@ class DouyinClient:
 
     def __init__(self, cfg: Config):
         self.cfg = cfg
-        self.api = DouyinApi(database_path="data.db" if cfg.database else None)
+        self.api = DouyinApi(database_path="data.db" if cfg.database else None, cookie=cfg.cookie)
         self.downloader = Download(
             thread=cfg.thread,
             music=cfg.music,
@@ -274,7 +295,7 @@ class DouyinClient:
         data = self.api.getUserInfoApi(
             sec_uid=sec_uid,
             mode=mode,
-            count=35,
+            count=DEFAULT_PAGE_SIZE,
             number=self.cfg.number.get(mode, 0),
             increase=self.cfg.increase.get(mode, False),
             start_time=self.cfg.start_time,
@@ -288,7 +309,7 @@ class DouyinClient:
     def _handle_user_all_mix(self, sec_uid: str, outdir: Path) -> None:
         mixes = self.api.getUserAllMixInfoApi(
             sec_uid=sec_uid,
-            count=35,
+            count=DEFAULT_PAGE_SIZE,
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
         )
@@ -300,7 +321,7 @@ class DouyinClient:
             log.info(f"Downloading mix: {mix_name}")
             data = self.api.getMixInfoApi(
                 mix_id=mix_id,
-                count=35,
+                count=DEFAULT_PAGE_SIZE,
                 number=0,
                 start_time=self.cfg.start_time,
                 end_time=self.cfg.end_time,
@@ -313,7 +334,7 @@ class DouyinClient:
     def _handle_mix(self, mix_id: str) -> bool:
         data = self.api.getMixInfoApi(
             mix_id=mix_id,
-            count=35,
+            count=DEFAULT_PAGE_SIZE,
             number=self.cfg.number.get("mix", 0),
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
@@ -336,7 +357,7 @@ class DouyinClient:
     def _handle_music(self, music_id: str) -> None:
         data = self.api.getMusicInfo(
             music_id=music_id,
-            count=35,
+            count=DEFAULT_PAGE_SIZE,
             number=self.cfg.number.get("music", 0),
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
@@ -360,8 +381,8 @@ class DouyinClient:
 
         # Basic sanity check (video type has play_addr)
         if d.get("awemeType") == 0:
-            play_addrs = (d.get("video") or {}).get("play_addr", [])
-            if not play_addrs:
+            play_url_list = (d.get("video") or {}).get("play_addr", {}).get("url_list", [])
+            if not play_url_list:
                 raise RuntimeError("Missing video URL")
 
         outdir = Path(self.cfg.path) / "aweme"
@@ -394,11 +415,11 @@ def build_parser() -> argparse.ArgumentParser:
     # Behavior source
     p.add_argument("--cmd", "-C", type=utils.str2bool, default=False,
                    help="Use CLI (True) or YAML (False). Default: False")
-    p.add_argument("--config", "-F", default="config.yml", help="Path to YAML config")
+    p.add_argument("--config", "-F", default="config.yaml", help="Path to YAML config")
 
     # Basic I/O
     p.add_argument("--link", "-l", action="append", default=[], help="Share URL / Web URL")
-    p.add_argument("--path", "-p", default=os.getcwd(), help="Download output directory")
+    p.add_argument("--path", "-p", default=Path.cwd(), help="Download output directory")
     p.add_argument("--thread", "-t", type=int, default=5, help="Thread count")
 
     # Toggles
@@ -423,6 +444,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    setup_logging()
     parser = build_parser()
     args = parser.parse_args()
 

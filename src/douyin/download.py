@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Optional, Any
 from pathlib import Path
 import logging
+import random
 
 import threading
 from requests.adapters import HTTPAdapter
@@ -30,9 +31,9 @@ class Download(object):
         self.avatar = avatar
         self.resjson = resjson
         self.folderstyle = folderstyle
-        self.retry_times = 3
+        self.retry_times = 5
         self.chunk_size = 8192
-        self.timeout = 30
+        self.timeout = 60
 
         self._tls = threading.local()
 
@@ -185,6 +186,90 @@ class Download(object):
         logger.info(f"Download media success: {success_count}/{len(tasks)} : {desc}")
         return len(failed_tasks) == 0
 
+    def _rename_if_exists(self, save_path: Path, file_name: str, suffix: str) -> None:
+        """
+        Check if a file/folder with the same suffix (time + desc) exists but with different likes count.
+        If found, rename it to the new file_name.
+        """
+        try:
+            # Search for files/folders ending with the same suffix
+            # Pattern: *likes_{suffix}
+            # Suffix is like: 2025-09-02 22.09.04_Desc
+            # Full name: 000029183likes_2025-09-02 22.09.04_Desc
+
+            # We need to be careful not to match random files, so we expect a digit prefix
+            # glob pattern: *likes_{suffix}
+            # Note: file_name already contains the suffix.
+            # safe_name ensures no special chars, but glob might need escaping if [] used?
+            # utils.replaceStr keeps alphanumeric and chinese, so usually safe for glob found in utils.
+
+            # We look for ANY file ending with this suffix
+            # However, glob might be slow if directory is huge.
+            # But usually it's per-user folder.
+
+            search_pattern = f"*likes_{suffix}"
+            if self.folderstyle:
+                # We are looking for a folder
+                candidates = list(save_path.glob(search_pattern))
+            else:
+                # We are looking for files starting with *likes_{suffix}*.mp4 or similar?
+                # Actually download creates multiple files: _video.mp4, _cover.jpeg...
+                # If folderstyle=False, all files are in save_path.
+                # We should look for the video file primarily?
+                # Or just any file that matches the base name pattern?
+
+                # Let's look for the base name.
+                # If folderstyle=False, we have files like:
+                # {name}_video.mp4
+                # {name}_cover.jpeg
+                # {name}_result.json
+                # We need to rename ALL of them.
+
+                # This is complicated for folderstyle=False because we have multiple files.
+                # Strategy: Identify the old base name from one file (e.g. video), then rename all related files.
+                candidates = list(save_path.glob(f"*{suffix}_video.mp4"))
+
+            if not candidates:
+                return
+
+            # Found candidate(s). Take the first one.
+            old_path = candidates[0]
+            old_name = old_path.name
+
+            # Extract old base name
+            if self.folderstyle:
+                if old_name == file_name:
+                    return # Already correct
+                old_base_name = old_name
+            else:
+                # old_name is like "0000100likes_..._video.mp4"
+                # We want "0000100likes_..."
+                old_base_name = old_name.replace("_video.mp4", "")
+                if old_base_name == file_name:
+                    return
+
+            logger.info(f"🔄 Found existing content with different name. Renaming: {old_base_name} -> {file_name}")
+
+            if self.folderstyle:
+                # Rename directory
+                new_path = save_path / file_name
+                if not new_path.exists():
+                    try:
+                        old_path.rename(new_path)
+                    except OSError as e:
+                         logger.warning(f"Rename failed: {e}")
+            else:
+                # Rename all files starting with old_base_name
+                for f in save_path.glob(f"{old_base_name}*"):
+                     new_name = f.name.replace(old_base_name, file_name)
+                     try:
+                         f.rename(save_path / new_name)
+                     except OSError:
+                         pass
+
+        except Exception as e:
+            logger.warning(f"Error checking/renaming existing file: {e}")
+
     def awemeDownload(self, awemeDict: dict, savePath: Path) -> bool:
         """Download detail of video with multithread"""
         if not awemeDict:
@@ -196,8 +281,18 @@ class Download(object):
             save_path = Path(savePath)
             save_path.mkdir(parents=True, exist_ok=True)
 
-            # Tạo tên file từ thời gian và mô tả
-            file_name = f"{awemeDict['create_time']}_{utils.replaceStr(awemeDict['desc'])}"
+            # Get digg_count for filename with zero-padding for proper sorting
+            digg_count = awemeDict.get('statistics', {}).get('digg_count', 0)
+            digg_count_str = f"{digg_count:09d}"  # 9-digit zero-padding for sorting
+
+            # Tạo tên file từ thời gian, digg_count và mô tả
+            # Identify suffix for stable identification: time + desc
+            suffix_id = f"{awemeDict['create_time']}_{utils.replaceStr(awemeDict['desc'])}"
+            file_name = f"{digg_count_str}likes_{suffix_id}"
+
+            # Check and rename if exists
+            self._rename_if_exists(save_path, file_name, suffix_id)
+
             aweme_path = save_path / file_name if self.folderstyle else save_path
             aweme_path.mkdir(exist_ok=True)
 
@@ -286,6 +381,10 @@ class Download(object):
 
         for attempt in range(self.retry_times):
             try:
+                # Create fresh session on retry to avoid stale connections
+                if attempt > 0:
+                    self._tls.session = None
+
                 session = self._get_session()
                 response = session.get(url, headers={**douyin_headers, **headers},
                                         stream=True, timeout=self.timeout)
@@ -293,8 +392,12 @@ class Download(object):
                 if response.status_code not in (200, 206):
                     raise Exception(f"HTTP {response.status_code}")
 
-                total_size = int(response.headers.get('content-length', 0)) + file_size
-                mode = 'ab' if file_size > 0 else 'wb'
+                total_size = int(response.headers.get('content-length', 0))
+                # If server returns 200 (full content), content-length is total file size
+                # If server returns 206 (partial), content-length is remaining bytes
+                if response.status_code == 206:
+                    total_size += file_size
+                mode = 'ab' if file_size > 0 and response.status_code == 206 else 'wb'
 
                 logger.debug(f"⬇️ Downloading {desc}...")
 
@@ -317,15 +420,16 @@ class Download(object):
                 return True
 
             except Exception as e:
-                wait_time = min(2 ** attempt, 10)  # Tối đa 10 giây
-                logger.warning(f"Download Failed ( {attempt + 1}/{self.retry_times}): {str(e)}")
+                wait_time = min(2 ** (attempt + 1), 10) + random.uniform(0, 1)
+                logger.warning(f"Download Failed ({attempt + 1}/{self.retry_times}): {str(e)}")
 
                 if attempt == self.retry_times - 1:
                     logger.error(f"❌ Download Failed: {desc}\n   {str(e)}")
                     return False
                 else:
-                    logger.info(f"Wait {wait_time} to try again...")
+                    logger.info(f"Wait {wait_time:.1f}s to try again...")
                     time.sleep(wait_time)
+                    # Re-check file size for resume on retry
                     file_size = filepath.stat().st_size if filepath.exists() else 0
                     headers = {'Range': f'bytes={file_size}-'} if file_size > 0 else {}
 

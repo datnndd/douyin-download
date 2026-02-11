@@ -3,7 +3,9 @@
 
 
 import re
+import random
 from urllib.parse import quote, urlencode
+from datetime import datetime
 
 import requests
 import json
@@ -23,10 +25,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 class DouyinApi(object):
-    def __init__(self, database_path: str | None = "data.db" ):
+
+    # Common browser/device params shared across all API calls
+    _COMMON_PARAMS = (
+        'device_platform=webapp&aid=6383&channel=channel_pc_web'
+        '&pc_client_type=1&version_code=170400&version_name=17.4.0'
+        '&cookie_enabled=true&screen_width=1920&screen_height=1080'
+        '&browser_language=zh-CN&browser_platform=MacIntel'
+        '&browser_name=Chrome&browser_version=122.0.0.0'
+        '&browser_online=true&engine_name=Blink&engine_version=122.0.0.0'
+        '&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8'
+        '&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
+    )
+    def __init__(self, database_path: str | None = "data.db", cookie: str | None = None):
         self.urls = Urls()
         self.result = Result()
-        self.timeout = 10
+        self.timeout = 60
+        self.max_consecutive_errors = 3
         self.database = Database(database_path) if database_path else None
 
         self.session = requests.Session()
@@ -39,6 +54,10 @@ class DouyinApi(object):
         adapter = HTTPAdapter(max_retries=retries)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
+
+        # Apply cookie from config to session headers
+        if cookie:
+            self.session.headers.update({'Cookie': cookie})
 
     # Extract URL from share link
     def getShareLink(self, string):
@@ -55,7 +74,7 @@ class DouyinApi(object):
             r = self.session.get(url=url, headers=douyin_headers)
         except Exception as e:
             logger.error(f"Error in getKey: {str(e)}")
-            print('[  Error  ]: Invalid link!\r')
+            logger.error('Invalid link!')
             return key_type, key
 
         urlstr = str(r.request.path_url)
@@ -92,7 +111,7 @@ class DouyinApi(object):
             key_type = "live"
 
         if key is None or key_type is None:
-            print('[  Error  ]: Invalid link! Could not extract ID\r')
+            logger.error('Invalid link! Could not extract ID')
             return key_type, key
 
         return key_type, key
@@ -126,7 +145,7 @@ class DouyinApi(object):
                     "cpu_core_num": 12,
                     "device_memory": 8,
                     "platform": "PC",
-                    "downlink": "10",
+                    "downlink": "1.35",
                     "effective_type": "4g",
                     "from_user_page": "1",
                     "locate_query": "false",
@@ -159,6 +178,8 @@ class DouyinApi(object):
                 end = time.time()
                 if end - start > self.timeout:
                     return None
+                # Delay before retry to avoid API spam
+                time.sleep(1 + random.uniform(0, 1))
 
         # Clear existing data in self.awemeDict
         self.result.clearDict(self.result.awemeDict)
@@ -181,23 +202,21 @@ class DouyinApi(object):
 
         return self.result.awemeDict
 
-    def getUserInfoApi(self, sec_uid, mode="post", count=35, number=0, increase=False, start_time="", end_time=""):
+    def getUserInfoApi(self, sec_uid, mode="post", count=18, number=0, increase=False, start_time="", end_time=""):
         if sec_uid is None:
             return None
 
-        if not start_time:
-            start_time = "1970-01-01"
-        if not end_time:
-            end_time = time.strftime("%Y-%m-%d")
+        start_time = start_time or "1970-01-01"
+        end_time = end_time or datetime.now().strftime("%Y-%m-%d")
 
         max_cursor = 0
         awemeList = []
         total_fetched = 0
+        consecutive_errors = 0
 
-        start = time.time()
         while True:
             try:
-                detail_params = f'sec_user_id={sec_uid}&count={count}&max_cursor={max_cursor}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
+                detail_params = f'sec_user_id={sec_uid}&count={count}&max_cursor={max_cursor}&{self._COMMON_PARAMS}'
 
                 if mode == "post":
                     url = self.urls.USER_POST + utils.getXbogus(detail_params)
@@ -209,24 +228,37 @@ class DouyinApi(object):
                 else:
                     return None
 
-                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=douyin_headers, timeout=self.timeout)
                 if len(res.text) == 0:
-                    logger.warning("User Get Post/Favorite API return an empty response")
-                    return awemeList
+                    consecutive_errors += 1
+                    logger.warning(f"User Get Post/Favorite API return an empty response (error {consecutive_errors}/{self.max_consecutive_errors})")
+                    if consecutive_errors >= self.max_consecutive_errors:
+                        logger.error("Max consecutive errors reached, stopping.")
+                        break
+                    time.sleep(2 + random.uniform(0, 1))
+                    continue
 
                 datadict = json.loads(res.text)
 
                 if datadict is None or datadict["status_code"] != 0:
-                    logger.warning(f"API returned error status: {datadict.get('status_code') if datadict else 'None'}")
-                    break
+                    consecutive_errors += 1
+                    logger.warning(f"API returned error status: {datadict.get('status_code') if datadict else 'None'} (error {consecutive_errors}/{self.max_consecutive_errors})")
+                    if consecutive_errors >= self.max_consecutive_errors:
+                        logger.error("Max consecutive errors reached, stopping.")
+                        break
+                    time.sleep(2 + random.uniform(0, 1))
+                    continue
 
                 if "aweme_list" not in datadict:
                     logger.warning("No aweme_list in API response")
                     break
 
+                # Reset consecutive error counter on success
+                consecutive_errors = 0
+
                 current_count = len(datadict["aweme_list"])
                 total_fetched += current_count
-                print(f"[INFO] Fetched: {total_fetched} items")
+                logger.info(f"Fetched: {total_fetched} items (+{current_count})")
 
                 # Process aweme_list
                 for aweme in datadict["aweme_list"]:
@@ -236,7 +268,7 @@ class DouyinApi(object):
                         continue
 
                     if number > 0 and len(awemeList) >= number:
-                        print(f"[INFO] Reached required number: {number}")
+                        logger.info(f"Reached required number: {number}")
                         return awemeList
 
                     self.result.clearDict(self.result.awemeDict)
@@ -249,27 +281,29 @@ class DouyinApi(object):
                         if increase and self.database and aweme.get("is_top", 0)==0:
                             _awid = str(aweme.get("aweme_id"))
                             if mode == "post" and self.database.has_user_post(sec_uid, _awid):
-                                print("Incremental update completed")
-                                break
+                                logger.info("Incremental update completed")
+                                return awemeList
 
                             elif mode == "like" and self.database.has_user_like(sec_uid, _awid):
-                                print("Incremental update completed")
-                                break
+                                logger.info("Incremental update completed")
+                                return awemeList
 
                 if not datadict.get("has_more", 0):
-                    print(f"[INFO] No more data available")
+                    logger.info(f"No more data available")
                     break
-
 
                 max_cursor = datadict["max_cursor"]
 
-            except Exception as e:
-                logger.error(f"Error in getUserInfoApi: {str(e)}")
-                end = time.time()
-                if end - start > self.timeout:
-                    logger.warning("Timeout reached")
-                    break
+                # Delay between pagination requests to avoid rate limiting
+                time.sleep(1 + random.uniform(0, 1))
 
+            except Exception as e:
+                consecutive_errors += 1
+                logger.error(f"Error in getUserInfoApi: {str(e)} (error {consecutive_errors}/{self.max_consecutive_errors})")
+                if consecutive_errors >= self.max_consecutive_errors:
+                    logger.error("Max consecutive errors reached, stopping.")
+                    break
+                time.sleep(1 + random.uniform(0, 1))
                 continue
 
         if self.database and awemeList:
@@ -316,8 +350,8 @@ class DouyinApi(object):
 
         self.result.liveDict["status"] = live_json['data']['data'][0]['status_str']
 
-        if self.result.liveDict["status"] == 4:
-            print(f"[ INFO ] Stream ended!")
+        if self.result.liveDict["status"] == "4":
+            logger.info("Stream ended!")
             return self.result.liveDict, live_json
 
         self.result.liveDict["title"] = live_json['data']['data'][0]['title']
@@ -363,7 +397,7 @@ class DouyinApi(object):
         start = time.time()
         while True:
             try:
-                mix_params = f'mix_id={mix_id}&cursor={cursor}&count={count}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
+                mix_params = f'mix_id={mix_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX + utils.getXbogus(mix_params)
 
                 res = self.session.get(url=url, headers=douyin_headers, timeout=10)
@@ -388,7 +422,7 @@ class DouyinApi(object):
 
                 current_count = len(datadict["aweme_list"])
                 total_fetched += current_count
-                print(f"[INFO] Fetched: {total_fetched} items from mix")
+                logger.info(f"Fetched: {total_fetched} items from mix (+{current_count})")
 
                 # Process aweme_list
                 for aweme in datadict["aweme_list"]:
@@ -401,7 +435,7 @@ class DouyinApi(object):
                         continue
 
                     if number > 0 and len(awemeList) >= number:
-                        print(f"[INFO] Reached required number: {number}")
+                        logger.info(f"Reached required number: {number}")
                         return awemeList
 
                     self.result.clearDict(self.result.awemeDict)
@@ -412,7 +446,7 @@ class DouyinApi(object):
                         awemeList.append(aweme_data)
 
                 if not datadict.get("has_more", False):
-                    print("[INFO] No more mix data available")
+                    logger.info("No more mix data available")
                     break
 
                 cursor = datadict["cursor"]
@@ -424,7 +458,7 @@ class DouyinApi(object):
                 logger.error(f"Error in getMixInfoApi: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warning("Timeout reached in getMixInfoApi")
+                    logger.warning("Timeout reached in getMusicInfo")
                     break
                 continue
 
@@ -448,7 +482,7 @@ class DouyinApi(object):
         start = time.time()
         while True:
             try:
-                mix_list_params = f'sec_user_id={sec_uid}&count={count}&cursor={cursor}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
+                mix_list_params = f'sec_user_id={sec_uid}&count={count}&cursor={cursor}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX_LIST + utils.getXbogus(mix_list_params)
 
                 res = self.session.get(url=url, headers=douyin_headers, timeout=10)
@@ -483,7 +517,7 @@ class DouyinApi(object):
                     mixDict[mix["mix_id"]] = mix["mix_name"]
 
                 if not datadict.get("has_more", 0):
-                    print(f"[INFO] No more data available")
+                    logger.info(f"No more data available")
                     break
 
 
@@ -516,7 +550,7 @@ class DouyinApi(object):
         start = time.time()  # Start time
         while True:
             try:
-                music_params = f'music_id={music_id}&cursor={cursor}&count={count}&device_platform=webapp&aid=6383&channel=channel_pc_web&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Chrome&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Mac&os_version=10.15.7&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50'
+                music_params = f'music_id={music_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.MUSIC + utils.getXbogus(music_params)
 
                 res = self.session.get(url=url, headers=douyin_headers, timeout=10)
@@ -541,7 +575,7 @@ class DouyinApi(object):
 
                 current_count = len(datadict["aweme_list"])
                 total_fetched += current_count
-                print(f"[INFO] Fetched: {total_fetched} items")
+                logger.info(f"Fetched: {total_fetched} items (+{current_count})")
 
                 for aweme in datadict["aweme_list"]:
 
@@ -551,7 +585,7 @@ class DouyinApi(object):
                         continue
 
                     if number > 0 and len(awemeList) >= number:
-                        print(f"[INFO] Reached required number: {number}")
+                        logger.info(f"Reached required number: {number}")
 
                         return awemeList
 
@@ -563,7 +597,7 @@ class DouyinApi(object):
                         awemeList.append(aweme_data)
 
                 if not datadict.get("has_more", 0):
-                    print("[INFO] No more data available")
+                    logger.info("No more data available")
                     break
 
                 cursor = datadict["cursor"]
@@ -573,10 +607,10 @@ class DouyinApi(object):
                 break
 
             except Exception as e:
-                logger.error(f"Error in getMixInfoApi: {str(e)}")
+                logger.error(f"Error in getMusicInfo: {str(e)}")
                 end = time.time()
                 if end - start > self.timeout:
-                    logger.warning("Timeout reached in getMixInfoApi")
+                    logger.warning("Timeout reached in getMusicInfo")
                     break
 
                 continue
