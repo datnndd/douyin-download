@@ -90,6 +90,9 @@ class Config:
     increase: Dict[str, bool] = field(default_factory=lambda: {
         "post": False, "like": False
     })
+    filter: Dict[str, any] = field(default_factory=lambda: {
+        "sort_by": "", "reverse": True, "limit": 0
+    })
 
     @classmethod
     def from_yaml(cls, yaml_path: str = "config.yaml") -> "Config":
@@ -118,6 +121,8 @@ class Config:
                 cfg.number.update(y["number"] or {})
             if "increase" in y:
                 cfg.increase.update(y["increase"] or {})
+            if "filter" in y:
+                cfg.filter.update(y["filter"] or {})
 
             # cookie sources
             if y.get("cookies"):
@@ -164,6 +169,11 @@ class Config:
                 "allmix": args.allmixincrease,
                 "mix": args.mixincrease,
                 "music": args.musicincrease,
+            },
+            filter={
+                "sort_by": args.sort_by,
+                "reverse": args.sort_reverse,
+                "limit": args.sort_limit,
             },
         )
 
@@ -235,6 +245,32 @@ class DouyinClient:
 
     # --------- public ---------
 
+    def _apply_filter_and_sort(self, data: List[Dict]) -> List[Dict]:
+        """Sort and limit the aweme list based on user config."""
+        if not data:
+            return []
+
+        sort_by = self.cfg.filter.get("sort_by")
+        reverse = self.cfg.filter.get("reverse", True)
+        limit = self.cfg.filter.get("limit", 0)
+
+        if sort_by:
+            log.info(f"Sorting by '{sort_by}' (reverse={reverse})…")
+            
+            # Map metric names to key functions
+            if sort_by in ["play_count", "digg_count", "comment_count", "share_count", "collect_count"]:
+                data.sort(key=lambda x: int(x.get("statistics", {}).get(sort_by, 0) or 0), reverse=reverse)
+            elif sort_by == "create_time":
+                data.sort(key=lambda x: x.get("create_time", ""), reverse=reverse)
+            else:
+                log.warning(f"Unknown sort metric '{sort_by}'. Skipping sort.")
+
+        if limit > 0:
+            log.info(f"Limiting to {limit} items.")
+            data = data[:limit]
+
+        return data
+
     def process_all(self) -> None:
         log.info(f"Output path: {self.cfg.path}")
         log.info(f"Threads: {self.cfg.thread}")
@@ -296,7 +332,7 @@ class DouyinClient:
             sec_uid=sec_uid,
             mode=mode,
             count=DEFAULT_PAGE_SIZE,
-            number=self.cfg.number.get(mode, 0),
+            number=self.cfg.number.get(mode, 0) if not self.cfg.filter.get("sort_by") else 0,
             increase=self.cfg.increase.get(mode, False),
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
@@ -304,6 +340,8 @@ class DouyinClient:
         if not data:
             log.warning(f"No data for user {mode}.")
             return
+
+        data = self._apply_filter_and_sort(data)
         self.downloader.userDownload(awemeList=data, savePath=outdir)
 
     def _handle_user_all_mix(self, sec_uid: str, outdir: Path) -> None:
@@ -328,6 +366,8 @@ class DouyinClient:
             )
             if not data:
                 continue
+            
+            data = self._apply_filter_and_sort(data)
             self.downloader.userDownload(awemeList=data, savePath=outdir / safe_name(mix_name, mix_id))
 
     @retry(max_retries=3, delay_sec=5)
@@ -335,12 +375,14 @@ class DouyinClient:
         data = self.api.getMixInfoApi(
             mix_id=mix_id,
             count=DEFAULT_PAGE_SIZE,
-            number=self.cfg.number.get("mix", 0),
+            number=self.cfg.number.get("mix", 0) if not self.cfg.filter.get("sort_by") else 0,
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
         )
         if not data:
             raise RuntimeError("Empty mix data")
+
+        data = self._apply_filter_and_sort(data)
 
         # try derive readable mix name
         first = data[0] if isinstance(data, list) and data else {}
@@ -358,7 +400,7 @@ class DouyinClient:
         data = self.api.getMusicInfo(
             music_id=music_id,
             count=DEFAULT_PAGE_SIZE,
-            number=self.cfg.number.get("music", 0),
+            number=self.cfg.number.get("music", 0) if not self.cfg.filter.get("sort_by") else 0,
             start_time=self.cfg.start_time,
             end_time=self.cfg.end_time,
         )
@@ -366,6 +408,8 @@ class DouyinClient:
             log.warning("No items under music.")
             return
 
+        data = self._apply_filter_and_sort(data)
+        
         first = data[0] if isinstance(data, list) and data else {}
         music_name = safe_name((first.get("music") or {}).get("title", ""), "music")
 
@@ -440,6 +484,11 @@ def build_parser() -> argparse.ArgumentParser:
     # Misc
     p.add_argument("--database", "-d", type=utils.str2bool, default=True, help="Use database for history")
     p.add_argument("--cookie", type=str, default="", help="Raw Cookie header string")
+
+    # Filter/Sort
+    p.add_argument("--sort-by", type=str, default="", help="Sort by: play_count, digg_count, create_time, etc.")
+    p.add_argument("--sort-reverse", type=utils.str2bool, default=True, help="Highest first? (True/False)")
+    p.add_argument("--sort-limit", type=int, default=0, help="Final limit after sorting")
     return p
 
 
