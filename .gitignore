@@ -10,3 +10,7 @@ Downloaded/
 # Harness core maintenance binary
 scripts/bin/harness
 scripts/bin/harness.exe
+
+# Frontend
+frontend/node_modules/
+

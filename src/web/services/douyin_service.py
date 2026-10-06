@@ -11,6 +11,7 @@ import logging
 import re
 import threading
 from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import requests
 
@@ -68,10 +69,29 @@ class DouyinUpstreamError(DouyinServiceError):
 
 
 # ==============================================================================
-# Regex Patterns
+# Domain Whitelist & Regex Patterns
 # ==============================================================================
 
+# Whitelist of legitimate Douyin hostnames for SSRF protection
+ALLOWED_HOSTS = (
+    "v.douyin.com",
+    "douyin.com",
+    "www.douyin.com",
+    "iesdouyin.com",
+    "www.iesdouyin.com",
+    "live.douyin.com",
+)
+
+# Standard HTTP/HTTPS link regex
 SHARE_LINK_REGEX = re.compile(r"https?://[a-zA-Z0-9_./\-?&=%#+:@!~*]+")
+
+# Schemeless Douyin URLs embedded in Chinese text, emojis, or punctuation
+SCHEMELESS_DOUYIN_REGEX = re.compile(
+    r"(?:^|[^\w./-])"
+    r"((?:v\.douyin\.com|www\.douyin\.com|douyin\.com|live\.douyin\.com|iesdouyin\.com|www\.iesdouyin\.com)"
+    r"(?:/[a-zA-Z0-9_./\-?&=%#+:@!~*]*)?)",
+    re.IGNORECASE,
+)
 
 AWEME_PATTERNS = [
     re.compile(r"/video/(\d+)"),
@@ -115,16 +135,36 @@ class DouyinService:
         self._local = threading.local()
 
     def _get_api(self, cookie: Optional[str] = None) -> DouyinApi:
-        """Retrieve or initialize thread-local DouyinApi instance."""
+        """Retrieve or initialize thread-local DouyinApi instance with cookie isolation."""
         active_cookie = cookie or self._default_cookie
         api = getattr(self._local, "api", None)
         cached_cookie = getattr(self._local, "cookie", None)
 
         if api is None or cached_cookie != active_cookie:
             api = DouyinApi(database_path=self._database_path, cookie=active_cookie)
+            if active_cookie:
+                self._isolate_session_cookie(api.session, active_cookie)
             self._local.api = api
             self._local.cookie = active_cookie
         return api
+
+    @staticmethod
+    def _isolate_session_cookie(session: requests.Session, cookie: Optional[str]) -> None:
+        """
+        Enforces per-request custom cookies on session headers without mutating global state.
+        Overrides prepare_request so request-level douyin_headers['Cookie'] cannot clobber it.
+        """
+        if not cookie:
+            return
+        session.headers.update({"Cookie": cookie})
+        orig_prepare_request = session.prepare_request
+
+        def _custom_prepare_request(request: requests.Request) -> requests.PreparedRequest:
+            prep = orig_prepare_request(request)
+            prep.headers["Cookie"] = cookie
+            return prep
+
+        session.prepare_request = _custom_prepare_request  # type: ignore[method-assign]
 
     # -------------------------------------------------------------------------
     # Public Async API
@@ -193,29 +233,69 @@ class DouyinService:
     # Link Resolution Helpers
     # -------------------------------------------------------------------------
 
-    @staticmethod
-    def extract_share_url(text: str) -> Optional[str]:
-        """Extracts first valid HTTP/HTTPS URL from raw string."""
-        matches = SHARE_LINK_REGEX.findall(text)
-        if not matches:
+    @classmethod
+    def extract_share_url(cls, text: str) -> Optional[str]:
+        """
+        Extracts first valid HTTP/HTTPS URL from raw string.
+        Normalizes raw inputs like v.douyin.com/xxx without https:// by prepending scheme.
+        """
+        if not text or not text.strip():
             return None
-        url = matches[0].rstrip("),.!?，。！？;；'\"")
-        return url if url else None
 
-    @staticmethod
-    def resolve_redirect_url(url: str, session: requests.Session) -> str:
-        """Follows HTTP redirects for short URLs (v.douyin.com) to find final destination."""
-        if "v.douyin.com" in url or "iesdouyin.com/share" in url:
+        # 1. Search for standard http(s) URL
+        matches = SHARE_LINK_REGEX.findall(text)
+        if matches:
+            url = matches[0].rstrip("),.!?，。！？;；'\"")
+            if url:
+                return url
+
+        # 2. Search for schemeless Douyin URL pattern
+        schemeless = SCHEMELESS_DOUYIN_REGEX.search(text)
+        if schemeless:
+            raw_url = schemeless.group(1).rstrip("),.!?，。！？;；'\"")
+            if raw_url:
+                return f"https://{raw_url}"
+
+        return None
+
+    @classmethod
+    def resolve_redirect_url(cls, url: str, session: requests.Session) -> str:
+        """
+        Follows HTTP redirects for short URLs (v.douyin.com) to find final destination.
+        Validates hostname against allowed whitelist to prevent SSRF and cookie exfiltration.
+        Properly closes streaming response with context manager.
+        """
+        try:
+            parsed = urlparse(url)
+            hostname = (parsed.hostname or "").lower()
+        except Exception:
+            return url
+
+        # Only follow redirects for known Douyin shortlink hosts
+        if hostname == "v.douyin.com" or (
+            hostname in ("iesdouyin.com", "www.iesdouyin.com") and "/share" in (parsed.path or "")
+        ):
             try:
-                # Use stream=True to avoid reading large response payloads
-                resp = session.get(
+                # Use stream=True and context manager to avoid memory leaks and unclosed sockets
+                with session.get(
                     url,
                     headers=douyin_headers,
                     allow_redirects=True,
                     timeout=10,
                     stream=True,
-                )
-                return str(resp.url)
+                ) as resp:
+                    final_url = str(resp.url)
+                    # Verify destination host belongs to Douyin ecosystem
+                    dest_parsed = urlparse(final_url)
+                    dest_host = (dest_parsed.hostname or "").lower()
+                    if (
+                        dest_host in ALLOWED_HOSTS
+                        or dest_host.endswith(".douyin.com")
+                        or dest_host.endswith(".iesdouyin.com")
+                    ):
+                        return final_url
+                    logger.warning(f"Redirect destination {final_url} is outside allowed Douyin domains.")
+                    return url
             except Exception as e:
                 logger.error(f"Failed to resolve short URL redirect for {url}: {e}")
                 raise DouyinUpstreamError(f"Failed to follow short link redirect: {e}")
@@ -224,35 +304,50 @@ class DouyinService:
     def extract_key_and_type(
         self, url: str, session: requests.Session
     ) -> Tuple[Optional[str], Optional[str]]:
-        """Matches URL against patterns for the 5 key types."""
+        """Matches URL against patterns for the 5 key types, strictly validating hostname."""
+        try:
+            parsed = urlparse(url)
+            hostname = (parsed.hostname or "").lower()
+        except Exception:
+            return None, None
+
+        if not hostname or (
+            hostname not in ALLOWED_HOSTS
+            and not hostname.endswith(".douyin.com")
+            and not hostname.endswith(".iesdouyin.com")
+        ):
+            return None, None
+
+        path = parsed.path or ""
+
         # 1. Aweme (Video/Note)
         for pattern in AWEME_PATTERNS:
-            if match := pattern.search(url):
+            if match := pattern.search(path):
                 return "aweme", match.group(1)
 
         # 2. User Profile
         for pattern in USER_PATTERNS:
-            if match := pattern.search(url):
+            if match := pattern.search(path):
                 return "user", match.group(1)
 
         # 3. Mix / Collection
         for pattern in MIX_PATTERNS:
-            if match := pattern.search(url):
+            if match := pattern.search(path):
                 return "mix", match.group(1)
 
         # 4. Music
         for pattern in MUSIC_PATTERNS:
-            if match := pattern.search(url):
+            if match := pattern.search(path):
                 return "music", match.group(1)
 
         # 5. Live Stream
-        if "live.douyin.com" in url:
-            clean = url.split("?")[0].rstrip("/")
-            room_id = clean.split("/")[-1]
+        if hostname == "live.douyin.com":
+            clean_path = path.strip("/")
+            room_id = clean_path.split("/")[-1] if clean_path else ""
             if room_id and room_id != "live.douyin.com":
                 return "live", room_id
 
-        if "/webcast/reflow/" in url:
+        if "/webcast/reflow/" in path or "/webcast/reflow/" in url:
             if match := re.search(r"/webcast/reflow/(\d+)", url):
                 reflow_room_id = match.group(1)
                 web_rid = self._resolve_reflow_live_room(reflow_room_id, session)
@@ -547,15 +642,19 @@ class DouyinService:
 
     @staticmethod
     def _pick_first_url(url_container: Any) -> Optional[str]:
-        """Safely extracts first string from url_list in dictionary or list."""
+        """Safely extracts first valid non-null string from url_list in dictionary or list."""
         if isinstance(url_container, dict):
             url_list = url_container.get("url_list")
-            if isinstance(url_list, list) and len(url_list) > 0:
-                return url_list[0]
-        elif isinstance(url_container, list) and len(url_container) > 0:
-            return url_container[0]
-        elif isinstance(url_container, str):
-            return url_container
+            if isinstance(url_list, list):
+                for u in url_list:
+                    if u and isinstance(u, str) and u.strip():
+                        return u.strip()
+        elif isinstance(url_container, list):
+            for u in url_container:
+                if u and isinstance(u, str) and u.strip():
+                    return u.strip()
+        elif isinstance(url_container, str) and url_container.strip():
+            return url_container.strip()
         return None
 
     # -------------------------------------------------------------------------
@@ -592,16 +691,40 @@ class DouyinService:
                 if cancel_event and cancel_event.is_set():
                     break
                 limit = req.number.get(mode, 0) if req.number else 0
-                data = api.getUserInfoApi(
-                    sec_uid=key,
-                    mode=mode,
-                    count=35,
-                    number=limit,
-                    start_time=req.start_time,
-                    end_time=req.end_time,
-                )
-                if data:
-                    all_items.extend(data)
+                if mode in ("mix", "allmix"):
+                    mixes = api.getUserAllMixInfoApi(
+                        sec_uid=key,
+                        count=35,
+                        start_time=req.start_time,
+                        end_time=req.end_time,
+                    )
+                    if mixes and isinstance(mixes, dict):
+                        for mix_id in mixes.keys():
+                            if cancel_event and cancel_event.is_set():
+                                break
+                            mix_items = api.getMixInfoApi(
+                                mix_id=mix_id,
+                                count=35,
+                                number=limit,
+                                start_time=req.start_time,
+                                end_time=req.end_time,
+                            )
+                            if mix_items:
+                                all_items.extend(mix_items)
+                                if limit > 0 and len(all_items) >= limit:
+                                    all_items = all_items[:limit]
+                                    break
+                else:
+                    data = api.getUserInfoApi(
+                        sec_uid=key,
+                        mode=mode,
+                        count=35,
+                        number=limit,
+                        start_time=req.start_time,
+                        end_time=req.end_time,
+                    )
+                    if data:
+                        all_items.extend(data)
             return all_items
 
         elif key_type == "mix":

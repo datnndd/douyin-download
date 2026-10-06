@@ -230,6 +230,7 @@ class Download(object):
         desc: str,
         cancel_event: Optional[threading.Event] = None,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        worker_offset: int = 0,
     ) -> bool:
         tasks = self._prepare_media_tasks(aweme, path, name, desc)
         eff_cancel = cancel_event or self.cancel_event
@@ -241,7 +242,7 @@ class Download(object):
             return True
 
         for i, task in enumerate(tasks):
-            task["worker_id"] = (i % self.thread) + 1
+            task["worker_id"] = ((worker_offset + i) % self.thread) + 1
             task["cancel_event"] = eff_cancel
             task["progress_callback"] = progress_callback or self.progress_callback
 
@@ -378,6 +379,7 @@ class Download(object):
         savePath: Path,
         cancel_event: Optional[threading.Event] = None,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        worker_offset: int = 0,
     ) -> bool:
         """Download detail of video with multithread"""
         eff_cancel = cancel_event or self.cancel_event
@@ -422,6 +424,7 @@ class Download(object):
                 desc,
                 cancel_event=eff_cancel,
                 progress_callback=progress_callback or self.progress_callback,
+                worker_offset=worker_offset,
             )
 
             if success:
@@ -450,12 +453,12 @@ class Download(object):
         savePath: Path,
         cancel_event: Optional[threading.Event] = None,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
-    ):
+    ) -> bool:
         """Download all aweme of user with threading"""
         eff_cancel = cancel_event or self.cancel_event
         if not awemeList:
             logger.warning("⚠️ Can't find aweme for downloading")
-            return
+            return True
 
         save_path = Path(savePath)
         save_path.mkdir(parents=True, exist_ok=True)
@@ -471,9 +474,9 @@ class Download(object):
         with ThreadPoolExecutor(max_workers=min(self.thread, total_count)) as executor:
             future_to_aweme = {
                 executor.submit(
-                    self.awemeDownload, aweme, save_path, eff_cancel, progress_callback
+                    self.awemeDownload, aweme, save_path, eff_cancel, progress_callback, idx % self.thread
                 ): aweme
-                for aweme in awemeList
+                for idx, aweme in enumerate(awemeList)
             }
 
             with tqdm(total=total_count, desc="Processing videos") as pbar:
@@ -493,6 +496,12 @@ class Download(object):
                         )
                     finally:
                         pbar.update(1)
+                        if progress_callback:
+                            progress_callback({
+                                "event": "item_complete",
+                                "item_index": success_count,
+                                "item_total": total_count,
+                            })
 
         # Thống kê kết quả
         end_time = time.time()
@@ -507,6 +516,7 @@ class Download(object):
 
         if success_count < total_count:
             logger.warning(f"{total_count - success_count} video download failed")
+        return success_count > 0 or total_count == 0
 
     def download_with_resume(
         self,
@@ -549,6 +559,7 @@ class Download(object):
                 if response.status_code == 206:
                     total_size += file_size
                 mode = "ab" if file_size > 0 and response.status_code == 206 else "wb"
+                initial_bytes = file_size if response.status_code == 206 else 0
 
                 logger.debug(f"⬇️ Downloading {desc}...")
 
@@ -560,18 +571,19 @@ class Download(object):
                             "filepath": str(filepath),
                             "filename": filepath.name,
                             "chunk_bytes": 0,
-                            "downloaded_bytes": file_size,
+                            "downloaded_bytes": initial_bytes,
                             "total_bytes": total_size,
                             "desc": desc,
                         }
                     )
 
                 last_emit_time = time.monotonic()
-                downloaded_so_far = file_size
+                downloaded_so_far = initial_bytes
+                accumulated_chunk_bytes = 0
                 with open(filepath, mode) as f:
                     with tqdm(
                         total=total_size,
-                        initial=file_size,
+                        initial=initial_bytes,
                         unit="B",
                         unit_scale=True,
                         desc=desc[:20],
@@ -590,6 +602,7 @@ class Download(object):
                                     size = f.write(chunk)
                                     pbar.update(size)
                                     downloaded_so_far += size
+                                    accumulated_chunk_bytes += size
                                     if eff_callback:
                                         now = time.monotonic()
                                         if (
@@ -601,12 +614,13 @@ class Download(object):
                                                     "worker_id": worker_id,
                                                     "filepath": str(filepath),
                                                     "filename": filepath.name,
-                                                    "chunk_bytes": size,
+                                                    "chunk_bytes": accumulated_chunk_bytes,
                                                     "downloaded_bytes": downloaded_so_far,
                                                     "total_bytes": total_size,
                                                     "desc": desc,
                                                 }
                                             )
+                                            accumulated_chunk_bytes = 0
                                             last_emit_time = now
                         except (
                             requests.exceptions.ConnectionError,
@@ -628,12 +642,13 @@ class Download(object):
                             "worker_id": worker_id,
                             "filepath": str(filepath),
                             "filename": filepath.name,
-                            "chunk_bytes": 0,
+                            "chunk_bytes": accumulated_chunk_bytes,
                             "downloaded_bytes": downloaded_so_far,
                             "total_bytes": total_size,
                             "desc": desc,
                         }
                     )
+                    accumulated_chunk_bytes = 0
 
                 logger.debug(f"✅ Success: {desc}")
                 return True

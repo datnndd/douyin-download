@@ -53,3 +53,8 @@ Reference design & color system: `c:\Users\ddat2\Downloads\Projects\pyvideotrans
 ### Production & Integration
 - [ ] FastAPI backend serves the production-built React static files so the entire web app can be launched with a single command (e.g. `python webui.py`).
 - [ ] Unit/integration tests verify API endpoints, config parsing, and job execution pipeline.
+
+
+## 2026-10-06T06:31:00Z
+
+The system server was restarted and stopped subagent tasks. Please resume work immediately from your current state. Continue through Milestone 1 hardening fixes, Milestone 2 (FastAPI REST endpoints & SSE streaming), Milestone 3 (React 19 + Vite + Tailwind frontend in pyvideotrans style), and Milestone 4 (unified webui.py launcher & end-to-end verification).

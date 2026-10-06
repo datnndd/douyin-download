@@ -69,6 +69,7 @@ class TaskRecord:
         self._last_speed_bytes: int = 0
         self._last_telemetry_emit_time: float = 0.0
         self._file_bytes_map: Dict[str, int] = {}  # filepath -> downloaded bytes
+        self._file_totals_map: Dict[str, int] = {}  # filepath -> total file bytes
 
     def to_detail_response(self) -> TaskDetailResponse:
         """Create a thread-safe snapshot model for GET /api/tasks/{task_id}."""
@@ -145,6 +146,8 @@ class TaskManager:
 
         self.max_concurrent_tasks: int = max_concurrent_tasks
         self.max_total_workers: int = max_total_workers
+
+        self._task_semaphore: threading.Semaphore = threading.Semaphore(max_concurrent_tasks)
 
         # Bounded executor pool for all background tasks
         self._executor: ThreadPoolExecutor = ThreadPoolExecutor(
@@ -269,6 +272,7 @@ class TaskManager:
                 return False
 
             record.cancel_event.set()
+            record.pause_event.set()  # Unblock any paused worker threads immediately
             record.status = TaskStatus.CANCELLED
             record.updated_at = datetime.now(timezone.utc)
 
@@ -406,15 +410,46 @@ class TaskManager:
             file_downloaded = payload.get("downloaded_bytes", 0)
             file_total = payload.get("total_bytes", 0)
 
-            # Check pause state (block worker thread if paused)
-            record.pause_event.wait()
+            file_key = payload.get("filepath") or file_name or f"worker_{worker_id}"
+
+            # Check pause state (block worker thread if paused, unblock on cancel)
+            while not record.pause_event.is_set():
+                if record.cancel_event.is_set():
+                    return
+                record.pause_event.wait(timeout=0.2)
+
+            if record.cancel_event.is_set():
+                return
 
             with record._lock:
                 record.updated_at = datetime.now(timezone.utc)
 
-                # 1. Update downloaded byte metrics
-                if chunk_bytes > 0:
+                # 1. Update total bytes dynamically from discovered file sizes
+                if file_total > 0 and file_key:
+                    prev_total = record._file_totals_map.get(file_key, 0)
+                    if file_total != prev_total:
+                        record.total_bytes += (file_total - prev_total)
+                        record._file_totals_map[file_key] = file_total
+
+                # 2. Update downloaded byte metrics accurately via delta
+                if file_key and (file_downloaded > 0 or file_key in record._file_bytes_map):
+                    prev_downloaded = record._file_bytes_map.get(file_key, 0)
+                    delta = file_downloaded - prev_downloaded
+                    if delta > 0:
+                        record.downloaded_bytes += delta
+                        record._file_bytes_map[file_key] = file_downloaded
+                    elif delta < 0:
+                        record._file_bytes_map[file_key] = file_downloaded
+                    elif chunk_bytes > 0:
+                        record.downloaded_bytes += chunk_bytes
+                elif chunk_bytes > 0:
                     record.downloaded_bytes += chunk_bytes
+
+                # Handle item_complete event in multi-item downloads
+                if event_kind == "item_complete":
+                    record.completed_items = payload.get("item_index", record.completed_items)
+                    if payload.get("item_total"):
+                        record.total_items = payload["item_total"]
 
                 # 2. Update worker slot in visualizer
                 slot_idx = max(0, min(worker_id - 1, len(record.threads) - 1))
@@ -489,6 +524,23 @@ class TaskManager:
         req = record.request
         logger.info(f"Starting execution for task {task_id}")
 
+        if record.cancel_event.is_set():
+            self._finish_task(record, TaskStatus.CANCELLED)
+            return
+
+        # Enforce max_concurrent_tasks bound
+        acquired = False
+        while not record.cancel_event.is_set():
+            acquired = self._task_semaphore.acquire(timeout=0.1)
+            if acquired:
+                break
+
+        if not acquired or record.cancel_event.is_set():
+            if acquired:
+                self._task_semaphore.release()
+            self._finish_task(record, TaskStatus.CANCELLED)
+            return
+
         try:
             # ----------------- Phase 1: PARSING -----------------
             parsing_status = getattr(TaskStatus, "PARSING", TaskStatus.DOWNLOADING)
@@ -547,31 +599,37 @@ class TaskManager:
             destination.mkdir(parents=True, exist_ok=True)
 
             # Process items
+            download_success = True
             if req.key_type == "aweme" and len(items) == 1:
                 aweme_dict = items[0]
                 save_out = destination / "aweme"
-                downloader.awemeDownload(
+                download_success = downloader.awemeDownload(
                     awemeDict=aweme_dict,
                     savePath=save_out,
                     cancel_event=record.cancel_event,
                     progress_callback=progress_hook,
                 )
                 with record._lock:
-                    record.completed_items = 1
+                    if download_success:
+                        record.completed_items = 1
             else:
                 # User / Mix / Multiple items
-                downloader.userDownload(
+                download_success = downloader.userDownload(
                     awemeList=items,
                     savePath=destination,
                     cancel_event=record.cancel_event,
                     progress_callback=progress_hook,
                 )
                 with record._lock:
-                    record.completed_items = len(items)
+                    if download_success:
+                        record.completed_items = len(items)
 
             # Check if cancelled during download
             if record.cancel_event.is_set():
                 self._finish_task(record, TaskStatus.CANCELLED)
+            elif not download_success:
+                record.error = "Download failed for task items"
+                self._finish_task(record, TaskStatus.FAILED)
             else:
                 self._finish_task(record, TaskStatus.COMPLETED)
 
@@ -580,6 +638,8 @@ class TaskManager:
             with record._lock:
                 record.error = str(e)
             self._finish_task(record, TaskStatus.FAILED)
+        finally:
+            self._task_semaphore.release()
 
     def _resolve_download_items(
         self,
@@ -674,6 +734,9 @@ class TaskManager:
         self._broadcast_event(
             record.to_progress_event(), task_id=record.task_id, force=True
         )
+        # Prune subscriber queues to prevent memory leak
+        with self._sub_lock:
+            self._subscribers.pop(record.task_id, None)
 
     def shutdown(self, wait: bool = True) -> None:
         """Gracefully shutdown background executor."""
@@ -681,4 +744,5 @@ class TaskManager:
         with self._task_lock:
             for task in self._tasks.values():
                 task.cancel_event.set()
+                task.pause_event.set()  # Unblock paused workers
         self._executor.shutdown(wait=wait)

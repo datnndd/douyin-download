@@ -13,7 +13,9 @@ Current iteration: 1 / 32
 - [x] Dispatch Parallel Tracks: M1 Explorers (done) + E2E Testing Track Writer (done, 191 tests)
 - [x] M1 Implementation It1 (Worker: done, 43 tests passed)
 - [x] M1 Verification & Gate It1 (Gate FAIL: 4 verifiers requested changes, Auditor CLEAN)
-- [/] M1 Iteration 2: 3 Explorers active planning remediation
+- [x] M1 Iteration 2 Planning (3 Explorers completed with verified drop-in patches)
+- [x] Reached 16 spawn limit with all subagents completed -> Triggered Succession Protocol
+- [/] Successor (orchestrator_2) spawn pending
 - [ ] M2 Sub-orchestrator (FastAPI REST & Streaming APIs)
 - [ ] M3 Sub-orchestrator (Modern React 19 Frontend)
 - [ ] M4 Sub-orchestrator (Production Mount & WebUI Launcher)

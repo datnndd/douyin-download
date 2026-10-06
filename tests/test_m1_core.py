@@ -939,10 +939,15 @@ class TestPreviewsAndEndToEnd:
 
         with patch("src.douyin.download.Download.awemeDownload", return_value=True):
             resp = manager.submit_task(req, douyin_service=mock_service)
-            # Allow worker thread to execute
-            time.sleep(0.1)
-
+            # Allow worker thread to execute (polling wait because time.sleep is monkeypatched)
+            deadline = time.monotonic() + 2.0
             detail = manager.get_task(resp.task_id)
+            while time.monotonic() < deadline and detail.status not in (
+                TaskStatus.COMPLETED,
+                TaskStatus.FAILED,
+            ):
+                detail = manager.get_task(resp.task_id)
+
             assert detail.status == TaskStatus.COMPLETED
             assert detail.completed_items == 1
             assert detail.progress_pct == 100.0

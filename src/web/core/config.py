@@ -6,13 +6,14 @@ Supports dual cookie representations (dictionary vs raw semicolon string),
 structure-preserving YAML reading and writing, and hot-reloading.
 """
 
-import os
-import re
-import time
+import json
 import logging
-import threading
+import os
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+import re
+import threading
+import time
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import yaml
 
@@ -82,6 +83,179 @@ def format_cookie_dict(cookies: Optional[Dict[str, str]]) -> str:
 # ==============================================================================
 
 
+def _format_yaml_scalar(val: Any) -> str:
+    """Safely format scalar values for YAML emission with proper quoting."""
+    if isinstance(val, bool):
+        return "True" if val else "False"
+    elif isinstance(val, (int, float)):
+        return str(val)
+    elif isinstance(val, str):
+        return json.dumps(val, ensure_ascii=False)
+    return str(val)
+
+
+def replace_root_scalar(content: str, key: str, value: Any) -> str:
+    """
+    Replace a top-level scalar line matching key: value at column 0.
+    Ensures nested keys (e.g., number.music or increase.music) are never clobbered.
+    """
+    pattern = rf"^({re.escape(key)}[ \t]*:[ \t]*)([^#\n]*)(.*)$"
+    val_str = _format_yaml_scalar(value) if not isinstance(value, str) else value
+
+    def repl(match: re.Match) -> str:
+        prefix = match.group(1)
+        comment = match.group(3)
+        sep = (
+            " "
+            if (
+                comment
+                and comment.strip().startswith("#")
+                and not comment.startswith(" ")
+                and not val_str.endswith(" ")
+            )
+            else ""
+        )
+        return f"{prefix}{val_str}{sep}{comment}"
+
+    return re.sub(pattern, repl, content, flags=re.MULTILINE)
+
+
+def update_mapping_section(
+    content: str,
+    section_name: str,
+    values: Dict[str, Any],
+    default_indent: str = "  ",
+) -> str:
+    """
+    Update a nested mapping section (e.g. number:, increase:, filter:) in-place.
+    Preserves existing line comments and indentation inside the section block.
+    If the section does not exist in content, it is appended to the bottom.
+    """
+    section_pattern = (
+        rf"^(?P<header>{re.escape(section_name)}[ \t]*:[ \t]*(?:#[^\r\n]*)?\r?\n)"
+        rf"(?P<body>(?:[ \t]+[^\r\n]*\r?\n|[ \t]*\r?\n)*)"
+    )
+    match = re.search(section_pattern, content, flags=re.MULTILINE)
+
+    if match:
+        header = match.group("header")
+        body = match.group("body")
+        for key, val in values.items():
+            val_str = _format_yaml_scalar(val)
+            key_pattern = rf"^([ \t]+{re.escape(key)}[ \t]*:[ \t]*)([^#\n]*)(.*)$"
+            if re.search(key_pattern, body, flags=re.MULTILINE):
+                def repl_key(km: re.Match) -> str:
+                    prefix = km.group(1)
+                    comment = km.group(3)
+                    sep = (
+                        " "
+                        if (
+                            comment
+                            and comment.strip().startswith("#")
+                            and not comment.startswith(" ")
+                            and not val_str.endswith(" ")
+                        )
+                        else ""
+                    )
+                    return f"{prefix}{val_str}{sep}{comment}"
+
+                body = re.sub(key_pattern, repl_key, body, flags=re.MULTILINE)
+            else:
+                body = body.rstrip() + f"\n{default_indent}{key}: {val_str}\n"
+
+        start, end = match.span()
+        return content[:start] + header + body + content[end:]
+    else:
+        # Append section at the end if missing
+        lines = [f"{section_name}:"]
+        for k, v in values.items():
+            lines.append(f"{default_indent}{k}: {_format_yaml_scalar(v)}")
+        return content.rstrip() + "\n\n" + "\n".join(lines) + "\n"
+
+
+def update_sequence_section(
+    content: str,
+    section_name: str,
+    values: List[str],
+    default_indent: str = "  ",
+) -> str:
+    """
+    Update a sequence section (e.g. mode: ['post', 'like']) in-place.
+    Preserves section header and comments preceding the sequence block.
+    """
+    section_pattern = (
+        rf"^(?P<header>{re.escape(section_name)}[ \t]*:[ \t]*(?:#[^\r\n]*)?\r?\n)"
+        rf"(?P<body>(?:[ \t]+[^\r\n]*\r?\n|[ \t]*\r?\n)*)"
+    )
+    match = re.search(section_pattern, content, flags=re.MULTILINE)
+    body_lines = [f"{default_indent}- {item}" for item in values]
+    new_body = "\n".join(body_lines) + "\n" if body_lines else f"{default_indent}[]\n"
+
+    if match:
+        header = match.group("header")
+        start, end = match.span()
+        return content[:start] + header + new_body + content[end:]
+    else:
+        # Check flow sequence style: `mode: [...]`
+        flow_pattern = rf"^({re.escape(section_name)}[ \t]*:[ \t]*)\[.*\](.*)$"
+        if re.search(flow_pattern, content, flags=re.MULTILINE):
+            def repl_flow(fm: re.Match) -> str:
+                return f"{fm.group(1)}{json.dumps(values)}{fm.group(2)}"
+
+            return re.sub(flow_pattern, repl_flow, content, flags=re.MULTILINE)
+        else:
+            return content.rstrip() + f"\n\n{section_name}:\n{new_body}"
+
+
+def update_cookies_section(content: str, settings: SettingsModel) -> str:
+    """
+    Update cookies representation in YAML content.
+    Handles:
+    - Block mapping format (`cookies:`)
+    - Scalar string format (`cookie: "..."`)
+    - JSON-safe quoting preventing YAML syntax corruption on special tokens (@, *, {, [, \)
+    - Synchronization when cookies are cleared
+    """
+    cookie_str = settings.raw_cookie or format_cookie_dict(settings.cookies)
+    has_cookies_block = bool(re.search(r"^cookies:[ \t]*", content, flags=re.MULTILINE))
+    has_cookie_scalar = bool(re.search(r"^cookie:[ \t]*", content, flags=re.MULTILINE))
+
+    # 1. Update mapping block format if present
+    if has_cookies_block:
+        if settings.cookies:
+            lines = ["cookies:"]
+            for k, v in settings.cookies.items():
+                quoted_v = json.dumps(str(v), ensure_ascii=False)
+                lines.append(f"  {k}: {quoted_v}")
+            new_block = "\n".join(lines)
+        else:
+            new_block = "cookies: {}"
+
+        cookies_pattern = r"^cookies:[ \t]*(?:\r?\n[ \t]+[^\r\n]+)*"
+        content = re.sub(
+            cookies_pattern, lambda m: new_block, content, flags=re.MULTILINE
+        )
+
+    # 2. Update scalar string format if present
+    if has_cookie_scalar:
+        escaped_cookie = json.dumps(cookie_str, ensure_ascii=False)
+        content = replace_root_scalar(content, "cookie", escaped_cookie)
+
+    # 3. If neither format exists in document, append whichever is defined
+    if not has_cookies_block and not has_cookie_scalar:
+        if settings.cookies:
+            lines = ["cookies:"]
+            for k, v in settings.cookies.items():
+                quoted_v = json.dumps(str(v), ensure_ascii=False)
+                lines.append(f"  {k}: {quoted_v}")
+            content = content.rstrip() + "\n\n" + "\n".join(lines) + "\n"
+        elif settings.raw_cookie:
+            escaped_cookie = json.dumps(settings.raw_cookie, ensure_ascii=False)
+            content = content.rstrip() + f"\n\ncookie: {escaped_cookie}\n"
+
+    return content
+
+
 def _update_yaml_in_place_regex(original_text: str, settings: SettingsModel) -> str:
     """
     In-place line replacement that preserves 100% of existing comments and spacing
@@ -89,73 +263,45 @@ def _update_yaml_in_place_regex(original_text: str, settings: SettingsModel) -> 
     """
     text = original_text
 
-    # Helper for simple key: value scalars
-    def replace_scalar(content: str, key: str, value: Any) -> str:
-        pattern = rf"^([ \t]*{re.escape(key)}[ \t]*:[ \t]*)([^#\n]*)(.*)$"
-        val_str = str(value)
-        if isinstance(value, bool):
-            val_str = "True" if value else "False"
-
-        def repl(match: re.Match) -> str:
-            prefix = match.group(1)
-            comment = match.group(3)
-            sep = (
-                " "
-                if (
-                    comment
-                    and comment.strip().startswith("#")
-                    and not comment.startswith(" ")
-                    and not val_str.endswith(" ")
-                )
-                else ""
-            )
-            return f"{prefix}{val_str}{sep}{comment}"
-
-        return re.sub(pattern, repl, content, flags=re.MULTILINE)
-
-    # 1. Update basic scalars
-    text = replace_scalar(text, "path", settings.path)
-    text = replace_scalar(text, "music", settings.music)
-    text = replace_scalar(text, "cover", settings.cover)
-    text = replace_scalar(text, "avatar", settings.avatar)
-    text = replace_scalar(text, "json", settings.json)
-    text = replace_scalar(text, "folderstyle", settings.folderstyle)
-    text = replace_scalar(text, "thread", settings.thread)
-    text = replace_scalar(text, "database", settings.database)
-    text = replace_scalar(
-        text, "start_time", f'"{settings.start_time}"' if settings.start_time else '""'
+    # 1. Update root-level scalars (strictly zero indentation)
+    text = replace_root_scalar(text, "path", settings.path)
+    text = replace_root_scalar(text, "music", settings.music)
+    text = replace_root_scalar(text, "cover", settings.cover)
+    text = replace_root_scalar(text, "avatar", settings.avatar)
+    text = replace_root_scalar(text, "json", settings.json)
+    text = replace_root_scalar(text, "folderstyle", settings.folderstyle)
+    text = replace_root_scalar(text, "thread", settings.thread)
+    text = replace_root_scalar(text, "database", settings.database)
+    text = replace_root_scalar(
+        text, "start_time", json.dumps(settings.start_time or "")
     )
-    text = replace_scalar(
-        text, "end_time", f'"{settings.end_time}"' if settings.end_time else '""'
+    text = replace_root_scalar(
+        text, "end_time", json.dumps(settings.end_time or "")
     )
 
-    # 2. Update filter sub-keys
+    # 2. Update mode sequence
+    if settings.mode is not None:
+        text = update_sequence_section(text, "mode", settings.mode)
+
+    # 3. Update number dictionary
+    if settings.number:
+        text = update_mapping_section(text, "number", settings.number)
+
+    # 4. Update increase dictionary
+    if settings.increase:
+        text = update_mapping_section(text, "increase", settings.increase)
+
+    # 5. Update filter sub-keys
     if settings.filter:
-        text = replace_scalar(text, "sort_by", f'"{settings.filter.sort_by}"')
-        text = replace_scalar(text, "reverse", settings.filter.reverse)
-        text = replace_scalar(text, "limit", settings.filter.limit)
+        filter_dict = {
+            "sort_by": settings.filter.sort_by,
+            "reverse": settings.filter.reverse,
+            "limit": settings.filter.limit,
+        }
+        text = update_mapping_section(text, "filter", filter_dict)
 
-    # 3. Update cookies section
-    if settings.cookies:
-        cookie_lines = ["cookies:"]
-        for k, v in settings.cookies.items():
-            clean_v = str(v).replace('"', '\\"')
-            if ":" in clean_v or "#" in clean_v or "%" in clean_v:
-                cookie_lines.append(f'  {k}: "{clean_v}"')
-            else:
-                cookie_lines.append(f"  {k}: {clean_v}")
-        new_cookies_block = "\n".join(cookie_lines)
-
-        cookies_pattern = r"^cookies:[ \t]*(?:\r?\n[ \t]+[^\r\n]+)*"
-        if re.search(cookies_pattern, text, flags=re.MULTILINE):
-            text = re.sub(
-                cookies_pattern, lambda m: new_cookies_block, text, flags=re.MULTILINE
-            )
-
-    # If raw_cookie is explicitly set and cookies dict is empty, update cookie: string
-    elif settings.raw_cookie:
-        escaped_cookie = settings.raw_cookie.replace('"', '\\"')
-        text = replace_scalar(text, "cookie", f'"{escaped_cookie}"')
+    # 6. Update cookies section
+    text = update_cookies_section(text, settings)
 
     return text
 
@@ -277,8 +423,13 @@ def save_config_file(
         data["database"] = settings.database
         data["start_time"] = settings.start_time
         data["end_time"] = settings.end_time
+        data["mode"] = list(settings.mode)
+        data["number"] = dict(settings.number)
+        data["increase"] = dict(settings.increase)
 
-        if settings.cookies:
+        if "cookie" in data and not settings.cookies and settings.raw_cookie:
+            data["cookie"] = settings.raw_cookie
+        elif settings.cookies:
             data["cookies"] = dict(settings.cookies)
         elif settings.raw_cookie:
             data["cookie"] = settings.raw_cookie
@@ -327,9 +478,16 @@ def save_config_file(
             "database": settings.database,
             "start_time": settings.start_time,
             "end_time": settings.end_time,
+            "mode": settings.mode,
+            "number": settings.number,
+            "increase": settings.increase,
             "cookies": settings.cookies,
             "filter": settings.filter.model_dump(),
         }
+        if settings.raw_cookie and not settings.cookies:
+            dump_dict["cookie"] = settings.raw_cookie
+            del dump_dict["cookies"]
+
         with open(path, "w", encoding="utf-8") as f:
             yaml.safe_dump(dump_dict, f, default_flow_style=False, allow_unicode=True)
         return True
@@ -423,14 +581,16 @@ class ConfigManager:
     def apply_to_douyin_headers(self) -> None:
         """Hot-reload cookies into global douyin_headers dict if available."""
         cookie_str = self.get_cookie_header()
-        if not cookie_str:
-            return
 
         try:
             from src.douyin import douyin_headers
 
-            douyin_headers["Cookie"] = cookie_str
-            logger.debug("Successfully hot-reloaded douyin_headers['Cookie'].")
+            if cookie_str:
+                douyin_headers["Cookie"] = cookie_str
+                logger.debug("Successfully hot-reloaded douyin_headers['Cookie'].")
+            else:
+                douyin_headers.pop("Cookie", None)
+                logger.debug("Successfully cleared douyin_headers['Cookie'].")
         except (ImportError, AttributeError, Exception) as e:
             logger.debug(f"Could not update src.douyin.douyin_headers: {e}")
 

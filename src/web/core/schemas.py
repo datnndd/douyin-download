@@ -159,9 +159,20 @@ class AuthorPreview(BaseModel):
     @classmethod
     def extract_avatar_url(cls, v: Any) -> str:
         if isinstance(v, dict):
-            url_list = v.get("url_list", [])
-            return url_list[0] if url_list else ""
-        return str(v or "")
+            url_list = v.get("url_list")
+            if isinstance(url_list, list):
+                for u in url_list:
+                    if u and isinstance(u, str) and u.strip():
+                        return u.strip()
+            return ""
+        if isinstance(v, list):
+            for u in v:
+                if u and isinstance(u, str) and u.strip():
+                    return u.strip()
+            return ""
+        if v is None:
+            return ""
+        return str(v)
 
     @field_validator("follower_count", "total_favorited", mode="before")
     @classmethod
@@ -201,9 +212,20 @@ class PreviewMetadata(BaseModel):
     @classmethod
     def extract_cover_url(cls, v: Any) -> str:
         if isinstance(v, dict):
-            url_list = v.get("url_list", [])
-            return url_list[0] if url_list else ""
-        return str(v or "")
+            url_list = v.get("url_list")
+            if isinstance(url_list, list):
+                for u in url_list:
+                    if u and isinstance(u, str) and u.strip():
+                        return u.strip()
+            return ""
+        if isinstance(v, list):
+            for u in v:
+                if u and isinstance(u, str) and u.strip():
+                    return u.strip()
+            return ""
+        if v is None:
+            return ""
+        return str(v)
 
 
 # ==============================================================================

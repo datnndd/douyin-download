@@ -58,6 +58,14 @@ class DouyinApi(object):
         # Apply cookie from config to session headers
         if cookie:
             self.session.headers.update({'Cookie': cookie})
+            orig_prepare_request = self.session.prepare_request
+
+            def _custom_prepare_request(request):
+                prep = orig_prepare_request(request)
+                prep.headers['Cookie'] = cookie
+                return prep
+
+            self.session.prepare_request = _custom_prepare_request
 
     # Extract URL from share link
     def getShareLink(self, string):
@@ -369,7 +377,9 @@ class DouyinApi(object):
 
         self.result.liveDict["display_long"] = live_json['data']['data'][0]['room_view_stats']['display_long']
 
-        self.result.liveDict["flv_pull_url"] = live_json['data']['data'][0]['stream_url']['flv_pull_url']["FULL_HD1"]
+        stream_url_obj = live_json['data']['data'][0].get('stream_url') or {}
+        flv_pull = stream_url_obj.get('flv_pull_url') or {}
+        self.result.liveDict["flv_pull_url"] = flv_pull.get("FULL_HD1", "")
 
         try:
             self.result.liveDict["partition"] = live_json['data']['partition_road_map']['partition']['title']

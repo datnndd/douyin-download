@@ -157,6 +157,15 @@ class MockHttpResponse:
         if self.status_code >= 400:
             raise requests.HTTPError(f"HTTP {self.status_code}", response=self)
 
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
 
 def mock_network_dispatch(url: str, *args, **kwargs) -> MockHttpResponse:
     """Deterministic offline dispatcher for all outgoing HTTP requests."""
@@ -204,7 +213,12 @@ def mock_network_dispatch(url: str, *args, **kwargs) -> MockHttpResponse:
                             "avatar_thumb": {"url_list": ["https://mock-cdn.douyin.com/avatar.jpg"]}
                         },
                         "user_count_str": "1000",
-                        "room_view_stats": {"display_long": "1000"}
+                        "room_view_stats": {"display_long": "1000"},
+                        "stream_url": {
+                            "flv_pull_url": {
+                                "FULL_HD1": "https://mock-cdn.douyin.com/live.flv"
+                            }
+                        }
                     }
                 ]
             }
