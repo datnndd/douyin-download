@@ -6,3 +6,7 @@ data.db
 config.yaml
 Downloaded/
 .idea/
+
+# Harness core maintenance binary
+scripts/bin/harness
+scripts/bin/harness.exe

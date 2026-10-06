@@ -7,7 +7,7 @@ import time
 import requests
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Callable, Dict
 from pathlib import Path
 import logging
 import random
@@ -24,13 +24,25 @@ logger = logging.getLogger(__name__)
 
 
 class Download(object):
-    def __init__(self, thread=5, music=True, cover=True, avatar=True, resjson=True, folderstyle=True):
+    def __init__(
+        self,
+        thread=5,
+        music=True,
+        cover=True,
+        avatar=True,
+        resjson=True,
+        folderstyle=True,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        cancel_event: Optional[threading.Event] = None,
+    ):
         self.thread = thread
         self.music = music
         self.cover = cover
         self.avatar = avatar
         self.resjson = resjson
         self.folderstyle = folderstyle
+        self.progress_callback = progress_callback
+        self.cancel_event = cancel_event
         self.retry_times = 5
         self.chunk_size = 8192
         self.timeout = 60
@@ -45,21 +57,54 @@ class Download(object):
                 total=2,
                 backoff_factor=0.2,
                 status_forcelist=[500, 502, 503, 504],
-                allowed_methods=["HEAD", "GET", "OPTIONS"]
+                allowed_methods=["HEAD", "GET", "OPTIONS"],
             )
-            adapter = HTTPAdapter(max_retries=retries, pool_connections=100, pool_maxsize=100)
+            adapter = HTTPAdapter(
+                max_retries=retries, pool_connections=100, pool_maxsize=100
+            )
             s.mount("http://", adapter)
             s.mount("https://", adapter)
             self._tls.session = s
         return s
 
-    def _download_media(self, url: str, path: Path, desc: str) -> bool:
+    def _download_media(
+        self,
+        url: str,
+        path: Path,
+        desc: str,
+        cancel_event: Optional[threading.Event] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        worker_id: int = 1,
+    ) -> bool:
         """Download for all kind of media"""
+        eff_cancel = cancel_event or self.cancel_event
+        if eff_cancel and eff_cancel.is_set():
+            return False
         if path.exists():
             logger.info(f"File Exited: {desc}")
+            eff_cb = progress_callback or self.progress_callback
+            if eff_cb:
+                eff_cb(
+                    {
+                        "event": "file_complete",
+                        "worker_id": worker_id,
+                        "filepath": str(path),
+                        "filename": path.name,
+                        "downloaded_bytes": path.stat().st_size,
+                        "total_bytes": path.stat().st_size,
+                        "desc": desc,
+                    }
+                )
             return True
 
-        return self.download_with_resume(url, path, desc)
+        return self.download_with_resume(
+            url,
+            path,
+            desc,
+            cancel_event=cancel_event,
+            progress_callback=progress_callback,
+            worker_id=worker_id,
+        )
 
     def _get_first_url(self, url_list: list) -> Any | None:
         """Get the first URL"""
@@ -69,28 +114,48 @@ class Download(object):
 
     def _download_single_media(self, media_info: dict) -> bool:
         try:
-            url = media_info['url']
-            path = media_info['path']
-            desc = media_info['desc']
-            return self._download_media(url, path, desc)
+            url = media_info["url"]
+            path = media_info["path"]
+            desc = media_info["desc"]
+            worker_id = media_info.get("worker_id", 1)
+            cancel_event = media_info.get("cancel_event") or self.cancel_event
+            progress_callback = (
+                media_info.get("progress_callback") or self.progress_callback
+            )
+            return self._download_media(
+                url,
+                path,
+                desc,
+                cancel_event=cancel_event,
+                progress_callback=progress_callback,
+                worker_id=worker_id,
+            )
         except Exception as e:
-            logger.error(f"Download media failed: {media_info.get('desc', 'Unknown')}, Error: {str(e)}")
+            logger.error(
+                f"Download media failed: {media_info.get('desc', 'Unknown')}, Error: {str(e)}"
+            )
             return False
 
-    def _prepare_media_tasks(self, aweme: dict, path: Path, name: str, desc: str) -> List[dict]:
+    def _prepare_media_tasks(
+        self, aweme: dict, path: Path, name: str, desc: str
+    ) -> List[dict]:
         tasks = []
 
         try:
             if aweme["awemeType"] == 0:  # Video
                 video_path = path / f"{name}_video.mp4"
-                url_list = aweme.get("video", {}).get("play_addr", {}).get("url_list", [])
+                url_list = (
+                    aweme.get("video", {}).get("play_addr", {}).get("url_list", [])
+                )
                 if url := self._get_first_url(url_list):
-                    tasks.append({
-                        'url': url,
-                        'path': video_path,
-                        'desc': f"[Video]{desc}",
-                        'type': 'video'
-                    })
+                    tasks.append(
+                        {
+                            "url": url,
+                            "path": video_path,
+                            "desc": f"[Video]{desc}",
+                            "type": "video",
+                        }
+                    )
                 else:
                     logger.warning(f"Empty Video URL : {desc}")
 
@@ -99,71 +164,104 @@ class Download(object):
                     url_list = image.get("url_list", [])
                     if url := self._get_first_url(url_list):
                         image_path = path / f"{name}_image_{i}.jpeg"
-                        tasks.append({
-                            'url': url,
-                            'path': image_path,
-                            'desc': f"[Image {i + 1}]{desc}",
-                            'type': 'image'
-                        })
+                        tasks.append(
+                            {
+                                "url": url,
+                                "path": image_path,
+                                "desc": f"[Image {i + 1}]{desc}",
+                                "type": "image",
+                            }
+                        )
                     else:
                         logger.warning(f"Images {i + 1} URL empty: {desc}")
 
             if self.music:
-                url_list = aweme.get("music", {}).get("play_url", {}).get("url_list", [])
+                url_list = (
+                    aweme.get("music", {}).get("play_url", {}).get("url_list", [])
+                )
                 if url := self._get_first_url(url_list):
                     music_name = utils.replaceStr(aweme["music"]["title"])
                     music_path = path / f"{name}_music_{music_name}.mp3"
-                    tasks.append({
-                        'url': url,
-                        'path': music_path,
-                        'desc': f"[Nhạc]{desc}",
-                        'type': 'music'
-                    })
+                    tasks.append(
+                        {
+                            "url": url,
+                            "path": music_path,
+                            "desc": f"[Nhạc]{desc}",
+                            "type": "music",
+                        }
+                    )
 
             if self.cover and aweme["awemeType"] == 0:
                 url_list = aweme.get("video", {}).get("cover", {}).get("url_list", [])
                 if url := self._get_first_url(url_list):
                     cover_path = path / f"{name}_cover.jpeg"
-                    tasks.append({
-                        'url': url,
-                        'path': cover_path,
-                        'desc': f"[Cover]{desc}",
-                        'type': 'cover'
-                    })
+                    tasks.append(
+                        {
+                            "url": url,
+                            "path": cover_path,
+                            "desc": f"[Cover]{desc}",
+                            "type": "cover",
+                        }
+                    )
 
             if self.avatar:
                 url_list = aweme.get("author", {}).get("avatar", {}).get("url_list", [])
                 if url := self._get_first_url(url_list):
                     avatar_path = path / f"{name}_avatar.jpeg"
-                    tasks.append({
-                        'url': url,
-                        'path': avatar_path,
-                        'desc': f"[Avatar]{desc}",
-                        'type': 'avatar'
-                    })
+                    tasks.append(
+                        {
+                            "url": url,
+                            "path": avatar_path,
+                            "desc": f"[Avatar]{desc}",
+                            "type": "avatar",
+                        }
+                    )
 
         except Exception as e:
             logger.error(f"Prepare task download : {str(e)}")
 
         return tasks
 
-    def _download_media_files_threaded(self, aweme: dict, path: Path, name: str, desc: str) -> bool:
+    def _download_media_files_threaded(
+        self,
+        aweme: dict,
+        path: Path,
+        name: str,
+        desc: str,
+        cancel_event: Optional[threading.Event] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ) -> bool:
         tasks = self._prepare_media_tasks(aweme, path, name, desc)
+        eff_cancel = cancel_event or self.cancel_event
+        if eff_cancel and eff_cancel.is_set():
+            return False
 
         if not tasks:
             logger.warning(f"No media file for download: {desc}")
             return True
+
+        for i, task in enumerate(tasks):
+            task["worker_id"] = (i % self.thread) + 1
+            task["cancel_event"] = eff_cancel
+            task["progress_callback"] = progress_callback or self.progress_callback
 
         success_count = 0
         failed_tasks = []
 
         with ThreadPoolExecutor(max_workers=self.thread) as executor:
             # Submit all of tasks
-            future_to_task = {executor.submit(self._download_single_media, task): task for task in tasks}
+            future_to_task = {
+                executor.submit(self._download_single_media, task): task
+                for task in tasks
+            }
 
             # Processing with progress bar
-            with tqdm(total=len(tasks), desc=f"Downloading media for {desc[:20]}...") as pbar:
+            with tqdm(
+                total=len(tasks), desc=f"Downloading media for {desc[:20]}..."
+            ) as pbar:
                 for future in as_completed(future_to_task):
+                    if eff_cancel and eff_cancel.is_set():
+                        break
                     task = future_to_task[future]
                     try:
                         success = future.result()
@@ -172,7 +270,9 @@ class Download(object):
                         else:
                             failed_tasks.append(task)
                     except Exception as e:
-                        logger.error(f"Task download exception: {task['desc']}, lỗi: {str(e)}")
+                        logger.error(
+                            f"Task download exception: {task['desc']}, lỗi: {str(e)}"
+                        )
                         failed_tasks.append(task)
                     finally:
                         pbar.update(1)
@@ -239,7 +339,7 @@ class Download(object):
             # Extract old base name
             if self.folderstyle:
                 if old_name == file_name:
-                    return # Already correct
+                    return  # Already correct
                 old_base_name = old_name
             else:
                 # old_name is like "0000100likes_..._video.mp4"
@@ -248,7 +348,9 @@ class Download(object):
                 if old_base_name == file_name:
                     return
 
-            logger.info(f"🔄 Found existing content with different name. Renaming: {old_base_name} -> {file_name}")
+            logger.info(
+                f"🔄 Found existing content with different name. Renaming: {old_base_name} -> {file_name}"
+            )
 
             if self.folderstyle:
                 # Rename directory
@@ -257,21 +359,30 @@ class Download(object):
                     try:
                         old_path.rename(new_path)
                     except OSError as e:
-                         logger.warning(f"Rename failed: {e}")
+                        logger.warning(f"Rename failed: {e}")
             else:
                 # Rename all files starting with old_base_name
                 for f in save_path.glob(f"{old_base_name}*"):
-                     new_name = f.name.replace(old_base_name, file_name)
-                     try:
-                         f.rename(save_path / new_name)
-                     except OSError:
-                         pass
+                    new_name = f.name.replace(old_base_name, file_name)
+                    try:
+                        f.rename(save_path / new_name)
+                    except OSError:
+                        pass
 
         except Exception as e:
             logger.warning(f"Error checking/renaming existing file: {e}")
 
-    def awemeDownload(self, awemeDict: dict, savePath: Path) -> bool:
+    def awemeDownload(
+        self,
+        awemeDict: dict,
+        savePath: Path,
+        cancel_event: Optional[threading.Event] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ) -> bool:
         """Download detail of video with multithread"""
+        eff_cancel = cancel_event or self.cancel_event
+        if eff_cancel and eff_cancel.is_set():
+            return False
         if not awemeDict:
             logger.warning("Video data not suitable")
             return False
@@ -282,12 +393,14 @@ class Download(object):
             save_path.mkdir(parents=True, exist_ok=True)
 
             # Get digg_count for filename with zero-padding for proper sorting
-            digg_count = awemeDict.get('statistics', {}).get('digg_count', 0)
+            digg_count = awemeDict.get("statistics", {}).get("digg_count", 0)
             digg_count_str = f"{digg_count:09d}"  # 9-digit zero-padding for sorting
 
             # Tạo tên file từ thời gian, digg_count và mô tả
             # Identify suffix for stable identification: time + desc
-            suffix_id = f"{awemeDict['create_time']}_{utils.replaceStr(awemeDict['desc'])}"
+            suffix_id = (
+                f"{awemeDict['create_time']}_{utils.replaceStr(awemeDict['desc'])}"
+            )
             file_name = f"{digg_count_str}likes_{suffix_id}"
 
             # Check and rename if exists
@@ -302,7 +415,14 @@ class Download(object):
 
             # Download các file media sử dụng threading
             desc = file_name[:30]
-            success = self._download_media_files_threaded(awemeDict, aweme_path, file_name, desc)
+            success = self._download_media_files_threaded(
+                awemeDict,
+                aweme_path,
+                file_name,
+                desc,
+                cancel_event=eff_cancel,
+                progress_callback=progress_callback or self.progress_callback,
+            )
 
             if success:
                 logger.info(f"✅ Download success: {desc}")
@@ -318,14 +438,21 @@ class Download(object):
     def _save_json(self, path: Path, data: dict) -> None:
         """Save JSON"""
         try:
-            with open(path, "w", encoding='utf-8') as f:
+            with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             logger.debug(f"Save JSON: {path}")
         except Exception as e:
             logger.error(f"Save JSON failed: {path}, Error: {str(e)}")
 
-    def userDownload(self, awemeList: List[dict], savePath: Path):
+    def userDownload(
+        self,
+        awemeList: List[dict],
+        savePath: Path,
+        cancel_event: Optional[threading.Event] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ):
         """Download all aweme of user with threading"""
+        eff_cancel = cancel_event or self.cancel_event
         if not awemeList:
             logger.warning("⚠️ Can't find aweme for downloading")
             return
@@ -343,20 +470,27 @@ class Download(object):
 
         with ThreadPoolExecutor(max_workers=min(self.thread, total_count)) as executor:
             future_to_aweme = {
-                executor.submit(self.awemeDownload, aweme, save_path): aweme
+                executor.submit(
+                    self.awemeDownload, aweme, save_path, eff_cancel, progress_callback
+                ): aweme
                 for aweme in awemeList
             }
 
             with tqdm(total=total_count, desc="Processing videos") as pbar:
                 for future in as_completed(future_to_aweme):
+                    if eff_cancel and eff_cancel.is_set():
+                        logger.info("userDownload cancelled, breaking future loop")
+                        break
                     aweme = future_to_aweme[future]
                     try:
                         success = future.result()
                         if success:
                             success_count += 1
                     except Exception as e:
-                        aweme_id = aweme.get('aweme_id', 'Unknown')
-                        logger.error(f"❌ Download failed, aweme_id {aweme_id}: {str(e)}")
+                        aweme_id = aweme.get("aweme_id", "Unknown")
+                        logger.error(
+                            f"❌ Download failed, aweme_id {aweme_id}: {str(e)}"
+                        )
                     finally:
                         pbar.update(1)
 
@@ -374,64 +508,156 @@ class Download(object):
         if success_count < total_count:
             logger.warning(f"{total_count - success_count} video download failed")
 
-    def download_with_resume(self, url: str, filepath: Path, desc: str) -> bool:
+    def download_with_resume(
+        self,
+        url: str,
+        filepath: Path,
+        desc: str,
+        cancel_event: Optional[threading.Event] = None,
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+        worker_id: int = 1,
+    ) -> bool:
         """Download with support resume (continue download when interrupted)"""
+        eff_cancel = cancel_event or self.cancel_event
+        eff_callback = progress_callback or self.progress_callback
         file_size = filepath.stat().st_size if filepath.exists() else 0
-        headers = {'Range': f'bytes={file_size}-'} if file_size > 0 else {}
+        headers = {"Range": f"bytes={file_size}-"} if file_size > 0 else {}
 
         for attempt in range(self.retry_times):
+            if eff_cancel and eff_cancel.is_set():
+                logger.info(f"Download cancelled before attempt: {desc}")
+                return False
             try:
                 # Create fresh session on retry to avoid stale connections
                 if attempt > 0:
                     self._tls.session = None
 
                 session = self._get_session()
-                response = session.get(url, headers={**douyin_headers, **headers},
-                                        stream=True, timeout=self.timeout)
+                response = session.get(
+                    url,
+                    headers={**douyin_headers, **headers},
+                    stream=True,
+                    timeout=self.timeout,
+                )
 
                 if response.status_code not in (200, 206):
                     raise Exception(f"HTTP {response.status_code}")
 
-                total_size = int(response.headers.get('content-length', 0))
+                total_size = int(response.headers.get("content-length", 0))
                 # If server returns 200 (full content), content-length is total file size
                 # If server returns 206 (partial), content-length is remaining bytes
                 if response.status_code == 206:
                     total_size += file_size
-                mode = 'ab' if file_size > 0 and response.status_code == 206 else 'wb'
+                mode = "ab" if file_size > 0 and response.status_code == 206 else "wb"
 
                 logger.debug(f"⬇️ Downloading {desc}...")
 
+                if eff_callback:
+                    eff_callback(
+                        {
+                            "event": "file_start",
+                            "worker_id": worker_id,
+                            "filepath": str(filepath),
+                            "filename": filepath.name,
+                            "chunk_bytes": 0,
+                            "downloaded_bytes": file_size,
+                            "total_bytes": total_size,
+                            "desc": desc,
+                        }
+                    )
+
+                last_emit_time = time.monotonic()
+                downloaded_so_far = file_size
                 with open(filepath, mode) as f:
-                    with tqdm(total=total_size, initial=file_size, unit='B',
-                              unit_scale=True, desc=desc[:20], leave=False) as pbar:
+                    with tqdm(
+                        total=total_size,
+                        initial=file_size,
+                        unit="B",
+                        unit_scale=True,
+                        desc=desc[:20],
+                        leave=False,
+                    ) as pbar:
                         try:
-                            for chunk in response.iter_content(chunk_size=self.chunk_size):
+                            for chunk in response.iter_content(
+                                chunk_size=self.chunk_size
+                            ):
+                                if eff_cancel and eff_cancel.is_set():
+                                    logger.info(
+                                        f"Download cancelled during stream: {desc}"
+                                    )
+                                    return False
                                 if chunk:
                                     size = f.write(chunk)
                                     pbar.update(size)
-                        except (requests.exceptions.ConnectionError,
-                                requests.exceptions.ChunkedEncodingError,
-                                Exception) as chunk_error:
-                            current_size = filepath.stat().st_size if filepath.exists() else 0
-                            logger.warning(f"Interrupted when download: {current_size} bytes: {str(chunk_error)}")
+                                    downloaded_so_far += size
+                                    if eff_callback:
+                                        now = time.monotonic()
+                                        if (
+                                            now - last_emit_time >= 0.25
+                                        ):  # ~250ms throttle
+                                            eff_callback(
+                                                {
+                                                    "event": "chunk",
+                                                    "worker_id": worker_id,
+                                                    "filepath": str(filepath),
+                                                    "filename": filepath.name,
+                                                    "chunk_bytes": size,
+                                                    "downloaded_bytes": downloaded_so_far,
+                                                    "total_bytes": total_size,
+                                                    "desc": desc,
+                                                }
+                                            )
+                                            last_emit_time = now
+                        except (
+                            requests.exceptions.ConnectionError,
+                            requests.exceptions.ChunkedEncodingError,
+                            Exception,
+                        ) as chunk_error:
+                            current_size = (
+                                filepath.stat().st_size if filepath.exists() else 0
+                            )
+                            logger.warning(
+                                f"Interrupted when download: {current_size} bytes: {str(chunk_error)}"
+                            )
                             raise chunk_error
+
+                if eff_callback:
+                    eff_callback(
+                        {
+                            "event": "file_complete",
+                            "worker_id": worker_id,
+                            "filepath": str(filepath),
+                            "filename": filepath.name,
+                            "chunk_bytes": 0,
+                            "downloaded_bytes": downloaded_so_far,
+                            "total_bytes": total_size,
+                            "desc": desc,
+                        }
+                    )
 
                 logger.debug(f"✅ Success: {desc}")
                 return True
 
             except Exception as e:
                 wait_time = min(2 ** (attempt + 1), 10) + random.uniform(0, 1)
-                logger.warning(f"Download Failed ({attempt + 1}/{self.retry_times}): {str(e)}")
+                logger.warning(
+                    f"Download Failed ({attempt + 1}/{self.retry_times}): {str(e)}"
+                )
 
                 if attempt == self.retry_times - 1:
                     logger.error(f"❌ Download Failed: {desc}\n   {str(e)}")
                     return False
                 else:
                     logger.info(f"Wait {wait_time:.1f}s to try again...")
-                    time.sleep(wait_time)
+                    if eff_cancel:
+                        if eff_cancel.wait(wait_time):
+                            logger.info(f"Download cancelled during retry wait: {desc}")
+                            return False
+                    else:
+                        time.sleep(wait_time)
                     # Re-check file size for resume on retry
                     file_size = filepath.stat().st_size if filepath.exists() else 0
-                    headers = {'Range': f'bytes={file_size}-'} if file_size > 0 else {}
+                    headers = {"Range": f"bytes={file_size}-"} if file_size > 0 else {}
 
         return False
 
