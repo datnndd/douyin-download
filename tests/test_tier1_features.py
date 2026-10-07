@@ -67,9 +67,53 @@ class TestFeature1AwemeResolution:
         assert key_type == "aweme"
         assert key == "7488893440932039970"
 
+    def test_complex_share_kouling_text_extraction(self):
+        """Extracts link from mobile Kouling text with hashtags, timestamps, and trailing text."""
+        api = DouyinApi()
+        from src.web.services.douyin_service import DouyinService
+        share_text = (
+            "0.23 C@u.sr :0pm 01/04 TLJ:/ 赶海现抓现吃 根本吃不完# 赶海 # 2024新农人计划  "
+            "https://v.douyin.com/meBXuCMU5l0/ 复制此链接，打开Dou音搜索，直接观看视频！"
+        )
+        url = api.getShareLink(share_text)
+        assert url == "https://v.douyin.com/meBXuCMU5l0/"
+
+        service_url = DouyinService.extract_share_url(share_text)
+        assert service_url == "https://v.douyin.com/meBXuCMU5l0/"
+
+    def test_share_text_variations_and_punctuation(self):
+        """Extracts link without space, with Chinese punctuation, or schemeless."""
+        from src.web.services.douyin_service import DouyinService
+        api = DouyinApi()
+
+        t1 = "赶海现抓现吃#赶海 https://v.douyin.com/meBXuCMU5l0/复制此链接"
+        assert api.getShareLink(t1) == "https://v.douyin.com/meBXuCMU5l0/"
+        assert DouyinService.extract_share_url(t1) == "https://v.douyin.com/meBXuCMU5l0/"
+
+        t2 = "%赶海% https://v.douyin.com/meBXuCMU5l0/，复制此链接"
+        assert api.getShareLink(t2) == "https://v.douyin.com/meBXuCMU5l0/"
+        assert DouyinService.extract_share_url(t2) == "https://v.douyin.com/meBXuCMU5l0/"
+
+        t3 = "【抖音】赶海现抓现吃 v.douyin.com/meBXuCMU5l0/ 复制此链接"
+        assert api.getShareLink(t3) == "https://v.douyin.com/meBXuCMU5l0/"
+        assert DouyinService.extract_share_url(t3) == "https://v.douyin.com/meBXuCMU5l0/"
+
     def test_aweme_api_endpoint_parse(self, api_client):
         """Web API /api/parse resolves aweme link per Interface Contract."""
         resp = api_client.post("/api/parse", json={"url": "https://v.douyin.com/iWhQezyaUco/"})
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data.get("success") is True
+        assert data.get("key_type") == "aweme"
+        assert data.get("key") == "7488893440932039970"
+
+    def test_aweme_api_endpoint_parse_complex_share_text(self, api_client):
+        """Web API /api/parse resolves complex clipboard share text with Kouling."""
+        share_text = (
+            "0.23 C@u.sr :0pm 01/04 TLJ:/ 赶海现抓现吃 根本吃不完# 赶海 # 2024新农人计划  "
+            "https://v.douyin.com/iWhQezyaUco/ 复制此链接，打开Dou音搜索，直接观看视频！"
+        )
+        resp = api_client.post("/api/parse", json={"url": share_text})
         assert resp.status_code == 200
         data = resp.json()
         assert data.get("success") is True

@@ -200,15 +200,17 @@ class TestTier4RealWorldScenarios:
         settings_get = api_client.get("/api/settings")
         assert settings_get.status_code == 200
 
-        settings_post = api_client.post("/api/settings", json={
-            "path": str(temp_download_dir),
-            "thread": 4,
-            "music": True,
-            "cover": True,
-            "folderstyle": True,
-            "raw_cookie": "sessionid=lifecycle_token_xyz;"
-        })
-        assert settings_post.status_code == 200
+        from unittest.mock import patch
+        with patch("src.web.core.config.save_config_file", return_value=True):
+            settings_post = api_client.post("/api/settings", json={
+                "path": str(temp_download_dir),
+                "thread": 4,
+                "music": True,
+                "cover": True,
+                "folderstyle": True,
+                "raw_cookie": "sessionid=lifecycle_token_xyz;"
+            })
+            assert settings_post.status_code == 200
 
         # 3. Create download task
         download_req = api_client.post("/api/download", json={

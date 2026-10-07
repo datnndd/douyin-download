@@ -231,6 +231,7 @@ class Download(object):
         cancel_event: Optional[threading.Event] = None,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
         worker_offset: int = 0,
+        is_batch: bool = False,
     ) -> bool:
         tasks = self._prepare_media_tasks(aweme, path, name, desc)
         eff_cancel = cancel_event or self.cancel_event
@@ -249,34 +250,52 @@ class Download(object):
         success_count = 0
         failed_tasks = []
 
-        with ThreadPoolExecutor(max_workers=self.thread) as executor:
-            # Submit all of tasks
-            future_to_task = {
-                executor.submit(self._download_single_media, task): task
-                for task in tasks
-            }
-
-            # Processing with progress bar
-            with tqdm(
-                total=len(tasks), desc=f"Downloading media for {desc[:20]}..."
-            ) as pbar:
-                for future in as_completed(future_to_task):
-                    if eff_cancel and eff_cancel.is_set():
-                        break
-                    task = future_to_task[future]
-                    try:
-                        success = future.result()
-                        if success:
-                            success_count += 1
-                        else:
-                            failed_tasks.append(task)
-                    except Exception as e:
-                        logger.error(
-                            f"Task download exception: {task['desc']}, lỗi: {str(e)}"
-                        )
+        if is_batch or self.thread <= 1:
+            # In batch mode (userDownload), media tasks execute sequentially within
+            # the assigned worker thread to strictly bound total concurrency
+            for task in tasks:
+                if eff_cancel and eff_cancel.is_set():
+                    break
+                try:
+                    success = self._download_single_media(task)
+                    if success:
+                        success_count += 1
+                    else:
                         failed_tasks.append(task)
-                    finally:
-                        pbar.update(1)
+                except Exception as e:
+                    logger.error(
+                        f"Task download exception: {task['desc']}, lỗi: {str(e)}"
+                    )
+                    failed_tasks.append(task)
+        else:
+            with ThreadPoolExecutor(max_workers=self.thread) as executor:
+                # Submit all of tasks
+                future_to_task = {
+                    executor.submit(self._download_single_media, task): task
+                    for task in tasks
+                }
+
+                # Processing with progress bar
+                with tqdm(
+                    total=len(tasks), desc=f"Downloading media for {desc[:20]}..."
+                ) as pbar:
+                    for future in as_completed(future_to_task):
+                        if eff_cancel and eff_cancel.is_set():
+                            break
+                        task = future_to_task[future]
+                        try:
+                            success = future.result()
+                            if success:
+                                success_count += 1
+                            else:
+                                failed_tasks.append(task)
+                        except Exception as e:
+                            logger.error(
+                                f"Task download exception: {task['desc']}, lỗi: {str(e)}"
+                            )
+                            failed_tasks.append(task)
+                        finally:
+                            pbar.update(1)
 
         # Log result
         if failed_tasks:
@@ -380,6 +399,7 @@ class Download(object):
         cancel_event: Optional[threading.Event] = None,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
         worker_offset: int = 0,
+        is_batch: bool = False,
     ) -> bool:
         """Download detail of video with multithread"""
         eff_cancel = cancel_event or self.cancel_event
@@ -425,6 +445,7 @@ class Download(object):
                 cancel_event=eff_cancel,
                 progress_callback=progress_callback or self.progress_callback,
                 worker_offset=worker_offset,
+                is_batch=is_batch,
             )
 
             if success:
@@ -474,7 +495,13 @@ class Download(object):
         with ThreadPoolExecutor(max_workers=min(self.thread, total_count)) as executor:
             future_to_aweme = {
                 executor.submit(
-                    self.awemeDownload, aweme, save_path, eff_cancel, progress_callback, idx % self.thread
+                    self.awemeDownload,
+                    aweme,
+                    save_path,
+                    eff_cancel,
+                    progress_callback,
+                    idx % self.thread,
+                    True,  # is_batch=True prevents nested thread explosion
                 ): aweme
                 for idx, aweme in enumerate(awemeList)
             }

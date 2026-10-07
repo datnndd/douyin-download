@@ -85,6 +85,14 @@ ALLOWED_HOSTS = (
 # Standard HTTP/HTTPS link regex
 SHARE_LINK_REGEX = re.compile(r"https?://[a-zA-Z0-9_./\-?&=%#+:@!~*]+")
 
+# Specific Douyin ecosystem link regex (prioritized for Kouling / share text extraction)
+DOUYIN_SPECIFIC_LINK_REGEX = re.compile(
+    r"(?:https?://)?(?:[a-zA-Z0-9\-]+\.)?(?:douyin\.com|iesdouyin\.com)/[a-zA-Z0-9_./\-?&=%#+:@!~*]*",
+    re.IGNORECASE,
+)
+
+PUNCTUATION_STRIP = '),.!?，。！？;；:：\'"【】（）《》、~ \t\r\n'
+
 # Schemeless Douyin URLs embedded in Chinese text, emojis, or punctuation
 SCHEMELESS_DOUYIN_REGEX = re.compile(
     r"(?:^|[^\w./-])"
@@ -136,7 +144,22 @@ class DouyinService:
 
     def _get_api(self, cookie: Optional[str] = None) -> DouyinApi:
         """Retrieve or initialize thread-local DouyinApi instance with cookie isolation."""
-        active_cookie = cookie or self._default_cookie
+        if cookie:
+            active_cookie = cookie
+        elif self._default_cookie:
+            active_cookie = self._default_cookie
+        else:
+            try:
+                from src.web.core.config import ConfigManager
+                active_cookie = ConfigManager.get_instance().get_cookie_header() or None
+            except Exception as e:
+                logger.debug(f"Could not load cookie from ConfigManager: {e}")
+                active_cookie = None
+
+        if active_cookie:
+            from src.douyin import douyin_headers
+            douyin_headers["Cookie"] = active_cookie
+
         api = getattr(self._local, "api", None)
         cached_cookie = getattr(self._local, "cookie", None)
 
@@ -236,23 +259,32 @@ class DouyinService:
     @classmethod
     def extract_share_url(cls, text: str) -> Optional[str]:
         """
-        Extracts first valid HTTP/HTTPS URL from raw string.
-        Normalizes raw inputs like v.douyin.com/xxx without https:// by prepending scheme.
+        Extracts valid Douyin or HTTP/HTTPS URL from raw string or clipboard share text.
+        Handles Kouling codes, emojis, surrounding Chinese text, and schemeless links.
         """
-        if not text or not text.strip():
+        if not text or not str(text).strip():
             return None
 
-        # 1. Search for standard http(s) URL
+        # 1. Prioritize Douyin-specific links in share text
+        douyin_match = DOUYIN_SPECIFIC_LINK_REGEX.search(text)
+        if douyin_match:
+            url = douyin_match.group(0).rstrip(PUNCTUATION_STRIP)
+            if url:
+                if not url.startswith(("http://", "https://")):
+                    url = f"https://{url}"
+                return url
+
+        # 2. Search for standard http(s) URL
         matches = SHARE_LINK_REGEX.findall(text)
         if matches:
-            url = matches[0].rstrip("),.!?，。！？;；'\"")
+            url = matches[0].rstrip(PUNCTUATION_STRIP)
             if url:
                 return url
 
-        # 2. Search for schemeless Douyin URL pattern
+        # 3. Search for schemeless Douyin URL pattern fallback
         schemeless = SCHEMELESS_DOUYIN_REGEX.search(text)
         if schemeless:
-            raw_url = schemeless.group(1).rstrip("),.!?，。！？;；'\"")
+            raw_url = schemeless.group(1).rstrip(PUNCTUATION_STRIP)
             if raw_url:
                 return f"https://{raw_url}"
 

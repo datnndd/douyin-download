@@ -39,6 +39,11 @@ async def submit_download_endpoint(payload: DownloadRequest) -> TaskResponse:
     if not payload.url or not payload.url.strip():
         raise HTTPException(status_code=422, detail="Download URL cannot be empty.")
 
+    # Automatically extract clean Douyin URL if full share text or Kouling was provided
+    extracted = DouyinService.extract_share_url(payload.url)
+    if extracted:
+        payload.url = extracted
+
     manager = get_task_manager()
     service = get_douyin_service()
 

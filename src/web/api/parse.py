@@ -37,9 +37,11 @@ async def parse_url_endpoint(payload: ParseRequest) -> ParseResponse:
         raise HTTPException(status_code=400, detail="URL cannot be empty.")
 
     service = get_douyin_service()
+    from src.web.core.config import ConfigManager
+    effective_cookie = payload.cookie or ConfigManager.get_instance().get_cookie_header() or None
 
     try:
-        response = await service.parse_url(payload.url, cookie=payload.cookie)
+        response = await service.parse_url(payload.url, cookie=effective_cookie)
         return response
     except DouyinInvalidUrlError as e:
         raise HTTPException(status_code=400, detail=str(e))

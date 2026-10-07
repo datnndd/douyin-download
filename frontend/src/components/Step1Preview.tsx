@@ -16,12 +16,37 @@ import {
   Radio,
   Search,
   Share2,
+  Sparkles,
   User,
   Users,
   Video,
 } from 'lucide-react';
 import { ParseResponse, PreviewMetadata } from '../types/api';
 import { api } from '../services/api';
+
+/**
+ * Extracts clean Douyin or HTTP URL from raw clipboard text, Kouling tokens, or share messages.
+ * e.g. "0.23 C@u.sr :0pm 01/04 TLJ:/ 赶海现抓现吃... https://v.douyin.com/meBXuCMU5l0/ 复制此链接..."
+ */
+export const extractDouyinUrl = (text: string): string => {
+  if (!text || !text.trim()) return '';
+  // 1. Prioritize Douyin ecosystem link (v.douyin.com, douyin.com, iesdouyin.com)
+  const douyinMatch = text.match(/(?:https?:\/\/)?(?:[a-zA-Z0-9\-]+\.)?(?:douyin\.com|iesdouyin\.com)\/[a-zA-Z0-9_./\-?&=%#+:@!~*]*/i);
+  const punctuationStrip = /[),.!?，。！？;；:：'"【】（）《》、~\s]+$/;
+  if (douyinMatch) {
+    let url = douyinMatch[0].replace(punctuationStrip, '');
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    return url;
+  }
+  // 2. Generic http/https match
+  const genericMatch = text.match(/https?:\/\/[a-zA-Z0-9_./\-?&=%#+:@!~*]+/i);
+  if (genericMatch) {
+    return genericMatch[0].replace(punctuationStrip, '');
+  }
+  return text.trim();
+};
 
 interface Step1PreviewProps {
   onProceedToConfig: (parseData: ParseResponse) => void;
@@ -39,6 +64,12 @@ export const Step1Preview: React.FC<Step1PreviewProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<ParseResponse | null>(null);
 
+  // Detect whether the input contains messy share text with an extractable URL
+  const detectedUrl = React.useMemo(() => {
+    const extracted = extractDouyinUrl(urlInput);
+    return extracted && extracted !== urlInput.trim() ? extracted : null;
+  }, [urlInput]);
+
   const formatNumber = (num: number = 0): string => {
     if (num >= 100000000) return (num / 100000000).toFixed(1) + '亿';
     if (num >= 10000) return (num / 10000).toFixed(1) + '万';
@@ -53,10 +84,16 @@ export const Step1Preview: React.FC<Step1PreviewProps> = ({
       return;
     }
 
+    // Auto-extract clean URL from share text
+    const cleanUrl = extractDouyinUrl(trimmed) || trimmed;
+    if (cleanUrl !== trimmed) {
+      setUrlInput(cleanUrl);
+    }
+
     setLoading(true);
     setError(null);
     try {
-      const res = await api.parseUrl(trimmed, cookieOverride);
+      const res = await api.parseUrl(cleanUrl, cookieOverride);
       if (!res.success) {
         setError(res.error || '解析失败，未获取到有效信息');
       } else {
@@ -74,6 +111,11 @@ export const Step1Preview: React.FC<Step1PreviewProps> = ({
       const text = await navigator.clipboard.readText();
       if (text) {
         setUrlInput(text);
+        const clean = extractDouyinUrl(text);
+        if (clean && clean !== text.trim()) {
+          // If clean link found, automatically set to clean URL
+          setUrlInput(clean);
+        }
       }
     } catch {
       // clipboard access denied
@@ -158,6 +200,23 @@ export const Step1Preview: React.FC<Step1PreviewProps> = ({
               </button>
             )}
           </div>
+
+          {detectedUrl && (
+            <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#FAF6F0] border border-[#E5DED4] text-xs animate-fadeIn">
+              <div className="flex items-center space-x-2 truncate min-w-0">
+                <Sparkles className="w-3.5 h-3.5 text-[#8D4B00] shrink-0" />
+                <span className="text-[#8D4B00] font-semibold shrink-0">已识别分享链接:</span>
+                <span className="font-mono text-[#595E68] text-[11px] truncate">{detectedUrl}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUrlInput(detectedUrl)}
+                className="ml-2 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-[#8D4B00] bg-[#F3ECE2] hover:bg-[#EDE5DA] transition-colors shrink-0 cursor-pointer"
+              >
+                仅保留链接
+              </button>
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-1">
             <button

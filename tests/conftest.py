@@ -33,6 +33,7 @@ import requests
 from src.common.utils import Utils
 Utils.getttwid = lambda self: "mock_ttwid_offline_token_12345"
 from src.douyin import douyin_headers
+_SAVED_REAL_COOKIE = douyin_headers.get("Cookie")
 douyin_headers["Cookie"] = "msToken=mock_msToken; ttwid=mock_ttwid_offline_token_12345; odin_tt=mock_odin; passport_csrf_token=mock_csrf;"
 
 
@@ -478,3 +479,42 @@ def api_client():
         pytest.skip("FastAPI app (src.web.main_web) not yet implemented (pending Milestone 2)")
     from fastapi.testclient import TestClient
     return TestClient(fastapi_app)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def protect_repo_config_yaml():
+    """
+    Guarantees that test runs (e.g. pytest or run_tests.py) never permanently overwrite
+    the user's authentic config.yaml or global douyin_headers.
+    """
+    config_file = PROJECT_ROOT / "config.yaml"
+    original_config_content = None
+    if config_file.exists():
+        try:
+            original_config_content = config_file.read_text(encoding="utf-8")
+        except Exception:
+            pass
+
+    from src.douyin import douyin_headers
+    original_cookie = douyin_headers.get("Cookie")
+
+    try:
+        yield
+    finally:
+        if original_config_content is not None:
+            try:
+                config_file.write_text(original_config_content, encoding="utf-8")
+            except Exception:
+                pass
+            try:
+                from src.web.core.config import ConfigManager
+                ConfigManager.get_instance().reload()
+            except Exception:
+                pass
+        if _SAVED_REAL_COOKIE is not None:
+            douyin_headers["Cookie"] = _SAVED_REAL_COOKIE
+        elif original_cookie is not None:
+            douyin_headers["Cookie"] = original_cookie
+        elif "Cookie" in douyin_headers:
+            douyin_headers.pop("Cookie", None)
+

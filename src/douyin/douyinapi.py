@@ -43,6 +43,7 @@ class DouyinApi(object):
         self.timeout = 60
         self.max_consecutive_errors = 3
         self.database = Database(database_path) if database_path else None
+        self.cookie = cookie
 
         self.session = requests.Session()
         retries = Retry(
@@ -58,19 +59,53 @@ class DouyinApi(object):
         # Apply cookie from config to session headers
         if cookie:
             self.session.headers.update({'Cookie': cookie})
+            douyin_headers["Cookie"] = cookie
             orig_prepare_request = self.session.prepare_request
 
             def _custom_prepare_request(request):
                 prep = orig_prepare_request(request)
-                prep.headers['Cookie'] = cookie
+                if self.cookie:
+                    prep.headers['Cookie'] = self.cookie
                 return prep
 
             self.session.prepare_request = _custom_prepare_request
 
-    # Extract URL from share link
+    def _get_headers(self) -> dict:
+        headers = copy.deepcopy(douyin_headers)
+        active_cookie = getattr(self, "cookie", None) or douyin_headers.get("Cookie")
+        if active_cookie:
+            headers["Cookie"] = active_cookie
+        return headers
+
+    # Extract URL from share link or raw clipboard text
     def getShareLink(self, string):
-        # findall() looks for strings that match the regular expression
-        return re.findall(r'https?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+', string)[0]
+        if not string or not str(string).strip():
+            raise IndexError("Input text is empty")
+
+        punctuation_strip = '),.!?，。！？;；:：\'"【】（）《》、~ \t\r\n'
+
+        # 1. Prioritize Douyin ecosystem URLs (v.douyin.com, douyin.com, iesdouyin.com)
+        douyin_match = re.search(
+            r'(?:https?://)?(?:[a-zA-Z0-9\-]+\.)?(?:douyin\.com|iesdouyin\.com)/[a-zA-Z0-9_./\-?&=%#+:@!~*]*',
+            string,
+            re.IGNORECASE,
+        )
+        if douyin_match:
+            url = douyin_match.group(0).rstrip(punctuation_strip)
+            if not url.startswith(('http://', 'https://')):
+                url = 'https://' + url
+            return url
+
+        # 2. Fallback to generic http/https URL
+        generic_match = re.search(
+            r'https?://[a-zA-Z0-9_./\-?&=%#+:@!~*]+',
+            string,
+            re.IGNORECASE,
+        )
+        if generic_match:
+            return generic_match.group(0).rstrip(punctuation_strip)
+
+        raise IndexError(f"No valid Douyin or HTTP URL found in text: {string}")
 
     # Get aweme_id or sec_uid from URL
     # Supports both https://www.iesdouyin.com and https://v.douyin.com
@@ -79,7 +114,7 @@ class DouyinApi(object):
         key_type = None
 
         try:
-            r = self.session.get(url=url, headers=douyin_headers)
+            r = self.session.get(url=url, headers=self._get_headers())
         except Exception as e:
             logger.error(f"Error in getKey: {str(e)}")
             logger.error('Invalid link!')
@@ -110,7 +145,7 @@ class DouyinApi(object):
         elif "/webcast/reflow/" in urlstr:
             key1 = re.findall(r'reflow/(\d+)?', urlstr)[0]
             url = self.urls.LIVE2 + utils.getXbogus(f'live_id=1&room_id={key1}&app_id=1128')
-            res = requests.get(url, headers=douyin_headers)
+            res = self.session.get(url, headers=self._get_headers())
             resjson = json.loads(res.text)
             key = resjson['data']['room']['owner']['web_rid']
             key_type = "live"
@@ -164,6 +199,7 @@ class DouyinApi(object):
                     "show_live_replay_strategy": "1",
                     "time_list_query": "0",
                     "whale_cut_token": "",
+                    "uifid": "",
                     "update_version_code": "170400",
                     "msToken": ""
                 }
@@ -172,17 +208,38 @@ class DouyinApi(object):
 
                 jx_url = self.urls.POST_DETAIL + f"{urlencode(detail_params)}&a_bogus={quote(a_bogus, safe='')}"
 
-                response = self.session.get(url=jx_url, headers=douyin_headers, timeout=10)
+                headers = self._get_headers()
+                response = self.session.get(url=jx_url, headers=headers, timeout=10)
 
-                if len(response.text)==0:
-                    logger.warning("Single API Video return an empty response")
-                    return {}
+                if response.status_code in (403, 429) or "ArgusSecurity" in response.text:
+                    logger.warning(
+                        f"Douyin WAF risk control triggered (HTTP {response.status_code}: {response.text[:80].strip()}), backing off..."
+                    )
+                    time.sleep(2 + random.uniform(1.0, 2.5))
+                    if time.time() - start > self.timeout:
+                        raise RuntimeError(f"Douyin WAF risk control triggered (HTTP {response.status_code}: {response.text[:80].strip()})")
+                    continue
+
+                if len(response.text) == 0:
+                    logger.warning("Single API Video returned an empty response, retrying...")
+                    time.sleep(1 + random.uniform(0.5, 1.5))
+                    if time.time() - start > self.timeout:
+                        return None
+                    continue
 
                 datadict = json.loads(response.text)
-                if datadict is not None and datadict["status_code"] == 0:
+                if datadict is not None and datadict.get("status_code") == 0:
                     break
+                else:
+                    logger.warning(f"Single API Video returned non-zero status: {datadict.get('status_code') if datadict else 'None'}")
+                    time.sleep(1 + random.uniform(0.5, 1.5))
+                    if time.time() - start > self.timeout:
+                        return None
+                    continue
+            except RuntimeError:
+                raise
             except Exception as e:
-                logger.error(f"Error in getAwemeInfoApi: {str(e)}")
+                logger.error(f"Error in getAwemeInfoApi: {str(e)} | status={getattr(response, 'status_code', None)} | text_len={len(getattr(response, 'text', ''))} | sample={repr(getattr(response, 'text', '')[:200])}")
                 end = time.time()
                 if end - start > self.timeout:
                     return None
@@ -236,7 +293,7 @@ class DouyinApi(object):
                 else:
                     return None
 
-                res = self.session.get(url=url, headers=douyin_headers, timeout=self.timeout)
+                res = self.session.get(url=url, headers=self._get_headers(), timeout=self.timeout)
                 if len(res.text) == 0:
                     consecutive_errors += 1
                     logger.warning(f"User Get Post/Favorite API return an empty response (error {consecutive_errors}/{self.max_consecutive_errors})")
@@ -337,7 +394,7 @@ class DouyinApi(object):
                 )
                 live_api = self.urls.LIVE + utils.getXbogus(detail_params)
 
-                response = self.session.get(live_api, headers=douyin_headers, timeout=10)
+                response = self.session.get(live_api, headers=self._get_headers(), timeout=10)
                 if len(response.text)==0:
                     logger.warning("Livestream API return an empty response")
                     return {}
@@ -410,7 +467,7 @@ class DouyinApi(object):
                 mix_params = f'mix_id={mix_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX + utils.getXbogus(mix_params)
 
-                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=self._get_headers(), timeout=10)
 
                 if res.status_code != 200:
                     logger.warning(f"Mix API HTTP request failed: {res.status_code}")
@@ -495,7 +552,7 @@ class DouyinApi(object):
                 mix_list_params = f'sec_user_id={sec_uid}&count={count}&cursor={cursor}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX_LIST + utils.getXbogus(mix_list_params)
 
-                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=self._get_headers(), timeout=10)
 
                 if res.status_code != 200:
                     logger.warning(f"Mix List API HTTP request failed: {res.status_code}")
@@ -563,7 +620,7 @@ class DouyinApi(object):
                 music_params = f'music_id={music_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.MUSIC + utils.getXbogus(music_params)
 
-                res = self.session.get(url=url, headers=douyin_headers, timeout=10)
+                res = self.session.get(url=url, headers=self._get_headers(), timeout=10)
 
                 if res.status_code != 200:
                     logger.warning(f"Music API HTTP request failed: {res.status_code}")
