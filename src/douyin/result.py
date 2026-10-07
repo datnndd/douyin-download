@@ -24,6 +24,8 @@ class Result(object):
                 "url_list": [],
                 "width": ""
             },
+            # Number of works / published posts
+            "aweme_count": 0,
             "cover_url": {
                 "height": "",
                 "uri": "",

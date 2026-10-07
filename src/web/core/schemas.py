@@ -154,6 +154,7 @@ class AuthorPreview(BaseModel):
     signature: Optional[str] = None
     follower_count: Optional[int] = 0
     total_favorited: Optional[int] = 0
+    following_count: Optional[int] = 0
 
     @field_validator("avatar_thumb", "avatar", mode="before")
     @classmethod
@@ -174,7 +175,7 @@ class AuthorPreview(BaseModel):
             return ""
         return str(v)
 
-    @field_validator("follower_count", "total_favorited", mode="before")
+    @field_validator("follower_count", "total_favorited", "following_count", mode="before")
     @classmethod
     def coerce_counts(cls, v: Any) -> int:
         if v is None or v == "":

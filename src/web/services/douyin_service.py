@@ -449,19 +449,24 @@ class DouyinService:
                 f"Video or note {aweme_id} not found or has been deleted."
             )
 
-        is_video = aweme.get("awemeType", 0) == 0
+        is_video = (str(aweme.get("awemeType", "0")) == "0") and not bool(aweme.get("images"))
         content_type = "video" if is_video else "image"
 
         author_data = aweme.get("author") or {}
+        author_avatar = self._pick_first_url(author_data.get("avatar"))
+        author_thumb = self._pick_first_url(author_data.get("avatar_thumb")) or author_avatar or ""
         author = AuthorPreview(
             nickname=author_data.get("nickname") or "Douyin User",
-            avatar_thumb=self._pick_first_url(author_data.get("avatar_thumb"))
-            or self._pick_first_url(author_data.get("avatar")),
+            avatar_thumb=author_thumb,
+            avatar=author_avatar or author_thumb,
             sec_uid=author_data.get("sec_uid") or "",
             signature=author_data.get("signature") or "",
+            unique_id=author_data.get("unique_id") or "",
+            short_id=author_data.get("short_id") or "",
         )
 
         cover_url = ""
+        image_urls = []
         if is_video:
             video_data = aweme.get("video") or {}
             cover_url = (
@@ -477,7 +482,11 @@ class DouyinService:
             )
         else:
             images = aweme.get("images") or []
-            cover_url = self._pick_first_url(images[0]) if images else ""
+            for img in images:
+                u = self._pick_first_url(img)
+                if u:
+                    image_urls.append(u)
+            cover_url = image_urls[0] if image_urls else ""
             duration = None
 
         stats_data = aweme.get("statistics") or {}
@@ -499,27 +508,52 @@ class DouyinService:
             cover_url=cover_url,
             statistics=statistics,
             duration=duration,
-            work_count=len(aweme.get("images", [])) if not is_video else 1,
+            work_count=len(image_urls) if not is_video else 1,
+            images=image_urls,
+            extra={
+                "create_time": aweme.get("create_time", ""),
+                "aweme_id": aweme_id,
+            },
         )
         return content_type, preview
 
     def _fetch_user_preview(
         self, api: DouyinApi, sec_uid: str
     ) -> Tuple[str, PreviewMetadata]:
-        try:
-            posts = api.getUserInfoApi(sec_uid=sec_uid, mode="post", count=1, number=1)
-        except Exception as e:
-            logger.error(f"Failed to query user {sec_uid}: {e}")
-            raise DouyinUpstreamError(f"Douyin upstream query failed: {e}")
-
         author_data = {}
-        if posts and isinstance(posts, list) and len(posts) > 0:
-            author_data = posts[0].get("author") or {}
+        # Try getUserDetailApi first if available
+        if hasattr(api, "getUserDetailApi"):
+            try:
+                detail = api.getUserDetailApi(sec_uid)
+                if isinstance(detail, dict) and detail.get("nickname"):
+                    author_data = detail
+            except Exception as e:
+                logger.debug(f"getUserDetailApi fallback: {e}")
+
+        # Fallback or supplement with getUserInfoApi
+        if not author_data or not author_data.get("nickname"):
+            try:
+                posts = api.getUserInfoApi(sec_uid=sec_uid, mode="post", count=1, number=1)
+            except Exception as e:
+                if not author_data:
+                    logger.error(f"Failed to query user {sec_uid}: {e}")
+                    raise DouyinUpstreamError(f"Douyin upstream query failed: {e}")
+                posts = None
+
+            if posts and isinstance(posts, list) and len(posts) > 0:
+                post_author = posts[0].get("author") or {}
+                if not author_data:
+                    author_data = post_author
+                else:
+                    for k, v in post_author.items():
+                        if not author_data.get(k) and v:
+                            author_data[k] = v
 
         nickname = author_data.get("nickname") or "Douyin User"
+        avatar = self._pick_first_url(author_data.get("avatar"))
         avatar_thumb = (
             self._pick_first_url(author_data.get("avatar_thumb"))
-            or self._pick_first_url(author_data.get("avatar"))
+            or avatar
             or ""
         )
         signature = author_data.get("signature") or ""
@@ -527,10 +561,16 @@ class DouyinService:
         author = AuthorPreview(
             nickname=nickname,
             avatar_thumb=avatar_thumb,
+            avatar=avatar or avatar_thumb,
             sec_uid=sec_uid,
             signature=signature,
+            unique_id=author_data.get("unique_id") or "",
+            short_id=author_data.get("short_id") or "",
+            follower_count=author_data.get("follower_count", 0),
+            total_favorited=author_data.get("total_favorited", 0),
+            following_count=author_data.get("following_count", 0),
         )
-        cover_url = self._pick_first_url(author_data.get("cover_url")) or avatar_thumb
+        cover_url = self._pick_first_url(author_data.get("cover_url")) or avatar or avatar_thumb
 
         statistics = PreviewStatistics(
             follower_count=author_data.get("follower_count", 0),
@@ -538,13 +578,24 @@ class DouyinService:
             following_count=author_data.get("following_count", 0),
         )
 
+        raw_work_count = author_data.get("aweme_count", 0)
+        try:
+            work_count = int(raw_work_count) if raw_work_count is not None and str(raw_work_count).strip() != "" else 0
+        except (ValueError, TypeError):
+            work_count = 0
+
         preview = PreviewMetadata(
             title=f"{nickname}'s Profile",
             desc=signature or "No bio available",
             author=author,
             cover_url=cover_url,
             statistics=statistics,
-            work_count=author_data.get("aweme_count", 0) or 1,
+            work_count=work_count,
+            extra={
+                "unique_id": author_data.get("unique_id", ""),
+                "short_id": author_data.get("short_id", ""),
+                "aweme_count": work_count,
+            },
         )
         return "user", preview
 
@@ -588,6 +639,11 @@ class DouyinService:
             work_count=(
                 int(updated_to) if str(updated_to).isdigit() else len(aweme_list)
             ),
+            extra={
+                "updated_to_episode": updated_to,
+                "current_episode": statis.get("current_episode", ""),
+                "mix_id": mix_id,
+            },
         )
         return "mix", preview
 
@@ -629,6 +685,11 @@ class DouyinService:
             author=author,
             cover_url=cover_url,
             work_count=len(aweme_list),
+            extra={
+                "music_id": music_id,
+                "owner_nickname": owner_nickname,
+                "owner_id": music_data.get("owner_id", ""),
+            },
         )
         return "music", preview
 
@@ -669,6 +730,13 @@ class DouyinService:
             cover_url=live_dict.get("cover") or "",
             statistics=statistics,
             work_count=1,
+            extra={
+                "is_live": is_live,
+                "status": live_dict.get("status"),
+                "partition": partition,
+                "web_rid": web_rid,
+                "user_count": live_dict.get("user_count"),
+            },
         )
         return "live", preview
 

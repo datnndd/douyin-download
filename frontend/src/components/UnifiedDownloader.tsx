@@ -6,9 +6,12 @@ import {
   Calendar,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ChevronUp,
   Clipboard,
   Cpu,
+  Disc,
   Download,
   Eye,
   FileCode,
@@ -24,6 +27,8 @@ import {
   Loader2,
   MessageCircle,
   Music,
+  Play,
+  Radio,
   RefreshCw,
   Search,
   Share2,
@@ -126,6 +131,12 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
   const [endTime, setEndTime] = useState<string>(settings?.end_time || '');
   const [videoLimit, setVideoLimit] = useState<number>(0); // 0 = unlimited
 
+  // Photo gallery active index state
+  const [selectedPhotoIdx, setSelectedPhotoIdx] = useState<number>(0);
+
+  // Focus ref for date range pickers
+  const startDateInputRef = useRef<HTMLInputElement>(null);
+
   // UI accordion state
   const [showUserFilters, setShowUserFilters] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
@@ -134,6 +145,11 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
 
   // Auto-preview debounce ref
   const lastParsedUrlRef = useRef<string>('');
+
+  // Reset selected photo when parsed content changes
+  useEffect(() => {
+    setSelectedPhotoIdx(0);
+  }, [parsedData?.key]);
 
   // Update downloadPath if settings change
   useEffect(() => {
@@ -155,21 +171,6 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       setShowUserFilters(true);
     }
   }, [isUserProfile]);
-
-  // Debounced auto-preview when user types or pastes URL
-  useEffect(() => {
-    const cleanUrl = extractDouyinUrl(urlInput.trim());
-    if (!cleanUrl || cleanUrl === lastParsedUrlRef.current) return;
-
-    // Minimum check for Douyin / HTTP format
-    if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) return;
-
-    const timer = setTimeout(() => {
-      handleParse(cleanUrl, true);
-    }, 600);
-
-    return () => clearTimeout(timer);
-  }, [urlInput]);
 
   // Parse handler
   const handleParse = async (targetUrl?: string, isSilent = false) => {
@@ -204,14 +205,26 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
     }
   };
 
+  const handleUrlChange = (val: string) => {
+    setUrlInput(val);
+    if (parseError) {
+      setParseError(null);
+    }
+    if (parsedData) {
+      setParsedData(null);
+      lastParsedUrlRef.current = '';
+    }
+  };
+
   const handlePaste = async () => {
     try {
       const text = await navigator.clipboard.readText();
       if (text) {
-        setUrlInput(text);
-        const clean = extractDouyinUrl(text);
-        if (clean) {
-          handleParse(clean, false);
+        setUrlInput(text.trim());
+        setParseError(null);
+        if (parsedData) {
+          setParsedData(null);
+          lastParsedUrlRef.current = '';
         }
       }
     } catch {
@@ -224,6 +237,22 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
     setParsedData(null);
     setParseError(null);
     lastParsedUrlRef.current = '';
+  };
+
+  const handleSetAllVideos = () => {
+    setVideoLimit(0);
+  };
+
+  const handleSetRecent20 = () => {
+    setVideoLimit(20);
+  };
+
+  const handleFocusDateFilter = () => {
+    setShowUserFilters(true);
+    setTimeout(() => {
+      startDateInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      startDateInputRef.current?.focus();
+    }, 120);
   };
 
   const toggleAsset = (key: keyof AssetTypeToggles) => {
@@ -336,8 +365,8 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       number: {
         post: videoLimit,
         like: videoLimit,
-        allmix: 0,
-        mix: videoLimit || 5,
+        allmix: videoLimit,
+        mix: videoLimit,
         music: 5,
       },
       cookie: settings?.raw_cookie || undefined,
@@ -355,10 +384,700 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
   };
 
   const formatNumber = (num: number = 0): string => {
+    if (!num || isNaN(num) || num < 0) return '0';
     if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toLocaleString();
+  };
+
+  // ---------------------------------------------------------------------------
+  // TAILORED PREVIEW CARDS RENDERERS
+  // ---------------------------------------------------------------------------
+
+  // 1. Creator Hero Profile Card (for key_type === 'user')
+  const renderCreatorHeroCard = (preview: PreviewMetadata) => {
+    const author = preview.author;
+    const workCount = preview.work_count ?? 0;
+    const followerCount =
+      author?.follower_count ?? preview.statistics?.follower_count ?? 0;
+    const totalLikes =
+      author?.total_favorited ?? preview.statistics?.total_favorited ?? 0;
+    const followingCount =
+      author?.following_count ?? preview.statistics?.following_count ?? 0;
+    const uniqueHandle =
+      author?.unique_id || author?.short_id || '';
+    const displaySecUid = author?.sec_uid || parsedData?.key || '';
+
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Creator Hero Header */}
+        <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#E5DED4] space-y-3.5">
+          <div className="flex items-start gap-3.5">
+            <div className="relative shrink-0">
+              <img
+                src={
+                  author?.avatar ||
+                  author?.avatar_thumb ||
+                  preview.cover_url ||
+                  '/avatar-placeholder.png'
+                }
+                alt={author?.nickname || 'Creator Avatar'}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#8D4B00]/25 shadow-sm bg-white"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <span className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full bg-[#8D4B00] text-white text-[9px] font-bold uppercase tracking-wider shadow-xs">
+                Creator
+              </span>
+            </div>
+
+            <div className="overflow-hidden flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm sm:text-base font-bold text-[#1F2328] truncate">
+                  {author?.nickname || preview.title || 'Douyin Creator'}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#595E68] font-mono">
+                {uniqueHandle ? (
+                  <span className="truncate bg-white px-2 py-0.5 rounded-md border border-[#E5DED4]">
+                    {uniqueHandle.startsWith('@') ? uniqueHandle : `@${uniqueHandle}`}
+                  </span>
+                ) : null}
+                {displaySecUid && (
+                  <span
+                    className="hidden sm:inline text-[10px] text-[#898174] truncate"
+                    title={displaySecUid}
+                  >
+                    sec_uid: {displaySecUid.slice(0, 12)}...
+                  </span>
+                )}
+              </div>
+
+              {/* Bio quote box */}
+              <div className="mt-2 p-2.5 rounded-xl bg-white border border-[#E5DED4] text-xs text-[#595E68] italic leading-relaxed line-clamp-3">
+                "{author?.signature || preview.desc || 'No bio available'}"
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Key Metric Badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            {/* Total Videos / Works - Highlighted in Terracotta Accent */}
+            <div className="p-2.5 rounded-xl bg-[#F3ECE2] border border-[#8D4B00]/40 text-center shadow-xs">
+              <div className="flex items-center justify-center space-x-1 text-[#8D4B00] mb-0.5">
+                <Video className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span className="text-sm sm:text-base font-extrabold font-mono">
+                  {formatNumber(workCount)}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#8D4B00] uppercase tracking-wide">
+                Total Videos
+              </span>
+            </div>
+
+            {/* Followers */}
+            <div className="p-2.5 rounded-xl bg-white border border-[#E5DED4] text-center">
+              <div className="flex items-center justify-center space-x-1 text-[#1F2328] mb-0.5">
+                <Users className="w-3.5 h-3.5 text-[#898174]" />
+                <span className="text-sm sm:text-base font-bold font-mono">
+                  {formatNumber(followerCount)}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-[#898174]">Followers</span>
+            </div>
+
+            {/* Total Likes */}
+            <div className="p-2.5 rounded-xl bg-white border border-[#E5DED4] text-center">
+              <div className="flex items-center justify-center space-x-1 text-rose-600 mb-0.5">
+                <Heart className="w-3.5 h-3.5 fill-rose-600" />
+                <span className="text-sm sm:text-base font-bold font-mono">
+                  {formatNumber(totalLikes)}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-[#898174]">Total Likes</span>
+            </div>
+
+            {/* Following */}
+            <div className="p-2.5 rounded-xl bg-white border border-[#E5DED4] text-center">
+              <div className="flex items-center justify-center space-x-1 text-[#595E68] mb-0.5">
+                <User className="w-3.5 h-3.5 text-[#898174]" />
+                <span className="text-sm sm:text-base font-bold font-mono">
+                  {formatNumber(followingCount)}
+                </span>
+              </div>
+              <span className="text-[10px] sm:text-[11px] text-[#898174]">Following</span>
+            </div>
+          </div>
+
+          {/* Quick Action Buttons directly inside Creator Card */}
+          <div className="pt-2 border-t border-[#E5DED4]/70 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold text-[#898174]">Quick Presets:</span>
+            <button
+              type="button"
+              onClick={handleSetAllVideos}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                videoLimit === 0
+                  ? 'bg-[#8D4B00] text-white border-[#8D4B00] shadow-xs'
+                  : 'bg-white text-[#595E68] border-[#E5DED4] hover:bg-[#F3ECE2] hover:text-[#8D4B00]'
+              }`}
+            >
+              Download All ({workCount > 0 ? formatNumber(workCount) : 'All'})
+            </button>
+            <button
+              type="button"
+              onClick={handleSetRecent20}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                videoLimit === 20
+                  ? 'bg-[#8D4B00] text-white border-[#8D4B00] shadow-xs'
+                  : 'bg-white text-[#595E68] border-[#E5DED4] hover:bg-[#F3ECE2] hover:text-[#8D4B00]'
+              }`}
+            >
+              Recent 20
+            </button>
+            <button
+              type="button"
+              onClick={handleFocusDateFilter}
+              className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[#8D4B00] border border-[#E5DED4] hover:bg-[#F3ECE2] transition-all cursor-pointer"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Filter by Date Range</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 2. Single Video Card (for aweme video)
+  const renderVideoCard = (preview: PreviewMetadata) => {
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Aspect Ratio Video Card with Play Overlay */}
+        <div className="relative rounded-2xl overflow-hidden border border-[#E5DED4] bg-black/5 aspect-video flex items-center justify-center group shadow-sm">
+          {preview.cover_url ? (
+            <img
+              src={preview.cover_url}
+              alt={preview.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <Film className="w-12 h-12 text-[#898174]" />
+          )}
+
+          {/* Quality badge */}
+          <span className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-xs text-white font-semibold text-[10px] rounded-lg tracking-wide uppercase">
+            Video • 1080p HD
+          </span>
+
+          {/* Play Button Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-all">
+            <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:bg-[#8D4B00] transition-all">
+              <Play className="w-5 h-5 fill-white ml-0.5" />
+            </div>
+          </div>
+
+          {/* Duration Badge */}
+          {preview.duration ? (
+            <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/75 text-white font-mono text-[10px] font-semibold rounded-md backdrop-blur-xs">
+              {Math.floor(preview.duration / 60)}:
+              {(preview.duration % 60).toString().padStart(2, '0')}
+            </span>
+          ) : null}
+        </div>
+
+        {/* Creator Chip */}
+        {preview.author && (
+          <div className="flex items-center space-x-3 p-2.5 bg-[#FAF8F5] rounded-xl border border-[#E5DED4]">
+            <img
+              src={preview.author.avatar_thumb || preview.author.avatar || '/avatar-placeholder.png'}
+              alt={preview.author.nickname}
+              className="w-9 h-9 rounded-full object-cover border border-[#E5DED4]"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+            <div className="overflow-hidden flex-1">
+              <h4 className="text-xs font-bold text-[#1F2328] truncate">
+                {preview.author.nickname}
+              </h4>
+              <p className="text-[10px] text-[#595E68] font-mono truncate">
+                {preview.author.unique_id
+                  ? `@${preview.author.unique_id}`
+                  : `ID: ${preview.author.short_id || parsedData?.key}`}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Title Description */}
+        <div>
+          <h3 className="text-xs sm:text-sm font-semibold text-[#1F2328] line-clamp-3">
+            {preview.title || preview.desc || 'Douyin Video'}
+          </h3>
+        </div>
+
+        {/* 4 Engagement Stats */}
+        <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#E5DED4] text-center">
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-rose-600 text-[11px] font-semibold">
+              <Heart className="w-3 h-3 fill-rose-600" />
+              <span>{formatNumber(preview.statistics?.digg_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Likes</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-[#8D4B00] text-[11px] font-semibold">
+              <MessageCircle className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.comment_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Comments</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-[#595E68] text-[11px] font-semibold">
+              <Share2 className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.share_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Shares</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-amber-600 text-[11px] font-semibold">
+              <Layers className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.collect_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Collects</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 3. Photo Album Card (for image note / album)
+  const renderPhotoAlbumCard = (preview: PreviewMetadata) => {
+    const imagesList =
+      preview.images && preview.images.length > 0
+        ? preview.images
+        : preview.cover_url
+        ? [preview.cover_url]
+        : [];
+    const activePhoto = imagesList[selectedPhotoIdx] || imagesList[0] || preview.cover_url || '';
+    const totalPhotos = preview.work_count || imagesList.length || 1;
+
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Main Display Image */}
+        <div className="relative rounded-2xl overflow-hidden border border-[#E5DED4] bg-black/5 aspect-video flex items-center justify-center group shadow-sm">
+          {activePhoto ? (
+            <img
+              src={activePhoto}
+              alt={preview.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+          ) : (
+            <ImageIcon className="w-12 h-12 text-[#898174]" />
+          )}
+
+          {/* Multi-Photo Badge */}
+          <span className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/65 backdrop-blur-xs text-white font-semibold text-[10px] rounded-lg tracking-wide flex items-center space-x-1">
+            <ImageIcon className="w-3 h-3" />
+            <span>Album • {totalPhotos} Photos</span>
+          </span>
+
+          {/* Previous / Next Arrow Controls */}
+          {imagesList.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedPhotoIdx((prev) => (prev > 0 ? prev - 1 : imagesList.length - 1));
+                }}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#8D4B00] text-white flex items-center justify-center backdrop-blur-xs opacity-75 group-hover:opacity-100 transition-all cursor-pointer shadow-md"
+                title="Previous photo"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedPhotoIdx((prev) => (prev < imagesList.length - 1 ? prev + 1 : 0));
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#8D4B00] text-white flex items-center justify-center backdrop-blur-xs opacity-75 group-hover:opacity-100 transition-all cursor-pointer shadow-md"
+                title="Next photo"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </>
+          )}
+
+          {/* Photo Counter */}
+          <span className="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/75 text-white font-mono text-[10px] font-semibold rounded-md backdrop-blur-xs">
+            Photo {selectedPhotoIdx + 1} / {imagesList.length || 1}
+          </span>
+        </div>
+
+        {/* Thumbnail Carousel / Grid */}
+        {imagesList.length > 1 && (
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-[11px] text-[#898174]">
+              <span>Album Carousel ({imagesList.length} photos)</span>
+              <span>Click to view</span>
+            </div>
+            <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin">
+              {imagesList.map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedPhotoIdx(idx)}
+                  className={`relative shrink-0 w-14 h-14 rounded-xl overflow-hidden border transition-all cursor-pointer ${
+                    selectedPhotoIdx === idx
+                      ? 'ring-2 ring-[#8D4B00] border-transparent shadow-xs scale-105'
+                      : 'border-[#E5DED4] opacity-70 hover:opacity-100 hover:border-[#8D4B00]'
+                  }`}
+                >
+                  <img
+                    src={imgUrl}
+                    alt={`Thumb ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <span className="absolute bottom-0.5 right-1 text-[8px] font-mono text-white bg-black/60 px-1 rounded">
+                    {idx + 1}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Creator Chip */}
+        {preview.author && (
+          <div className="flex items-center space-x-3 p-2.5 bg-[#FAF8F5] rounded-xl border border-[#E5DED4]">
+            <img
+              src={preview.author.avatar_thumb || preview.author.avatar || '/avatar-placeholder.png'}
+              alt={preview.author.nickname}
+              className="w-9 h-9 rounded-full object-cover border border-[#E5DED4]"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+            />
+            <div className="overflow-hidden flex-1">
+              <h4 className="text-xs font-bold text-[#1F2328] truncate">
+                {preview.author.nickname}
+              </h4>
+              <p className="text-[10px] text-[#595E68] font-mono truncate">
+                {preview.author.unique_id
+                  ? `@${preview.author.unique_id}`
+                  : `ID: ${preview.author.short_id || parsedData?.key}`}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Title Description */}
+        <div>
+          <h3 className="text-xs sm:text-sm font-semibold text-[#1F2328] line-clamp-3">
+            {preview.title || preview.desc || 'Douyin Photo Album'}
+          </h3>
+        </div>
+
+        {/* 4 Engagement Stats */}
+        <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#E5DED4] text-center">
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-rose-600 text-[11px] font-semibold">
+              <Heart className="w-3 h-3 fill-rose-600" />
+              <span>{formatNumber(preview.statistics?.digg_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Likes</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-[#8D4B00] text-[11px] font-semibold">
+              <MessageCircle className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.comment_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Comments</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-[#595E68] text-[11px] font-semibold">
+              <Share2 className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.share_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Shares</span>
+          </div>
+          <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
+            <div className="flex items-center justify-center space-x-1 text-amber-600 text-[11px] font-semibold">
+              <Layers className="w-3 h-3" />
+              <span>{formatNumber(preview.statistics?.collect_count)}</span>
+            </div>
+            <span className="text-[10px] text-[#898174]">Collects</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 4. Collection / Mix Card
+  const renderCollectionCard = (preview: PreviewMetadata) => {
+    const episodeCount =
+      preview.work_count || preview.extra?.updated_to_episode || 1;
+
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Album Sleeve Design */}
+        <div className="relative p-4 rounded-2xl bg-[#FAF8F5] border-2 border-[#E5DED4] shadow-sm space-y-3">
+          {/* Top Badge */}
+          <div className="flex items-center justify-between">
+            <span className="px-2.5 py-1 bg-[#8D4B00] text-white font-bold text-[10px] rounded-lg uppercase tracking-wider flex items-center space-x-1 shadow-xs">
+              <Layers className="w-3 h-3" />
+              <span>Collection • {episodeCount} Episodes</span>
+            </span>
+            <span className="text-[11px] font-mono text-[#898174]">
+              Mix ID: {parsedData?.key}
+            </span>
+          </div>
+
+          {/* Sleeve Cover Container with Stacked Layers */}
+          <div className="relative aspect-video rounded-xl overflow-hidden border border-[#E5DED4] bg-white flex items-center justify-center group shadow-sm">
+            {preview.cover_url ? (
+              <img
+                src={preview.cover_url}
+                alt={preview.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <Layers className="w-12 h-12 text-[#898174]" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-3">
+              <p className="text-white text-xs font-semibold line-clamp-1">
+                {preview.title}
+              </p>
+            </div>
+          </div>
+
+          {/* Title & Status */}
+          <div className="space-y-1">
+            <h3 className="text-sm font-bold text-[#1F2328]">
+              {preview.title}
+            </h3>
+            <p className="text-xs text-[#595E68]">
+              {preview.desc || `Collection updated to episode ${episodeCount}`}
+            </p>
+          </div>
+
+          {/* Author Chip */}
+          {preview.author && (
+            <div className="flex items-center space-x-2.5 pt-2 border-t border-[#E5DED4]">
+              <img
+                src={preview.author.avatar_thumb || preview.author.avatar || '/avatar-placeholder.png'}
+                alt={preview.author.nickname}
+                className="w-7 h-7 rounded-full object-cover border border-[#E5DED4]"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <span className="text-xs font-medium text-[#1F2328]">
+                Curated by <strong className="font-semibold">{preview.author.nickname}</strong>
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // 5. Soundtrack / Music Card
+  const renderMusicCard = (preview: PreviewMetadata) => {
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Vinyl Disc Theme Card */}
+        <div className="p-4 rounded-2xl bg-[#FAF8F5] border-2 border-[#E5DED4] shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="px-2.5 py-1 bg-[#8D4B00] text-white font-bold text-[10px] rounded-lg uppercase tracking-wider flex items-center space-x-1 shadow-xs">
+              <Music className="w-3 h-3" />
+              <span>Original Soundtrack</span>
+            </span>
+            <span className="text-[11px] font-mono text-[#898174]">
+              Music ID: {parsedData?.key}
+            </span>
+          </div>
+
+          {/* Vinyl Disc Display */}
+          <div className="flex items-center justify-center py-4">
+            <div className="relative flex items-center">
+              {/* Cover Jacket */}
+              <div className="w-32 h-32 rounded-xl overflow-hidden border-2 border-[#E5DED4] shadow-md z-10 bg-white">
+                {preview.cover_url ? (
+                  <img
+                    src={preview.cover_url}
+                    alt={preview.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#F3ECE2] text-[#8D4B00]">
+                    <Music className="w-10 h-10" />
+                  </div>
+                )}
+              </div>
+
+              {/* Styled Vinyl Record Peeking Out */}
+              <div className="w-28 h-28 -ml-12 rounded-full bg-neutral-900 border-4 border-neutral-800 shadow-xl flex items-center justify-center animate-[spin_12s_linear_infinite]">
+                {/* Vinyl Grooves */}
+                <div className="w-20 h-20 rounded-full border border-neutral-700/60 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full border border-neutral-700/60 flex items-center justify-center">
+                    {/* Vinyl Center Label */}
+                    <div className="w-8 h-8 rounded-full bg-[#8D4B00] flex items-center justify-center text-white">
+                      <Disc className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Song Title & Musician */}
+          <div className="text-center space-y-1">
+            <h3 className="text-sm sm:text-base font-bold text-[#1F2328]">
+              {preview.title}
+            </h3>
+            <p className="text-xs text-[#595E68]">
+              By <strong className="font-semibold text-[#8D4B00]">{preview.author?.nickname || 'Original Artist'}</strong>
+            </p>
+          </div>
+
+          {/* Use Count Badge */}
+          <div className="p-2.5 rounded-xl bg-white border border-[#E5DED4] text-center">
+            <span className="text-xs font-semibold text-[#8D4B00]">
+              🎵 {formatNumber(preview.work_count || 1)} Public Works
+            </span>
+            <span className="text-[11px] text-[#898174] block">
+              Created using this soundtrack audio
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 6. Live Stream Card
+  const renderLiveCard = (preview: PreviewMetadata) => {
+    const isLive =
+      preview.extra?.is_live ||
+      preview.extra?.status === '2' ||
+      preview.desc?.toLowerCase().includes('live streaming');
+
+    return (
+      <div className="space-y-4 animate-fadeIn">
+        {/* Live Card */}
+        <div className="p-4 rounded-2xl bg-[#FAF8F5] border-2 border-[#E5DED4] shadow-sm space-y-3.5">
+          {/* Status Badge */}
+          <div className="flex items-center justify-between">
+            {isLive ? (
+              <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold shadow-xs">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600"></span>
+                </span>
+                <span>🔴 LIVE STREAMING</span>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gray-100 border border-gray-200 text-gray-600 text-xs font-bold">
+                <span>STREAM ENDED</span>
+              </div>
+            )}
+
+            <span className="text-[11px] font-mono text-[#898174]">
+              Room: {parsedData?.key}
+            </span>
+          </div>
+
+          {/* Stream Frame / Cover */}
+          <div className="relative aspect-video rounded-xl overflow-hidden border border-[#E5DED4] bg-neutral-900 flex items-center justify-center group shadow-sm">
+            {preview.cover_url ? (
+              <img
+                src={preview.cover_url}
+                alt={preview.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Radio className="w-12 h-12 text-[#898174]" />
+            )}
+            {isLive && (
+              <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-white text-[10px] font-mono font-semibold flex items-center space-x-1">
+                <Users className="w-3 h-3 text-rose-400" />
+                <span>
+                  {formatNumber(preview.statistics?.play_count || preview.extra?.user_count || 0)} Viewers
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Streamer Avatar & Room Title */}
+          <div className="space-y-1.5">
+            <div className="flex items-center space-x-2.5">
+              <img
+                src={preview.author?.avatar_thumb || preview.author?.avatar || '/avatar-placeholder.png'}
+                alt={preview.author?.nickname || 'Streamer'}
+                className="w-8 h-8 rounded-full object-cover border border-[#E5DED4]"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <div className="overflow-hidden flex-1">
+                <h4 className="text-xs font-bold text-[#1F2328] truncate">
+                  {preview.author?.nickname || 'Streamer'}
+                </h4>
+                <p className="text-[11px] text-[#8D4B00] font-medium truncate">
+                  Category: {preview.extra?.partition || 'Live Broadcasting'}
+                </p>
+              </div>
+            </div>
+
+            <h3 className="text-xs sm:text-sm font-semibold text-[#1F2328] line-clamp-2">
+              {preview.title}
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Dispatcher for tailored cards
+  const renderTailoredPreviewCard = () => {
+    if (!parsedData?.preview) {
+      return (
+        <div className="p-6 rounded-2xl bg-[#FAF8F5] border border-[#E5DED4] text-center space-y-2">
+          <Film className="w-8 h-8 text-[#8D4B00] mx-auto" />
+          <h4 className="text-xs font-bold text-[#1F2328]">
+            Metadata Resolved: {parsedData?.key_type.toUpperCase()}
+          </h4>
+          <p className="text-[11px] text-[#595E68] font-mono">
+            Key: {parsedData?.key}
+          </p>
+        </div>
+      );
+    }
+    const { preview, key_type, content_type } = parsedData;
+
+    if (key_type === 'user') {
+      return renderCreatorHeroCard(preview);
+    }
+    if (key_type === 'mix') {
+      return renderCollectionCard(preview);
+    }
+    if (key_type === 'music') {
+      return renderMusicCard(preview);
+    }
+    if (key_type === 'live') {
+      return renderLiveCard(preview);
+    }
+    if (content_type === 'image' || (preview.images && preview.images.length > 0)) {
+      return renderPhotoAlbumCard(preview);
+    }
+    return renderVideoCard(preview);
   };
 
   return (
@@ -381,11 +1100,11 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             <input
               type="text"
               value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
+              onChange={(e) => handleUrlChange(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  handleStartDownload();
+                  handleParse();
                 }
               }}
               placeholder="Paste video link, Kouling share text, or Douyin profile link (https://v.douyin.com/...)"
@@ -398,7 +1117,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                 <button
                   type="button"
                   onClick={handleClearUrl}
-                  className="p-1 rounded-md text-[#898174] hover:text-[#1F2328] hover:bg-[#E5DED4]/50 transition-colors"
+                  className="p-1 rounded-md text-[#898174] hover:text-[#1F2328] hover:bg-[#E5DED4]/50 transition-colors cursor-pointer"
                   title="Clear input"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -407,7 +1126,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               <button
                 type="button"
                 onClick={handlePaste}
-                className="flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium text-[#8D4B00] bg-[#F3ECE2] hover:bg-[#EDE5DA] transition-colors"
+                className="flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium text-[#8D4B00] bg-[#F3ECE2] hover:bg-[#EDE5DA] transition-colors cursor-pointer"
                 title="Paste from clipboard"
               >
                 <Clipboard className="w-3.5 h-3.5" />
@@ -416,37 +1135,21 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             </div>
           </div>
 
-          {/* Right Action Buttons */}
+          {/* Right Action Button: Primary CTA Analyze & Preview */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Preview Button */}
             <button
               type="button"
               onClick={() => handleParse()}
               disabled={parsing || !urlInput.trim()}
-              className="flex items-center justify-center space-x-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#F3ECE2] hover:bg-[#EDE5DA] text-[#8D4B00] border border-[#E5DED4] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              title="Inspect & preview content"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#8D4B00] hover:bg-[#723C00] active:scale-[0.98] text-white shadow-md shadow-[#8D4B00]/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+              title="Inspect & preview content metadata"
             >
               {parsing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <Eye className="w-4 h-4" />
+                <Eye className="w-4 h-4 stroke-[2.5]" />
               )}
-              <span>Preview</span>
-            </button>
-
-            {/* PRIMARY DOWNLOAD BUTTON */}
-            <button
-              type="button"
-              onClick={handleStartDownload}
-              disabled={downloading || !urlInput.trim()}
-              className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#8D4B00] hover:bg-[#723C00] active:scale-[0.98] text-white shadow-md shadow-[#8D4B00]/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
-            >
-              {downloading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4 stroke-[2.5]" />
-              )}
-              <span>DOWNLOAD NOW</span>
+              <span>Analyze &amp; Preview</span>
             </button>
           </div>
         </div>
@@ -480,143 +1183,95 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       </div>
 
       {/* ==================================================================== */}
-      {/* 2. SPLIT LAYOUT: LIVE PREVIEW & DOWNLOAD CONFIGURATION CARD          */}
+      {/* 2. CONDITIONAL VIEW: CLEAN PLACEHOLDER OR SPLIT WORKSPACE            */}
       {/* ==================================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* ------------------------------------------------------------------ */}
-        {/* LEFT COLUMN: LIVE METADATA PREVIEW (5 cols)                       */}
-        {/* ------------------------------------------------------------------ */}
-        <div className="lg:col-span-5 bg-white border border-[#E5DED4] rounded-2xl p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E5DED4]">
-            <div className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-[#8D4B00]" />
-              <h2 className="text-sm font-bold text-[#1F2328]">Detected Content</h2>
-            </div>
-            {parsedData && (
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F3ECE2] text-[#8D4B00] border border-[#E5DED4] uppercase">
-                {parsedData.key_type}
-              </span>
-            )}
-          </div>
-
-          {parsedData?.preview ? (
-            <div className="space-y-4 animate-fadeIn">
-              {/* Creator Card */}
-              {parsedData.preview.author && (
-                <div className="flex items-center space-x-3 p-3 bg-[#FAF8F5] rounded-xl border border-[#E5DED4]">
-                  <img
-                    src={
-                      parsedData.preview.author.avatar_thumb ||
-                      parsedData.preview.author.avatar ||
-                      '/avatar-placeholder.png'
-                    }
-                    alt={parsedData.preview.author.nickname}
-                    className="w-12 h-12 rounded-full object-cover border border-[#E5DED4] shadow-xs"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
-                  />
-                  <div className="overflow-hidden flex-1">
-                    <h4 className="text-xs font-bold text-[#1F2328] truncate">
-                      {parsedData.preview.author.nickname}
-                    </h4>
-                    <p className="text-[11px] text-[#595E68] font-mono truncate">
-                      {parsedData.preview.author.unique_id
-                        ? `@${parsedData.preview.author.unique_id}`
-                        : `ID: ${parsedData.preview.author.short_id || parsedData.key}`}
-                    </p>
-                    <div className="flex items-center space-x-3 text-[10px] text-[#898174] mt-0.5">
-                      <span>
-                        Followers:{' '}
-                        <strong>
-                          {formatNumber(parsedData.preview.author.follower_count || 0)}
-                        </strong>
-                      </span>
-                      <span>
-                        Likes:{' '}
-                        <strong>
-                          {formatNumber(parsedData.preview.author.total_favorited || 0)}
-                        </strong>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Cover & Title */}
-              <div className="relative rounded-xl overflow-hidden border border-[#E5DED4] bg-[#FAF8F5] aspect-video flex items-center justify-center group">
-                {parsedData.preview.cover_url ? (
-                  <img
-                    src={parsedData.preview.cover_url}
-                    alt={parsedData.preview.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <Film className="w-10 h-10 text-[#898174]" />
-                )}
-                {parsedData.preview.duration ? (
-                  <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 text-white font-mono text-[10px] rounded-md backdrop-blur-xs">
-                    {Math.floor(parsedData.preview.duration / 60)}:
-                    {(parsedData.preview.duration % 60).toString().padStart(2, '0')}
-                  </span>
-                ) : null}
+      {!parsedData ? (
+        <div className="bg-white border border-[#E5DED4] rounded-2xl p-8 sm:p-12 shadow-sm text-center space-y-6 animate-fadeIn">
+          {parsing ? (
+            <div className="space-y-4 py-6">
+              <div className="w-16 h-16 rounded-2xl bg-[#F3ECE2] text-[#8D4B00] mx-auto flex items-center justify-center shadow-xs">
+                <Loader2 className="w-8 h-8 animate-spin" />
               </div>
-
-              {/* Title description */}
-              <div>
-                <h3 className="text-xs font-semibold text-[#1F2328] line-clamp-3">
-                  {parsedData.preview.title || parsedData.preview.desc || 'Douyin Video'}
+              <div className="max-w-md mx-auto space-y-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#1F2328]">
+                  Analyzing Link &amp; Fetching Preview...
                 </h3>
-              </div>
-
-              {/* Statistics Counters */}
-              <div className="grid grid-cols-4 gap-2 pt-2 border-t border-[#E5DED4] text-center">
-                <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
-                  <div className="flex items-center justify-center space-x-1 text-rose-600 text-[11px] font-semibold">
-                    <Heart className="w-3 h-3 fill-rose-600" />
-                    <span>{formatNumber(parsedData.preview.statistics?.digg_count)}</span>
-                  </div>
-                  <span className="text-[10px] text-[#898174]">Likes</span>
-                </div>
-                <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
-                  <div className="flex items-center justify-center space-x-1 text-[#8D4B00] text-[11px] font-semibold">
-                    <MessageCircle className="w-3 h-3" />
-                    <span>{formatNumber(parsedData.preview.statistics?.comment_count)}</span>
-                  </div>
-                  <span className="text-[10px] text-[#898174]">Comments</span>
-                </div>
-                <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
-                  <div className="flex items-center justify-center space-x-1 text-[#595E68] text-[11px] font-semibold">
-                    <Share2 className="w-3 h-3" />
-                    <span>{formatNumber(parsedData.preview.statistics?.share_count)}</span>
-                  </div>
-                  <span className="text-[10px] text-[#898174]">Shares</span>
-                </div>
-                <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
-                  <div className="flex items-center justify-center space-x-1 text-amber-600 text-[11px] font-semibold">
-                    <Layers className="w-3 h-3" />
-                    <span>{formatNumber(parsedData.preview.statistics?.collect_count)}</span>
-                  </div>
-                  <span className="text-[10px] text-[#898174]">Collects</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="py-10 px-4 text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#F3ECE2] text-[#8D4B00] flex items-center justify-center mx-auto">
-                <Film className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-[#1F2328]">
-                  No preview available
-                </h4>
-                <p className="text-[11px] text-[#595E68] mt-1 max-w-xs mx-auto">
-                  Paste a video link, photo gallery, or user profile above to preview or click <strong>Download Now</strong>.
+                <p className="text-xs sm:text-sm text-[#595E68] leading-relaxed">
+                  Connecting to Douyin to resolve creator details, work counts, and media assets.
                 </p>
               </div>
             </div>
-          )}
-        </div>
+          ) : (
+            <>
+              <div className="w-16 h-16 rounded-2xl bg-[#F3ECE2] text-[#8D4B00] mx-auto flex items-center justify-center shadow-xs">
+                <Sparkles className="w-8 h-8" />
+              </div>
+
+              <div className="max-w-md mx-auto space-y-2">
+                <h3 className="text-base sm:text-lg font-bold text-[#1F2328]">
+                  Ready to Download? Preview First.
+                </h3>
+                <p className="text-xs sm:text-sm text-[#595E68] leading-relaxed">
+                  Paste your Douyin video, creator profile, album, or playlist link above and click{' '}
+                  <strong className="text-[#8D4B00]">Analyze &amp; Preview</strong> to inspect creator stats, total video counts, and configure download options.
+                </p>
+              </div>
+
+          {/* Supported Content Badges */}
+          <div className="pt-2">
+            <p className="text-[11px] font-semibold text-[#898174] uppercase tracking-wider mb-3">
+              Supported Content Types
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2 max-w-xl mx-auto">
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <Video className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Single Videos</span>
+              </span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <ImageIcon className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Photo Albums</span>
+              </span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <User className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Creator Profiles</span>
+              </span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <Layers className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Collections &amp; Series</span>
+              </span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <Music className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Soundtracks</span>
+              </span>
+              <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] text-xs font-medium text-[#1F2328]">
+                <Radio className="w-3.5 h-3.5 text-[#8D4B00]" />
+                <span>Live Streams</span>
+              </span>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* ------------------------------------------------------------------ */}
+          {/* LEFT COLUMN: TAILORED LIVE METADATA PREVIEW (5 cols)               */}
+          {/* ------------------------------------------------------------------ */}
+          <div className="lg:col-span-5 bg-white border border-[#E5DED4] rounded-2xl p-5 shadow-sm space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5DED4]">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-[#8D4B00]" />
+                <h2 className="text-sm font-bold text-[#1F2328]">
+                  {parsedData.key_type === 'user' ? 'Creator Profile Preview' : 'Detected Content Preview'}
+                </h2>
+              </div>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F3ECE2] text-[#8D4B00] border border-[#E5DED4] uppercase">
+                {parsedData.key_type}
+              </span>
+            </div>
+
+            {renderTailoredPreviewCard()}
+          </div>
 
         {/* ------------------------------------------------------------------ */}
         {/* RIGHT COLUMN: DOWNLOAD OPTIONS & DIRECT CONTROLS (7 cols)         */}
@@ -937,6 +1592,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                       <div>
                         <span className="text-[10px] text-[#898174] block mb-0.5">Start Date:</span>
                         <input
+                          ref={startDateInputRef}
                           type="date"
                           value={startTime}
                           onChange={(e) => setStartTime(e.target.value)}
@@ -1075,6 +1731,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
           </div>
         </div>
       </div>
-    </div>
-  );
+    )}
+  </div>
+);
 };

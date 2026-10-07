@@ -49,6 +49,7 @@ export interface AuthorPreview {
   signature?: string;
   follower_count?: number;
   total_favorited?: number;
+  following_count?: number;
 }
 
 export interface PreviewMetadata {

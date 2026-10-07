@@ -267,6 +267,43 @@ class DouyinApi(object):
 
         return self.result.awemeDict
 
+    def getUserDetailApi(self, sec_uid):
+        """Fetch creator detailed profile info including aweme_count."""
+        if not sec_uid:
+            return None
+        try:
+            detail_params = f"sec_user_id={sec_uid}&publish_video_strategy_type=2&personal_center_strategy=1&{self._COMMON_PARAMS}"
+            # 1. Try modern a_bogus endpoint token
+            try:
+                a_bogus = ABogus().get_value(detail_params)
+                url = self.urls.USER_DETAIL + f"{detail_params}&a_bogus={quote(a_bogus, safe='')}"
+                res = self.session.get(url=url, headers=self._get_headers(), timeout=self.timeout)
+                if res.status_code == 200 and len(res.text) > 0:
+                    datadict = json.loads(res.text)
+                    if datadict and datadict.get("status_code") == 0:
+                        user_data = datadict.get("user") or {}
+                        if user_data:
+                            self.result.clearDict(self.result.authorDict)
+                            self.result.dataConvert(0, self.result.authorDict, user_data)
+                            return copy.deepcopy(self.result.authorDict)
+            except Exception as e:
+                logger.debug(f"getUserDetailApi with a_bogus failed, falling back: {e}")
+
+            # 2. Fallback to X-Bogus signature
+            url = self.urls.USER_DETAIL + utils.getXbogus(detail_params)
+            res = self.session.get(url=url, headers=self._get_headers(), timeout=self.timeout)
+            if res.status_code == 200 and len(res.text) > 0:
+                datadict = json.loads(res.text)
+                if datadict and datadict.get("status_code") == 0:
+                    user_data = datadict.get("user") or {}
+                    if user_data:
+                        self.result.clearDict(self.result.authorDict)
+                        self.result.dataConvert(0, self.result.authorDict, user_data)
+                        return copy.deepcopy(self.result.authorDict)
+        except Exception as e:
+            logger.error(f"Error in getUserDetailApi: {str(e)}")
+        return None
+
     def getUserInfoApi(self, sec_uid, mode="post", count=18, number=0, increase=False, start_time="", end_time=""):
         if sec_uid is None:
             return None
