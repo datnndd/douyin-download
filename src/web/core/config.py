@@ -569,14 +569,43 @@ class ConfigManager:
             self.apply_to_douyin_headers()
             return self._settings.model_copy(deep=True)
 
+    @staticmethod
+    def _load_auxiliary_security_cookies() -> Dict[str, str]:
+        """Look for .cookies.json in current directory, project root, or sibling projects."""
+        candidates = [
+            Path(".cookies.json"),
+            Path(__file__).resolve().parent.parent.parent.parent / ".cookies.json",
+            Path.cwd() / ".cookies.json",
+            Path.cwd().parent / "douyin-downloader" / ".cookies.json",
+        ]
+        for c in candidates:
+            if c.exists() and c.is_file():
+                try:
+                    data = json.loads(c.read_text(encoding="utf-8"))
+                    if isinstance(data, dict):
+                        return {str(k): str(v) for k, v in data.items() if v}
+                except Exception as e:
+                    logger.debug(f"Failed to load auxiliary cookies from {c}: {e}")
+        return {}
+
     def get_cookie_header(self) -> str:
-        """Retrieve active formatted cookie string for HTTP requests."""
+        """Retrieve active formatted cookie string for HTTP requests with security token enrichment."""
         with self._settings_lock:
-            if self._settings.raw_cookie:
-                return self._settings.raw_cookie
-            if self._settings.cookies:
-                return format_cookie_dict(self._settings.cookies)
-            return ""
+            active_cookies: Dict[str, str] = dict(self._settings.cookies or {})
+            if not active_cookies and self._settings.raw_cookie:
+                active_cookies = parse_raw_cookie(self._settings.raw_cookie)
+
+            # Auto-enrich missing Argus security tokens (UIFID, UIFID_TEMP, bd_ticket_guard, etc.) only if cookies are active
+            if active_cookies and not active_cookies.get("UIFID") and not active_cookies.get("UIFID_TEMP"):
+                aux_cookies = self._load_auxiliary_security_cookies()
+                if aux_cookies:
+                    merged = dict(aux_cookies)
+                    merged.update(active_cookies)  # user tokens take precedence
+                    active_cookies = merged
+
+            if active_cookies:
+                return format_cookie_dict(active_cookies)
+            return self._settings.raw_cookie or ""
 
     def apply_to_douyin_headers(self) -> None:
         """Hot-reload cookies into global douyin_headers dict if available."""

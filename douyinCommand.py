@@ -127,6 +127,20 @@ class Config:
             # cookie sources
             if y.get("cookies"):
                 cfg.cookie = "; ".join(f"{k}={v}" for k, v in (y["cookies"] or {}).items())
+            elif y.get("cookie"):
+                cfg.cookie = str(y["cookie"]).strip()
+
+            # Enrich security tokens (UIFID, etc.) if cookies defined and UIFID is missing
+            if cfg.cookie and "UIFID=" not in cfg.cookie and "UIFID_TEMP=" not in cfg.cookie:
+                try:
+                    from src.web.core.config import ConfigManager
+                    aux = ConfigManager._load_auxiliary_security_cookies()
+                    if aux:
+                        aux_parts = [f"{k}={v}" for k, v in aux.items() if f"{k}=" not in cfg.cookie]
+                        if aux_parts:
+                            cfg.cookie = f"{cfg.cookie}; {'; '.join(aux_parts)}"
+                except Exception:
+                    pass
 
             # end_time special value
             if y.get("end_time") == "now":
