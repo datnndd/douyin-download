@@ -2,14 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Header } from './components/Header';
-import { Step1Preview } from './components/Step1Preview';
-import { Step2DownloadConfig } from './components/Step2DownloadConfig';
+import { UnifiedDownloader } from './components/UnifiedDownloader';
 import { TaskTracker } from './components/TaskTracker';
 import { MediaLibrary } from './components/MediaLibrary';
 import { SettingsModal } from './components/SettingsModal';
 import {
   DownloadProgressEvent,
-  ParseResponse,
   SettingsModel,
   TaskDetailResponse,
   TaskResponse,
@@ -18,8 +16,6 @@ import { api } from './services/api';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'downloader' | 'library'>('downloader');
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
-  const [parsedData, setParsedData] = useState<ParseResponse | null>(null);
   const [tasks, setTasks] = useState<TaskDetailResponse[]>([]);
   const [settings, setSettings] = useState<SettingsModel | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -136,15 +132,6 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleProceedToConfig = (data: ParseResponse) => {
-    setParsedData(data);
-    setCurrentStep(2);
-  };
-
-  const handleBackToStep1 = () => {
-    setCurrentStep(1);
-  };
-
   const handleDownloadStarted = (task: TaskResponse) => {
     // Add pending task to tracker
     const newTask: TaskDetailResponse = {
@@ -154,19 +141,15 @@ export const App: React.FC = () => {
       downloaded_bytes: 0,
       total_bytes: 0,
       speed_bps: 0,
-      current_item: parsedData?.preview?.title || parsedData?.url || '',
+      current_item: task.message || 'Tác vụ mới',
       completed_items: 0,
-      total_items: parsedData?.preview?.work_count || 1,
+      total_items: 1,
       active_threads: 0,
       threads: [],
       created_at: task.created_at || new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
     setTasks((prev) => [newTask, ...prev]);
-
-    // Reset back to Step 1 for next download
-    setCurrentStep(1);
-    setParsedData(null);
   };
 
   const handleDismissTask = (taskId: string) => {
@@ -195,21 +178,11 @@ export const App: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         {activeTab === 'downloader' ? (
           <>
-            {currentStep === 1 && (
-              <Step1Preview
-                onProceedToConfig={handleProceedToConfig}
-                cookieOverride={settings?.raw_cookie}
-              />
-            )}
-
-            {currentStep === 2 && parsedData && (
-              <Step2DownloadConfig
-                parseData={parsedData}
-                settings={settings}
-                onBack={handleBackToStep1}
-                onDownloadStarted={handleDownloadStarted}
-              />
-            )}
+            <UnifiedDownloader
+              settings={settings}
+              onDownloadStarted={handleDownloadStarted}
+              onOpenFolder={handleOpenFolder}
+            />
 
             {/* Live Task Tracker section */}
             <TaskTracker

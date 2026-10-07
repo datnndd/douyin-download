@@ -89,6 +89,7 @@ export interface DownloadRequest {
   filter?: FilterOptions;
   folderstyle?: boolean;
   download_path?: string;
+  filename_template?: string;
   start_time?: string;
   end_time?: string;
   number?: Record<string, number>;
@@ -153,6 +154,7 @@ export interface SettingsModel {
   json: boolean;
   folderstyle: boolean;
   thread: number;
+  filename_template?: string;
   cookies: Record<string, string>;
   raw_cookie?: string;
   start_time: string;

@@ -6,6 +6,7 @@ import {
   Check,
   Cpu,
   Database,
+  FileCode,
   Folder,
   Key,
   Loader2,
@@ -126,6 +127,26 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 />
                 <p className="text-[11px] text-[#595E68]">
                   支持相对路径（如 ./Downloaded/）或绝对路径（如 D:\DouyinDownloads\）
+                </p>
+              </div>
+
+              {/* Filename Template */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
+                  <FileCode className="w-3.5 h-3.5 text-[#8D4B00]" />
+                  <span>Định dạng tên file mặc định (filename_template)</span>
+                </label>
+                <input
+                  type="text"
+                  value={settings.filename_template || '{date}_{title}_{id}'}
+                  onChange={(e) =>
+                    setSettings({ ...settings, filename_template: e.target.value })
+                  }
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#E5DED4] bg-white text-xs font-mono text-[#1F2328] focus:outline-none focus:border-[#8D4B00]"
+                  placeholder="{date}_{title}_{id}"
+                />
+                <p className="text-[11px] text-[#595E68]">
+                  Các thẻ hỗ trợ: <code>{'{date}'}</code>, <code>{'{title}'}</code>, <code>{'{id}'}</code>, <code>{'{author}'}</code>, <code>{'{likes}'}</code>
                 </p>
               </div>
 

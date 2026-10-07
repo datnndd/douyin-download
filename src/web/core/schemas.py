@@ -295,6 +295,10 @@ class DownloadRequest(BaseModel):
     download_path: str = Field(
         default="./Downloaded/", description="Target destination folder"
     )
+    filename_template: str = Field(
+        default="{date}_{title}_{id}",
+        description="Template for media filenames: {date}, {title}, {id}, {author}, {likes}",
+    )
     start_time: str = Field(default="", description="Date filter start YYYY-MM-DD")
     end_time: str = Field(default="", description="Date filter end YYYY-MM-DD")
     number: Dict[str, int] = Field(
@@ -446,6 +450,10 @@ class SettingsModel(BaseModel):
     folderstyle: bool = Field(default=True, description="Organize items in subfolders")
     thread: int = Field(
         default=5, ge=1, le=32, description="Default concurrency thread count"
+    )
+    filename_template: str = Field(
+        default="{date}_{title}_{id}",
+        description="Template for media filenames: {date}, {title}, {id}, {author}, {likes}",
     )
     cookies: Dict[str, str] = Field(
         default_factory=dict, description="Parsed cookie key-value dictionary"

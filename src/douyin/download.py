@@ -34,6 +34,7 @@ class Download(object):
         folderstyle=True,
         progress_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
         cancel_event: Optional[threading.Event] = None,
+        filename_template: Optional[str] = None,
     ):
         self.thread = thread
         self.music = music
@@ -43,11 +44,78 @@ class Download(object):
         self.folderstyle = folderstyle
         self.progress_callback = progress_callback
         self.cancel_event = cancel_event
+        self.filename_template = filename_template
         self.retry_times = 5
         self.chunk_size = 8192
         self.timeout = 60
 
         self._tls = threading.local()
+
+    def _sanitize_name_part(self, s: str, max_len: int = 60) -> str:
+        """Sanitize a filename component for Windows and Unix filesystems."""
+        import re
+        if not s:
+            return ""
+        cleaned = re.sub(r'[\\/*?:"<>|\r\n\t]', "_", str(s))
+        cleaned = re.sub(r"\s+", " ", cleaned).strip(". ")
+        if len(cleaned) > max_len:
+            cleaned = cleaned[:max_len].strip(". ")
+        return cleaned
+
+    def _format_file_name(self, awemeDict: dict) -> str:
+        """
+        Format media base filename using self.filename_template.
+        Supported variables: {date}, {time}, {title}, {desc}, {id}, {aweme_id}, {author}, {nickname}, {likes}, {digg_count}
+        """
+        if not self.filename_template:
+            digg_count = awemeDict.get("statistics", {}).get("digg_count", 0)
+            try:
+                digg_int = int(digg_count)
+            except (ValueError, TypeError):
+                digg_int = 0
+            digg_count_str = f"{digg_int:09d}"
+            suffix_id = f"{awemeDict.get('create_time', '')}_{utils.replaceStr(awemeDict.get('desc', ''))}"
+            return f"{digg_count_str}likes_{suffix_id}"
+
+        template = self.filename_template
+
+        raw_time = str(awemeDict.get("create_time", ""))
+        date_part = raw_time.split(" ")[0] if " " in raw_time else raw_time
+        date_clean = self._sanitize_name_part(date_part, 20)
+
+        raw_desc = awemeDict.get("desc", "") or "video"
+        title_clean = self._sanitize_name_part(raw_desc, 60)
+
+        raw_id = str(awemeDict.get("aweme_id") or awemeDict.get("id") or "")
+        id_clean = self._sanitize_name_part(raw_id, 30)
+
+        author_name = awemeDict.get("author", {}).get("nickname", "")
+        author_clean = self._sanitize_name_part(author_name, 30)
+
+        digg_count = awemeDict.get("statistics", {}).get("digg_count", 0)
+        try:
+            digg_int = int(digg_count)
+        except (ValueError, TypeError):
+            digg_int = 0
+        likes_clean = f"{digg_int:09d}"
+
+        result = template
+        result = result.replace("{date}", date_clean)
+        result = result.replace("{time}", self._sanitize_name_part(raw_time, 25))
+        result = result.replace("{title}", title_clean)
+        result = result.replace("{desc}", title_clean)
+        result = result.replace("{id}", id_clean)
+        result = result.replace("{aweme_id}", id_clean)
+        result = result.replace("{author}", author_clean)
+        result = result.replace("{nickname}", author_clean)
+        result = result.replace("{likes}", likes_clean)
+        result = result.replace("{digg_count}", likes_clean)
+
+        final_name = self._sanitize_name_part(result, 120)
+        if not final_name:
+            final_name = f"{date_clean}_{title_clean}_{id_clean}".strip("_")
+        return final_name or "douyin_video"
+
 
     def _get_session(self) -> requests.Session:
         s = getattr(self._tls, "session", None)
@@ -414,19 +482,15 @@ class Download(object):
             save_path = Path(savePath)
             save_path.mkdir(parents=True, exist_ok=True)
 
-            # Get digg_count for filename with zero-padding for proper sorting
-            digg_count = awemeDict.get("statistics", {}).get("digg_count", 0)
-            digg_count_str = f"{digg_count:09d}"  # 9-digit zero-padding for sorting
-
-            # Tạo tên file từ thời gian, digg_count và mô tả
-            # Identify suffix for stable identification: time + desc
+            # Tạo tên file từ thời gian, digg_count và mô tả theo filename_template
+            file_name = self._format_file_name(awemeDict)
             suffix_id = (
-                f"{awemeDict['create_time']}_{utils.replaceStr(awemeDict['desc'])}"
+                f"{awemeDict.get('create_time', '')}_{utils.replaceStr(awemeDict.get('desc', ''))}"
             )
-            file_name = f"{digg_count_str}likes_{suffix_id}"
 
-            # Check and rename if exists
-            self._rename_if_exists(save_path, file_name, suffix_id)
+            # Check and rename if exists (for like count changes)
+            if not self.filename_template or "{likes}" in self.filename_template or "{digg_count}" in self.filename_template:
+                self._rename_if_exists(save_path, file_name, suffix_id)
 
             aweme_path = save_path / file_name if self.folderstyle else save_path
             aweme_path.mkdir(exist_ok=True)

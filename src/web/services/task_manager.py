@@ -593,6 +593,7 @@ class TaskManager:
                 folderstyle=req.folderstyle,
                 progress_callback=progress_hook,
                 cancel_event=record.cancel_event,
+                filename_template=getattr(req, "filename_template", None),
             )
 
             destination = Path(req.download_path).resolve()

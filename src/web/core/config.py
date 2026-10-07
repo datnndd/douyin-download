@@ -271,6 +271,9 @@ def _update_yaml_in_place_regex(original_text: str, settings: SettingsModel) -> 
     text = replace_root_scalar(text, "json", settings.json)
     text = replace_root_scalar(text, "folderstyle", settings.folderstyle)
     text = replace_root_scalar(text, "thread", settings.thread)
+    text = replace_root_scalar(
+        text, "filename_template", json.dumps(settings.filename_template or "{date}_{title}_{id}")
+    )
     text = replace_root_scalar(text, "database", settings.database)
     text = replace_root_scalar(
         text, "start_time", json.dumps(settings.start_time or "")
@@ -354,6 +357,7 @@ def load_config_file(config_path: Union[str, Path] = "config.yaml") -> SettingsM
             json=bool(raw_data.get("json", True)),
             folderstyle=bool(raw_data.get("folderstyle", True)),
             thread=max(1, min(32, int(raw_data.get("thread", 5)))),
+            filename_template=str(raw_data.get("filename_template", "{date}_{title}_{id}")),
             cookies=cookies_dict,
             raw_cookie=raw_cookie_val,
             start_time=str(raw_data.get("start_time", "")),
@@ -420,6 +424,7 @@ def save_config_file(
         data["json"] = settings.json
         data["folderstyle"] = settings.folderstyle
         data["thread"] = settings.thread
+        data["filename_template"] = settings.filename_template
         data["database"] = settings.database
         data["start_time"] = settings.start_time
         data["end_time"] = settings.end_time
