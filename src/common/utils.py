@@ -52,7 +52,7 @@ class Utils(object):
             return True
 
     def generate_random_str(self, length=16):
-        """Tạo chuỗi ngẫu nhiên"""
+        """Generate random string."""
         chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789='
         return ''.join(random.choice(chars) for _ in range(length))
 
@@ -66,7 +66,7 @@ class Utils(object):
                 if name == 'ttwid':
                     return value
         except Exception as e:
-            logger.warning(f"Không thể lấy ttwid: {e}")
+            logger.warning(f"Failed to obtain ttwid: {e}")
             return None
 
     def getXbogus(self, payload, form='', ua=src.ua):

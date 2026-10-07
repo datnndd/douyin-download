@@ -47,7 +47,7 @@ import { api } from '../services/api';
 
 /**
  * Extracts clean Douyin or HTTP URL from raw clipboard text, Kouling tokens, or share messages.
- * e.g. "0.23 C@u.sr :0pm 01/04 TLJ:/ 赶海现抓现吃... https://v.douyin.com/meBXuCMU5l0/ 复制此链接..."
+ * e.g. "0.23 C@u.sr :0pm 01/04 TLJ:/ Catching seafood fresh... https://v.douyin.com/meBXuCMU5l0/ Copy this link..."
  */
 export const extractDouyinUrl = (text: string): string => {
   if (!text || !text.trim()) return '';
@@ -76,12 +76,12 @@ interface UnifiedDownloaderProps {
 }
 
 const FILENAME_PRESETS = [
-  { label: 'Ngày_Tiêu-đề_ID (Chuẩn)', template: '{date}_{title}_{id}' },
-  { label: 'Số-like_Ngày_Tiêu-đề (Mặc định cũ)', template: '{likes}likes_{date}_{title}' },
-  { label: 'Tiêu-đề_ID (Gọn gàng)', template: '{title}_{id}' },
-  { label: 'Tác-giả_Tiêu-đề_ID', template: '{author}_{title}_{id}' },
-  { label: 'Chỉ ID video', template: '{id}' },
-  { label: 'Tùy chỉnh...', template: 'custom' },
+  { label: 'Date_Title_ID (Standard)', template: '{date}_{title}_{id}' },
+  { label: 'Likes_Date_Title (Legacy default)', template: '{likes}likes_{date}_{title}' },
+  { label: 'Title_ID (Compact)', template: '{title}_{id}' },
+  { label: 'Author_Title_ID', template: '{author}_{title}_{id}' },
+  { label: 'Video ID Only', template: '{id}' },
+  { label: 'Custom...', template: 'custom' },
 ];
 
 export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
@@ -176,7 +176,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
     const raw = targetUrl || urlInput.trim();
     const clean = extractDouyinUrl(raw) || raw;
     if (!clean) {
-      if (!isSilent) setParseError('Vui lòng nhập liên kết hoặc chia sẻ Douyin.');
+      if (!isSilent) setParseError('Please enter a Douyin link or share text.');
       return;
     }
 
@@ -191,13 +191,13 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
     try {
       const res = await api.parseUrl(clean, settings?.raw_cookie);
       if (!res.success) {
-        setParseError(res.error || 'Không thể phân tích thông tin từ liên kết.');
+        setParseError(res.error || 'Failed to parse link metadata.');
       } else {
         setParsedData(res);
       }
     } catch (err: any) {
       if (!isSilent) {
-        setParseError(err.message || 'Lỗi kết nối máy chủ phân tích.');
+        setParseError(err.message || 'Connection error with parsing engine.');
       }
     } finally {
       setParsing(false);
@@ -281,7 +281,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       ? String(parsedData.preview.extra.create_time).split(' ')[0]
       : '2024-10-29';
     const titleVal =
-      (parsedData?.preview?.title || '赶海现抓现吃根本吃不完')
+      (parsedData?.preview?.title || 'Sample Video Title')
         .replace(/[\\/*?:"<>|\r\n\t]/g, '_')
         .slice(0, 30);
     const idVal = parsedData?.key || '7431234567890';
@@ -309,12 +309,12 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
     const raw = urlInput.trim();
     const clean = extractDouyinUrl(raw) || raw;
     if (!clean) {
-      setDownloadError('Vui lòng nhập hoặc dán liên kết Douyin cần tải.');
+      setDownloadError('Please enter or paste a Douyin link to download.');
       return;
     }
 
     if (!assetTypes.video && !assetTypes.music && !assetTypes.cover && !assetTypes.avatar && !assetTypes.json) {
-      setDownloadError('Vui lòng chọn ít nhất một định dạng tài nguyên (Video, Âm thanh, Ảnh bìa...)');
+      setDownloadError('Please select at least one media asset (Video, Audio, Cover...)');
       return;
     }
 
@@ -348,15 +348,16 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       onDownloadStarted(res);
       // Optional: keep URL or clear according to preference
     } catch (err: any) {
-      setDownloadError(err.message || 'Không thể khởi chạy tác vụ tải về.');
+      setDownloadError(err.message || 'Failed to start download task.');
     } finally {
       setDownloading(false);
     }
   };
 
   const formatNumber = (num: number = 0): string => {
-    if (num >= 100000000) return (num / 100000000).toFixed(1) + '亿';
-    if (num >= 10000) return (num / 10000).toFixed(1) + '万';
+    if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toLocaleString();
   };
 
@@ -387,7 +388,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   handleStartDownload();
                 }
               }}
-              placeholder="Dán link video, chia sẻ Kouling, hoặc link trang cá nhân Douyin (https://v.douyin.com/...)"
+              placeholder="Paste video link, Kouling share text, or Douyin profile link (https://v.douyin.com/...)"
               className="w-full py-2.5 pr-20 bg-transparent text-xs sm:text-sm text-[#1F2328] placeholder-[#898174] focus:outline-none"
             />
 
@@ -398,7 +399,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   type="button"
                   onClick={handleClearUrl}
                   className="p-1 rounded-md text-[#898174] hover:text-[#1F2328] hover:bg-[#E5DED4]/50 transition-colors"
-                  title="Xóa nội dung"
+                  title="Clear input"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -407,10 +408,10 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                 type="button"
                 onClick={handlePaste}
                 className="flex items-center space-x-1 px-2 py-1 rounded-md text-xs font-medium text-[#8D4B00] bg-[#F3ECE2] hover:bg-[#EDE5DA] transition-colors"
-                title="Dán từ Clipboard"
+                title="Paste from clipboard"
               >
                 <Clipboard className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">Dán</span>
+                <span className="hidden md:inline">Paste</span>
               </button>
             </div>
           </div>
@@ -423,14 +424,14 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               onClick={() => handleParse()}
               disabled={parsing || !urlInput.trim()}
               className="flex items-center justify-center space-x-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#F3ECE2] hover:bg-[#EDE5DA] text-[#8D4B00] border border-[#E5DED4] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              title="Kiểm tra & xem trước nội dung"
+              title="Inspect & preview content"
             >
               {parsing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Eye className="w-4 h-4" />
               )}
-              <span>Xem trước</span>
+              <span>Preview</span>
             </button>
 
             {/* PRIMARY DOWNLOAD BUTTON */}
@@ -445,7 +446,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               ) : (
                 <Download className="w-4 h-4 stroke-[2.5]" />
               )}
-              <span>TẢI XUỐNG NGAY</span>
+              <span>DOWNLOAD NOW</span>
             </button>
           </div>
         </div>
@@ -459,7 +460,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               onClick={() => setParseError(null)}
               className="text-amber-700 hover:text-amber-900 text-xs underline"
             >
-              Đóng
+              Dismiss
             </button>
           </div>
         )}
@@ -472,7 +473,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               onClick={() => setDownloadError(null)}
               className="text-rose-700 hover:text-rose-900 text-xs underline"
             >
-              Đóng
+              Dismiss
             </button>
           </div>
         )}
@@ -489,7 +490,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-[#E5DED4]">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 text-[#8D4B00]" />
-              <h2 className="text-sm font-bold text-[#1F2328]">Nội dung phát hiện</h2>
+              <h2 className="text-sm font-bold text-[#1F2328]">Detected Content</h2>
             </div>
             {parsedData && (
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#F3ECE2] text-[#8D4B00] border border-[#E5DED4] uppercase">
@@ -526,7 +527,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                     </p>
                     <div className="flex items-center space-x-3 text-[10px] text-[#898174] mt-0.5">
                       <span>
-                        Follower:{' '}
+                        Followers:{' '}
                         <strong>
                           {formatNumber(parsedData.preview.author.follower_count || 0)}
                         </strong>
@@ -564,7 +565,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               {/* Title description */}
               <div>
                 <h3 className="text-xs font-semibold text-[#1F2328] line-clamp-3">
-                  {parsedData.preview.title || parsedData.preview.desc || 'Video Douyin'}
+                  {parsedData.preview.title || parsedData.preview.desc || 'Douyin Video'}
                 </h3>
               </div>
 
@@ -575,28 +576,28 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                     <Heart className="w-3 h-3 fill-rose-600" />
                     <span>{formatNumber(parsedData.preview.statistics?.digg_count)}</span>
                   </div>
-                  <span className="text-[10px] text-[#898174]">Thích</span>
+                  <span className="text-[10px] text-[#898174]">Likes</span>
                 </div>
                 <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
                   <div className="flex items-center justify-center space-x-1 text-[#8D4B00] text-[11px] font-semibold">
                     <MessageCircle className="w-3 h-3" />
                     <span>{formatNumber(parsedData.preview.statistics?.comment_count)}</span>
                   </div>
-                  <span className="text-[10px] text-[#898174]">Bình luận</span>
+                  <span className="text-[10px] text-[#898174]">Comments</span>
                 </div>
                 <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
                   <div className="flex items-center justify-center space-x-1 text-[#595E68] text-[11px] font-semibold">
                     <Share2 className="w-3 h-3" />
                     <span>{formatNumber(parsedData.preview.statistics?.share_count)}</span>
                   </div>
-                  <span className="text-[10px] text-[#898174]">Chia sẻ</span>
+                  <span className="text-[10px] text-[#898174]">Shares</span>
                 </div>
                 <div className="p-2 rounded-lg bg-[#FAF8F5] border border-[#E5DED4]/60">
                   <div className="flex items-center justify-center space-x-1 text-amber-600 text-[11px] font-semibold">
                     <Layers className="w-3 h-3" />
                     <span>{formatNumber(parsedData.preview.statistics?.collect_count)}</span>
                   </div>
-                  <span className="text-[10px] text-[#898174]">Lưu</span>
+                  <span className="text-[10px] text-[#898174]">Collects</span>
                 </div>
               </div>
             </div>
@@ -607,10 +608,10 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               </div>
               <div>
                 <h4 className="text-xs font-bold text-[#1F2328]">
-                  Chưa có thông tin xem trước
+                  No preview available
                 </h4>
                 <p className="text-[11px] text-[#595E68] mt-1 max-w-xs mx-auto">
-                  Dán liên kết video đơn, album ảnh hoặc trang cá nhân tác giả vào ô phía trên để xem trước hoặc bấm <strong>Tải xuống ngay</strong>.
+                  Paste a video link, photo gallery, or user profile above to preview or click <strong>Download Now</strong>.
                 </p>
               </div>
             </div>
@@ -626,17 +627,17 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-[#E5DED4]">
               <div className="flex items-center space-x-2">
                 <Sliders className="w-4 h-4 text-[#8D4B00]" />
-                <h2 className="text-sm font-bold text-[#1F2328]">Tùy chọn tải về</h2>
+                <h2 className="text-sm font-bold text-[#1F2328]">Download Options</h2>
               </div>
               <span className="text-[11px] text-[#898174]">
-                Tự động áp dụng khi bấm tải
+                Automatically applied when starting download
               </span>
             </div>
 
             {/* 1. ASSET SELECTION TOGGLES */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-[#1F2328]">
-                Định dạng tài nguyên cần lưu
+                Target Media Assets
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 {/* Video */}
@@ -664,7 +665,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   }`}
                 >
                   <Music className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Nhạc nền (.mp3)</span>
+                  <span className="truncate">Music (.mp3)</span>
                 </button>
 
                 {/* Cover */}
@@ -678,7 +679,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   }`}
                 >
                   <ImageIcon className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Ảnh bìa (.jpeg)</span>
+                  <span className="truncate">Cover (.jpeg)</span>
                 </button>
 
                 {/* Avatar */}
@@ -692,7 +693,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   }`}
                 >
                   <User className="w-4 h-4 shrink-0" />
-                  <span className="truncate">Avatar creator</span>
+                  <span className="truncate">Creator avatar</span>
                 </button>
 
                 {/* JSON */}
@@ -706,7 +707,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   }`}
                 >
                   <FileText className="w-4 h-4 shrink-0" />
-                  <span className="truncate">JSON kết quả</span>
+                  <span className="truncate">JSON metadata</span>
                 </button>
               </div>
             </div>
@@ -716,7 +717,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <Folder className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>Thư mục lưu trữ video</span>
+                  <span>Download Destination Folder</span>
                 </label>
                 {onOpenFolder && (
                   <button
@@ -725,7 +726,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                     className="text-[11px] text-[#8D4B00] hover:underline flex items-center space-x-1"
                   >
                     <FolderOpen className="w-3 h-3" />
-                    <span>Mở thư mục trong Explorer</span>
+                    <span>Open in File Explorer</span>
                   </button>
                 )}
               </div>
@@ -741,19 +742,19 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   type="button"
                   onClick={() => setDownloadPath('./Downloaded/')}
                   className="px-2.5 py-2 text-xs rounded-xl border border-[#E5DED4] text-[#595E68] hover:bg-[#FAF8F5]"
-                  title="Đặt lại mặc định"
+                  title="Reset to default"
                 >
-                  Mặc định
+                  Default
                 </button>
               </div>
             </div>
 
-            {/* 3. FILENAME NAMING TEMPLATE (QUY TẮC ĐẶT TÊN FILE) */}
+            {/* 3. FILENAME NAMING TEMPLATE */}
             <div className="space-y-2 p-3.5 bg-[#FAF8F5] rounded-xl border border-[#E5DED4]">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <FileCode className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>Quy tắc đặt tên file (Filename Template)</span>
+                  <span>Filename Naming Template</span>
                 </label>
               </div>
 
@@ -790,13 +791,13 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
 
                 {/* Variable helper tags */}
                 <div className="flex flex-wrap items-center gap-1 text-[10px] text-[#898174]">
-                  <span>Bấm chèn thẻ:</span>
+                  <span>Insert tag:</span>
                   {[
-                    { tag: '{date}', label: 'Ngày' },
-                    { tag: '{title}', label: 'Tiêu đề' },
+                    { tag: '{date}', label: 'Date' },
+                    { tag: '{title}', label: 'Title' },
                     { tag: '{id}', label: 'ID' },
-                    { tag: '{author}', label: 'Tác giả' },
-                    { tag: '{likes}', label: 'Lượt thích' },
+                    { tag: '{author}', label: 'Author' },
+                    { tag: '{likes}', label: 'Likes' },
                   ].map((v) => (
                     <button
                       key={v.tag}
@@ -811,7 +812,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
 
                 {/* Live Sample Preview */}
                 <div className="flex items-center space-x-1.5 text-[11px] text-[#595E68] bg-white p-2 rounded-lg border border-[#E5DED4]/60 font-mono truncate">
-                  <span className="text-[#8D4B00] font-semibold shrink-0">Ví dụ tên file:</span>
+                  <span className="text-[#8D4B00] font-semibold shrink-0">Sample filename:</span>
                   <span className="truncate">{sampleFilename}</span>
                 </div>
               </div>
@@ -833,10 +834,10 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               >
                 <div className="flex items-center space-x-2">
                   <Filter className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>Bộ lọc tải Trang cá nhân / Kênh tác giả (User Works)</span>
+                  <span>Creator Profile / User Works Filter</span>
                   {isUserProfile && (
                     <span className="text-[10px] px-2 py-0.5 bg-[#8D4B00] text-white rounded-full font-bold">
-                      Đang bật
+                      Active
                     </span>
                   )}
                 </div>
@@ -853,7 +854,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   {/* Mode Select (Post vs Like) */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-semibold text-[#595E68]">
-                      Loại danh sách tác phẩm
+                      Works Content Type
                     </label>
                     <div className="flex items-center gap-2">
                       <button
@@ -866,7 +867,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                         }`}
                       >
                         <Video className="w-3 h-3" />
-                        <span>Bài đăng của kênh (post)</span>
+                        <span>Published works (post)</span>
                       </button>
 
                       <button
@@ -879,7 +880,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                         }`}
                       >
                         <Heart className="w-3 h-3" />
-                        <span>Video đã thích (like)</span>
+                        <span>Liked works (like)</span>
                       </button>
                     </div>
                   </div>
@@ -888,10 +889,10 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#595E68]">
-                        Giới hạn số lượng video tải về
+                        Video Download Limit
                       </label>
                       <span className="text-[10px] text-[#898174]">
-                        {videoLimit === 0 ? 'Tải toàn bộ không giới hạn' : `Tối đa ${videoLimit} video`}
+                        {videoLimit === 0 ? 'Unlimited (All)' : `Max ${videoLimit} videos`}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -916,7 +917,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                                 : 'bg-white text-[#595E68] border-[#E5DED4]'
                             }`}
                           >
-                            {count === 0 ? 'Tất cả' : count}
+                            {count === 0 ? 'All' : count}
                           </button>
                         ))}
                       </div>
@@ -928,13 +929,13 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                     <div className="flex items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#595E68] flex items-center space-x-1">
                         <Calendar className="w-3 h-3 text-[#8D4B00]" />
-                        <span>Khoảng thời gian đăng video (Từ ngày nào đến ngày nào)</span>
+                        <span>Publish Date Range</span>
                       </label>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div>
-                        <span className="text-[10px] text-[#898174] block mb-0.5">Từ ngày (Start):</span>
+                        <span className="text-[10px] text-[#898174] block mb-0.5">Start Date:</span>
                         <input
                           type="date"
                           value={startTime}
@@ -944,7 +945,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                       </div>
 
                       <div>
-                        <span className="text-[10px] text-[#898174] block mb-0.5">Đến ngày (End):</span>
+                        <span className="text-[10px] text-[#898174] block mb-0.5">End Date:</span>
                         <input
                           type="date"
                           value={endTime}
@@ -956,34 +957,34 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
 
                     {/* Quick date shortcuts */}
                     <div className="flex items-center gap-1.5 pt-1">
-                      <span className="text-[10px] text-[#898174]">Chọn nhanh:</span>
+                      <span className="text-[10px] text-[#898174]">Quick pick:</span>
                       <button
                         type="button"
                         onClick={() => applyQuickDate('all')}
                         className="px-2 py-0.5 text-[10px] rounded bg-white hover:bg-[#F3ECE2] border border-[#E5DED4] text-[#595E68]"
                       >
-                        Tất cả
+                        All
                       </button>
                       <button
                         type="button"
                         onClick={() => applyQuickDate(7)}
                         className="px-2 py-0.5 text-[10px] rounded bg-white hover:bg-[#F3ECE2] border border-[#E5DED4] text-[#595E68]"
                       >
-                        7 ngày qua
+                        Last 7 days
                       </button>
                       <button
                         type="button"
                         onClick={() => applyQuickDate(30)}
                         className="px-2 py-0.5 text-[10px] rounded bg-white hover:bg-[#F3ECE2] border border-[#E5DED4] text-[#595E68]"
                       >
-                        30 ngày qua
+                        Last 30 days
                       </button>
                       <button
                         type="button"
                         onClick={() => applyQuickDate('this_year')}
                         className="px-2 py-0.5 text-[10px] rounded bg-white hover:bg-[#F3ECE2] border border-[#E5DED4] text-[#595E68]"
                       >
-                        Năm nay
+                        This year
                       </button>
                     </div>
                   </div>
@@ -1000,7 +1001,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               >
                 <div className="flex items-center space-x-2">
                   <Cpu className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>Cài đặt nâng cao (Số luồng & Phân loại thư mục)</span>
+                  <span>Advanced Settings (Workers & Folder Structure)</span>
                 </div>
                 {showAdvanced ? (
                   <ChevronUp className="w-4 h-4 text-[#898174]" />
@@ -1015,10 +1016,10 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
                       <label className="text-[11px] font-semibold text-[#595E68]">
-                        Số luồng tải đồng thời (Worker threads)
+                        Concurrent Download Workers
                       </label>
                       <span className="font-mono text-xs font-bold text-[#8D4B00]">
-                        {threadCount} luồng
+                        {threadCount} workers
                       </span>
                     </div>
                     <div className="flex items-center space-x-3">
@@ -1044,7 +1045,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                         onChange={(e) => setFolderStyle(e.target.checked)}
                         className="accent-[#8D4B00] w-4 h-4 rounded"
                       />
-                      <span>Gom nhóm từng video vào thư mục con riêng biệt</span>
+                      <span>Organize each video into separate subfolder</span>
                     </label>
                   </div>
                 </div>
@@ -1054,7 +1055,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             {/* Bottom Actions Bar */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-[#E5DED4]">
               <span className="text-xs text-[#898174]">
-                Nhấn bắt đầu để tải video về máy với các tùy chọn đã thiết lập.
+                Click start to begin downloading media files with current configuration.
               </span>
 
               <button
@@ -1068,7 +1069,7 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
                 ) : (
                   <Download className="w-4 h-4 stroke-[2.5]" />
                 )}
-                <span>BẮT ĐẦU TẢI VỀ</span>
+                <span>START DOWNLOAD</span>
               </button>
             </div>
           </div>

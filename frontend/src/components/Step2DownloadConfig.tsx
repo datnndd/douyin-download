@@ -88,7 +88,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
   const handleStartDownload = async () => {
     // Validate at least one asset selected
     if (!assetTypes.video && !assetTypes.music && !assetTypes.cover && !assetTypes.avatar && !assetTypes.json) {
-      setError('请至少选择一项需要下载的资源类型（如视频或音频）');
+      setError('Please select at least one resource type to download (e.g. video or audio)');
       return;
     }
 
@@ -112,7 +112,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
       const res = await api.startDownload(payload);
       onDownloadStarted(res);
     } catch (err: any) {
-      setError(err.message || '启动下载任务失败');
+      setError(err.message || 'Failed to start download task');
     } finally {
       setSubmitting(false);
     }
@@ -126,14 +126,14 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
           <button
             onClick={onBack}
             className="p-2 rounded-xl text-[#595E68] hover:text-[#1F2328] hover:bg-[#F3ECE2] border border-[#E5DED4] transition-colors"
-            title="返回第一步"
+            title="Back to Step 1"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div className="overflow-hidden">
             <div className="flex items-center space-x-2">
               <span className="text-[11px] font-semibold text-[#8D4B00] uppercase tracking-wider">
-                当前下载目标
+                Current Download Target
               </span>
               <span className="text-[11px] px-2 py-0.2 rounded-full bg-[#F3ECE2] text-[#595E68] border border-[#E5DED4]">
                 {parseData.key_type}
@@ -149,7 +149,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
           onClick={onBack}
           className="text-xs text-[#8D4B00] font-semibold hover:underline shrink-0 ml-4"
         >
-          更换链接
+          Change Link
         </button>
       </div>
 
@@ -158,10 +158,10 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
         <div>
           <h2 className="text-sm font-semibold text-[#1F2328] flex items-center space-x-2">
             <Sliders className="w-4 h-4 text-[#8D4B00]" />
-            <span>第二步：配置下载参数</span>
+            <span>Step 2: Configure Download Options</span>
           </h2>
           <p className="text-xs text-[#595E68] mt-1">
-            自定义下载资源类型、并发线程数、排序过滤与目标文件目录
+            Customize media asset types, concurrency workers, sorting filters, and destination folder
           </p>
         </div>
 
@@ -169,7 +169,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
         {isUserProfile && (
           <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#E5DED4] space-y-2">
             <label className="text-xs font-semibold text-[#1F2328] block">
-              主页作品下载范围
+              Profile Works Download Scope
             </label>
             <div className="flex flex-wrap gap-3">
               <button
@@ -188,7 +188,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
                 >
                   {modes.includes('post') && <Check className="w-3 h-3 text-white" />}
                 </div>
-                <span>作者已发布作品 (post)</span>
+                <span>Author published works (post)</span>
               </button>
 
               <button
@@ -207,11 +207,11 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
                 >
                   {modes.includes('like') && <Check className="w-3 h-3 text-white" />}
                 </div>
-                <span>作者点赞作品 (like)</span>
+                <span>Author liked works (like)</span>
               </button>
             </div>
             <p className="text-[11px] text-[#595E68]">
-              注：下载点赞作品需用户主页公开点赞或配置有效 Cookie
+              Note: Downloading liked works requires public likes on the profile or valid cookies
             </p>
           </div>
         )}
@@ -219,7 +219,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
         {/* Asset Selection Toggles */}
         <div className="space-y-2">
           <label className="text-xs font-semibold text-[#1F2328] block">
-            下载资源选择 (Asset Toggles)
+            Select Media Assets (Asset Toggles)
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {/* Video */}
@@ -233,7 +233,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
               }`}
             >
               <Film className="w-5 h-5 mb-1.5" />
-              <span className="text-xs">无水印视频</span>
+              <span className="text-xs">Watermark-free video</span>
               <span className="text-[10px] opacity-75 mt-0.5">MP4</span>
             </button>
 
@@ -248,7 +248,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
               }`}
             >
               <Music className="w-5 h-5 mb-1.5" />
-              <span className="text-xs">背景原声音频</span>
+              <span className="text-xs">Background audio</span>
               <span className="text-[10px] opacity-75 mt-0.5">MP3</span>
             </button>
 
@@ -263,7 +263,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
               }`}
             >
               <ImageIcon className="w-5 h-5 mb-1.5" />
-              <span className="text-xs">动态/高清封面</span>
+              <span className="text-xs">HD Cover image</span>
               <span className="text-[10px] opacity-75 mt-0.5">JPG / PNG</span>
             </button>
 
@@ -278,7 +278,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
               }`}
             >
               <User className="w-5 h-5 mb-1.5" />
-              <span className="text-xs">创作者头像</span>
+              <span className="text-xs">Creator avatar</span>
               <span className="text-[10px] opacity-75 mt-0.5">JPG</span>
             </button>
 
@@ -293,7 +293,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
               }`}
             >
               <FileCode className="w-5 h-5 mb-1.5" />
-              <span className="text-xs">元数据文档</span>
+              <span className="text-xs">Metadata document</span>
               <span className="text-[10px] opacity-75 mt-0.5">JSON</span>
             </button>
           </div>
@@ -305,12 +305,12 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
             <div className="flex items-center space-x-2">
               <Cpu className="w-4 h-4 text-[#8D4B00]" />
               <span className="text-xs font-semibold text-[#1F2328]">
-                下载并发线程数 (Concurrency Workers)
+                Concurrent Download Workers
               </span>
             </div>
             <div className="flex items-center space-x-1.5">
               <span className="text-sm font-mono font-bold text-[#8D4B00] px-2.5 py-0.5 rounded-md bg-[#F3ECE2] border border-[#E5DED4]">
-                {threadCount} 线程
+                {threadCount} workers
               </span>
             </div>
           </div>
@@ -329,7 +329,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
           </div>
 
           <p className="text-[11px] text-[#595E68]">
-            线程池管理多文件并发拉取与断点续传。推荐设置 5~10 线程以平衡下载吞吐率与系统负载。
+            Thread pool manages multi-file concurrent downloads and range resumption. 5~10 threads recommended for balance.
           </p>
         </div>
 
@@ -338,24 +338,24 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-semibold text-[#1F2328] block mb-1.5">
-                排序规则
+                Sort By
               </label>
               <select
                 value={filter.sort_by}
                 onChange={(e) => setFilter({ ...filter, sort_by: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-[#E5DED4] bg-[#FAF8F5] text-xs text-[#1F2328] focus:outline-none focus:border-[#8D4B00]"
               >
-                <option value="create_time">发布时间 (create_time)</option>
-                <option value="digg_count">点赞数量 (digg_count)</option>
-                <option value="comment_count">评论数量 (comment_count)</option>
-                <option value="play_count">播放数量 (play_count)</option>
-                <option value="share_count">分享数量 (share_count)</option>
+                <option value="create_time">Publish Time (create_time)</option>
+                <option value="digg_count">Like Count (digg_count)</option>
+                <option value="comment_count">Comment Count (comment_count)</option>
+                <option value="play_count">Play Count (play_count)</option>
+                <option value="share_count">Share Count (share_count)</option>
               </select>
             </div>
 
             <div>
               <label className="text-xs font-semibold text-[#1F2328] block mb-1.5">
-                排列顺序
+                Sort Order
               </label>
               <select
                 value={filter.reverse ? 'desc' : 'asc'}
@@ -364,14 +364,14 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
                 }
                 className="w-full px-3 py-2 rounded-xl border border-[#E5DED4] bg-[#FAF8F5] text-xs text-[#1F2328] focus:outline-none focus:border-[#8D4B00]"
               >
-                <option value="desc">降序（从新到旧 / 从多到少）</option>
-                <option value="asc">升序（从旧到新 / 从少到多）</option>
+                <option value="desc">Descending (Newest / Highest)</option>
+                <option value="asc">Ascending (Oldest / Lowest)</option>
               </select>
             </div>
 
             <div>
               <label className="text-xs font-semibold text-[#1F2328] block mb-1.5">
-                下载数量限制 (0 表示全部)
+                Download Limit (0 for all)
               </label>
               <input
                 type="number"
@@ -390,7 +390,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
           <div>
             <label className="text-xs font-semibold text-[#1F2328] block mb-1.5">
-              目标下载路径
+              Destination Download Path
             </label>
             <div className="relative">
               <input
@@ -405,7 +405,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
 
           <div>
             <label className="text-xs font-semibold text-[#1F2328] block mb-1.5">
-              目录组织结构
+              Directory Organization Structure
             </label>
             <div className="flex items-center space-x-3 pt-1">
               <button
@@ -417,7 +417,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
                     : 'bg-white border-[#E5DED4] text-[#595E68] hover:bg-[#FAF8F5]'
                 }`}
               >
-                独立文件夹归档 (推荐)
+                Individual subfolders (Recommended)
               </button>
               <button
                 type="button"
@@ -428,7 +428,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
                     : 'bg-white border-[#E5DED4] text-[#595E68] hover:bg-[#FAF8F5]'
                 }`}
               >
-                平铺存储于根目录
+                Flat in root directory
               </button>
             </div>
           </div>
@@ -449,7 +449,7 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
             className="flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-medium text-[#595E68] bg-[#FAF8F5] hover:bg-[#F3ECE2] border border-[#E5DED4] transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>返回预览</span>
+            <span>Back to Preview</span>
           </button>
 
           <button
@@ -461,12 +461,12 @@ export const Step2DownloadConfig: React.FC<Step2DownloadConfigProps> = ({
             {submitting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>正在初始化下载任务...</span>
+                <span>Initializing download task...</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>启动多线程高速下载</span>
+                <span>Start High-Speed Download</span>
               </>
             )}
           </button>

@@ -82,10 +82,10 @@ def main():
     server_url = f"http://{args.host}:{args.port}"
 
     print("=" * 64)
-    print("  抖音视频/音频/图集 Web 下载器 (Douyin Web Downloader)")
+    print("  Douyin Video/Audio/Image Web Downloader")
     print("  Editorial Warm Theme Edition")
-    print(f"  服务启动中: {server_url}")
-    print("  按 Ctrl+C 停止服务")
+    print(f"  Server starting at: {server_url}")
+    print("  Press Ctrl+C to stop server")
     print("=" * 64)
 
     if not args.no_browser:

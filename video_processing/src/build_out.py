@@ -8,27 +8,27 @@ CONFIG_FILE = "config_video.json"
 OUTPUT_FILE = "out.mp4"
 TEMP_AUDIO_DIR = "temp_audio_chunks"
 
-# ================== CẤU HÌNH PCM / AUDIO ==================
+# ================== PCM / AUDIO CONFIGURATION ==================
 PCM_SAMPLE_RATE = 24000
 PCM_CHANNELS = 1
 PCM_BITS_PER_SAMPLE = 16
 
-# Tối ưu cho t3.micro (2 vCPU)
+# Optimized for t3.micro (2 vCPU)
 FFMPEG_THREADS = "2"
 VIDEO_PRESET = "ultrafast"
 VIDEO_CRF = "28"
 MAX_HEIGHT = 720
 
-# ================== FONT & MÀU SẮC SUBTITLE ==================
+# ================== SUBTITLE FONT & COLOR ==================
 SUB_FONT = "Arial"
-COLOR_TEXT = "&H00FFFF"      # chữ vàng sáng (Cyan in BGR = Yellow in RGB)
-COLOR_OUTLINE = "0"       # viền đen
+COLOR_TEXT = "&H00FFFF"      # Bright yellow text (Cyan in BGR = Yellow in RGB)
+COLOR_OUTLINE = "0"       # Black outline
 SUB_FONT_SIZE = 18
-SUB_MARGIN_V = 12         # vị trí chữ
+SUB_MARGIN_V = 12         # Subtitle vertical position
 
 
 def get_duration(path: str, cache: dict) -> float:
-    """Lấy duration của file audio (pcm hoặc định dạng khác) và cache lại."""
+    """Retrieve duration of audio file (pcm or other formats) and cache it."""
     if path in cache:
         return cache[path]
     dur = 0.0
@@ -63,7 +63,7 @@ def get_duration(path: str, cache: dict) -> float:
 
 
 def create_silent_wav(filename, duration_sec):
-    """Tạo file wav silence mono 24kHz với độ dài duration_sec."""
+    """Create mono 24kHz silent wav file with duration_sec length."""
     if duration_sec <= 0:
         return
     num_frames = int(duration_sec * PCM_SAMPLE_RATE)
@@ -80,7 +80,7 @@ def create_silent_wav(filename, duration_sec):
 
 def generate_optimized_audio(segments, output_wav):
     """
-    MỤC TIÊU: ĐỒNG BỘ VỚI SRT.
+    GOAL: SYNCHRONIZE WITH SRT.
     """
     if os.path.exists(TEMP_AUDIO_DIR):
         shutil.rmtree(TEMP_AUDIO_DIR)
@@ -101,7 +101,7 @@ def generate_optimized_audio(segments, output_wav):
         end_target = float(seg["end"]) 
         slot_len = max(end_target - start, 0.1)
 
-        # ---- GAP TRƯỚC SEGMENT ----
+        # ---- GAP BEFORE SEGMENT ----
         gap = start - last_end_time
         if gap > 0.01:
             silence_file = os.path.join(TEMP_AUDIO_DIR, f"silence_{i}.wav")
@@ -110,7 +110,7 @@ def generate_optimized_audio(segments, output_wav):
                 concat_files.append(silence_file)
             last_end_time += gap
 
-        # ---- DURATION GỐC ----
+        # ---- ORIGINAL DURATION ----
         raw_dur = get_duration(audio_path, duration_cache)
         if raw_dur <= 0:
             silence_seg = os.path.join(TEMP_AUDIO_DIR, f"seg_silence_{i}.wav")
@@ -124,11 +124,11 @@ def generate_optimized_audio(segments, output_wav):
         need_padding = False
 
         if tempo < 1.0:
-            # Nếu audio ngắn hơn slot -> KHÔNG giãn (slow), mà giữ nguyên tốc độ (1.0) + padding silence
+            # If audio is shorter than slot -> DO NOT slow down, keep 1.0 speed + pad silence
             tempo = 1.0
             need_padding = True
         elif tempo > 2.0:
-            # Nếu audio dài hơn slot quá nhiều -> tua nhanh tối đa 2.0
+            # If audio is much longer than slot -> speed up to max 2.0
             tempo = 2.0
 
         seg_output = os.path.join(TEMP_AUDIO_DIR, f"seg_{i}.wav")
@@ -145,13 +145,13 @@ def generate_optimized_audio(segments, output_wav):
             filter_str += f",atempo={tempo:.3f}"
         
         if need_padding:
-            # Thêm pad vô tận, sau đó dùng -t để cắt đúng slot_len
+            # Append infinite padding, then use -t to trim to exact slot_len
             filter_str += ",apad"
 
         cmd += ["-af", filter_str, "-ac", str(PCM_CHANNELS), "-ar", str(PCM_SAMPLE_RATE)]
 
         if need_padding:
-            # Cắt đúng thời lượng slot
+            # Trim to exact slot duration
             cmd += ["-t", str(slot_len)]
 
         cmd += ["-c:a", "pcm_s16le", seg_output]
@@ -166,7 +166,7 @@ def generate_optimized_audio(segments, output_wav):
 
         last_end_time = end_target
 
-    # ---- NỐI TOÀN BỘ AUDIO ----
+    # ---- CONCAT ALL AUDIO SEGMENTS ----
     with open(concat_list_path, "w", encoding="utf-8") as f:
         for path in concat_files:
             safe_path = os.path.abspath(path).replace("'", "'\\''")

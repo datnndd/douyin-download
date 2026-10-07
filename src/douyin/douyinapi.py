@@ -47,8 +47,8 @@ class DouyinApi(object):
 
         self.session = requests.Session()
         retries = Retry(
-            total=5,  # số lần thử lại
-            backoff_factor=0.3,  # thời gian chờ giữa các lần thử (0.3, 0.6, 1.2s...)
+            total=5,  # Number of retries
+            backoff_factor=0.3,  # Backoff factor between attempts (0.3, 0.6, 1.2s...)
             status_forcelist=[500, 502, 503, 504],
             allowed_methods=["HEAD", "GET", "OPTIONS"]
         )

@@ -49,7 +49,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       const data = await api.getSettings();
       setSettings(data);
     } catch (err: any) {
-      setError(err.message || '加载配置失败');
+      setError(err.message || 'Failed to load settings');
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         setSaveSuccess(false);
       }, 3000);
     } catch (err: any) {
-      setError(err.message || '保存设置失败');
+      setError(err.message || 'Failed to save settings');
     } finally {
       setSaving(false);
     }
@@ -90,8 +90,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <Settings className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#1F2328]">下载与系统配置</h2>
-              <p className="text-[11px] text-[#595E68]">修改并持久化保存至本地 config.yaml</p>
+              <h2 className="text-sm font-bold text-[#1F2328]">Download & System Settings</h2>
+              <p className="text-[11px] text-[#595E68]">Modify and persist to local config.yaml</p>
             </div>
           </div>
 
@@ -108,7 +108,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {loading ? (
             <div className="py-16 flex flex-col items-center justify-center space-y-2">
               <Loader2 className="w-6 h-6 text-[#8D4B00] animate-spin" />
-              <span className="text-xs text-[#595E68]">读取配置中...</span>
+              <span className="text-xs text-[#595E68]">Loading settings...</span>
             </div>
           ) : settings ? (
             <form id="settings-form" onSubmit={handleSave} className="space-y-5">
@@ -116,7 +116,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <Folder className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>默认下载存储路径 (path)</span>
+                  <span>Default download path (path)</span>
                 </label>
                 <input
                   type="text"
@@ -126,7 +126,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   placeholder="./Downloaded/"
                 />
                 <p className="text-[11px] text-[#595E68]">
-                  支持相对路径（如 ./Downloaded/）或绝对路径（如 D:\DouyinDownloads\）
+                  Supports relative paths (e.g. ./Downloaded/) or absolute paths (e.g. D:\DouyinDownloads\)
                 </p>
               </div>
 
@@ -134,7 +134,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <FileCode className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>Định dạng tên file mặc định (filename_template)</span>
+                  <span>Default filename template (filename_template)</span>
                 </label>
                 <input
                   type="text"
@@ -146,7 +146,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   placeholder="{date}_{title}_{id}"
                 />
                 <p className="text-[11px] text-[#595E68]">
-                  Các thẻ hỗ trợ: <code>{'{date}'}</code>, <code>{'{title}'}</code>, <code>{'{id}'}</code>, <code>{'{author}'}</code>, <code>{'{likes}'}</code>
+                  Supported tags: <code>{'{date}'}</code>, <code>{'{title}'}</code>, <code>{'{id}'}</code>, <code>{'{author}'}</code>, <code>{'{likes}'}</code>
                 </p>
               </div>
 
@@ -155,10 +155,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                     <Cpu className="w-3.5 h-3.5 text-[#8D4B00]" />
-                    <span>默认下载并发线程数 (thread)</span>
+                    <span>Concurrent download threads (thread)</span>
                   </label>
                   <span className="font-mono text-xs font-bold text-[#8D4B00] px-2 py-0.5 rounded bg-[#F3ECE2]">
-                    {settings.thread} 线程
+                    {settings.thread} threads
                   </span>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -181,17 +181,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <Key className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>抖音认证 Cookie (cookies)</span>
+                  <span>Douyin Cookie (cookies)</span>
                 </label>
                 <textarea
                   rows={4}
                   value={settings.raw_cookie || ''}
                   onChange={(e) => setSettings({ ...settings, raw_cookie: e.target.value })}
-                  placeholder="odin_tt=...; sessionid_ss=...; passport_csrf_token=... (可在网页登录后按 F12 网络请求中复制 Cookie 头)"
+                  placeholder="odin_tt=...; sessionid_ss=...; passport_csrf_token=... (Copy Cookie header from browser DevTools Network tab)"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5DED4] bg-white text-xs font-mono text-[#1F2328] focus:outline-none focus:border-[#8D4B00] resize-none"
                 />
                 <p className="text-[11px] text-[#595E68]">
-                  下载他人公开作品通常无需登录；若需下载创作者点赞作品或无水印最高画质原片，建议填写有效 Cookie。
+                  Downloading public posts usually does not require login; for liked posts or highest quality water-mark free originals, a valid Cookie is recommended.
                 </p>
               </div>
 
@@ -199,7 +199,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="p-4 rounded-xl bg-white border border-[#E5DED4] space-y-3">
                 <label className="text-xs font-semibold text-[#1F2328] flex items-center space-x-1.5">
                   <Sliders className="w-3.5 h-3.5 text-[#8D4B00]" />
-                  <span>默认下载选项开关</span>
+                  <span>Default Download Options</span>
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -209,7 +209,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onChange={(e) => setSettings({ ...settings, music: e.target.checked })}
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>保存背景音频 (music)</span>
+                    <span>Save background music (music)</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -219,7 +219,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onChange={(e) => setSettings({ ...settings, cover: e.target.checked })}
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>保存封面原图 (cover)</span>
+                    <span>Save cover image (cover)</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -229,7 +229,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onChange={(e) => setSettings({ ...settings, avatar: e.target.checked })}
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>保存作者头像 (avatar)</span>
+                    <span>Save author avatar (avatar)</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -239,7 +239,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onChange={(e) => setSettings({ ...settings, json: e.target.checked })}
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>保存作品 JSON 元数据</span>
+                    <span>Save post JSON metadata</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -251,7 +251,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       }
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>使用子文件夹归档</span>
+                    <span>Subfolder archiving</span>
                   </label>
 
                   <label className="flex items-center space-x-2 cursor-pointer">
@@ -263,7 +263,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       }
                       className="accent-[#8D4B00] w-4 h-4 rounded"
                     />
-                    <span>开启 SQLite 去重缓存</span>
+                    <span>Enable SQLite deduplication</span>
                   </label>
                 </div>
               </div>
@@ -273,7 +273,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {saveSuccess && (
             <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 animate-fadeIn">
               <Check className="w-4 h-4 text-emerald-600" />
-              <span>设置已成功持久化保存至 config.yaml</span>
+              <span>Settings saved successfully to config.yaml</span>
             </div>
           )}
 
@@ -292,7 +292,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 rounded-xl text-xs font-medium text-[#595E68] hover:text-[#1F2328] hover:bg-[#F3ECE2] border border-[#E5DED4] transition-colors"
           >
-            取消
+            Cancel
           </button>
 
           <button
@@ -304,12 +304,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>保存中...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                <span>保存配置</span>
+                <span>Save Settings</span>
               </>
             )}
           </button>

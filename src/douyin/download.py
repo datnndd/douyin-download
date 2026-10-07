@@ -254,7 +254,7 @@ class Download(object):
                         {
                             "url": url,
                             "path": music_path,
-                            "desc": f"[Nhạc]{desc}",
+                            "desc": f"[Music]{desc}",
                             "type": "music",
                         }
                     )
@@ -332,7 +332,7 @@ class Download(object):
                         failed_tasks.append(task)
                 except Exception as e:
                     logger.error(
-                        f"Task download exception: {task['desc']}, lỗi: {str(e)}"
+                        f"Task download exception: {task['desc']}, error: {str(e)}"
                     )
                     failed_tasks.append(task)
         else:
@@ -359,7 +359,7 @@ class Download(object):
                                 failed_tasks.append(task)
                         except Exception as e:
                             logger.error(
-                                f"Task download exception: {task['desc']}, lỗi: {str(e)}"
+                                f"Task download exception: {task['desc']}, error: {str(e)}"
                             )
                             failed_tasks.append(task)
                         finally:
@@ -478,11 +478,11 @@ class Download(object):
             return False
 
         try:
-            # Tạo thư mục lưu trữ
+            # Create storage directory
             save_path = Path(savePath)
             save_path.mkdir(parents=True, exist_ok=True)
 
-            # Tạo tên file từ thời gian, digg_count và mô tả theo filename_template
+            # Generate filename from timestamp, digg_count, and description according to filename_template
             file_name = self._format_file_name(awemeDict)
             suffix_id = (
                 f"{awemeDict.get('create_time', '')}_{utils.replaceStr(awemeDict.get('desc', ''))}"
@@ -495,11 +495,11 @@ class Download(object):
             aweme_path = save_path / file_name if self.folderstyle else save_path
             aweme_path.mkdir(exist_ok=True)
 
-            # Lưu dữ liệu JSON với định dạng mới
+            # Save JSON metadata
             if self.resjson:
                 self._save_json(aweme_path / f"{file_name}_result.json", awemeDict)
 
-            # Download các file media sử dụng threading
+            # Download media files using threading
             desc = file_name[:30]
             success = self._download_media_files_threaded(
                 awemeDict,
@@ -594,7 +594,7 @@ class Download(object):
                                 "item_total": total_count,
                             })
 
-        # Thống kê kết quả
+        # Results summary
         end_time = time.time()
         duration = end_time - start_time
         minutes = int(duration // 60)
@@ -602,7 +602,7 @@ class Download(object):
 
         logger.info(f"\n=== DONE ===")
         logger.info(f"Success: {success_count}/{total_count}")
-        logger.info(f"Time: {minutes}phút {seconds}giây")
+        logger.info(f"Time: {minutes}m {seconds}s")
         logger.info(f"Save at: {save_path}")
 
         if success_count < total_count:

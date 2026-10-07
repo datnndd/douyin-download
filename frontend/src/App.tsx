@@ -141,7 +141,7 @@ export const App: React.FC = () => {
       downloaded_bytes: 0,
       total_bytes: 0,
       speed_bps: 0,
-      current_item: task.message || 'Tác vụ mới',
+      current_item: task.message || 'New task',
       completed_items: 0,
       total_items: 1,
       active_threads: 0,

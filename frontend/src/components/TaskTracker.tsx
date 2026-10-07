@@ -64,7 +64,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-semibold flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
-            下载中
+            Downloading
           </span>
         );
       case 'PARSING':
@@ -72,35 +72,35 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold flex items-center gap-1.5">
             <Loader2 className="w-3 h-3 animate-spin text-amber-600" />
-            排队中
+            Queued
           </span>
         );
       case 'PAUSED':
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 border border-orange-200 text-[11px] font-semibold flex items-center gap-1.5">
             <Pause className="w-3 h-3 text-orange-600" />
-            已暂停
+            Paused
           </span>
         );
       case 'COMPLETED':
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold flex items-center gap-1.5">
             <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-            已完成
+            Completed
           </span>
         );
       case 'FAILED':
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-semibold flex items-center gap-1.5">
             <XCircle className="w-3 h-3 text-rose-600" />
-            失败
+            Failed
           </span>
         );
       case 'CANCELLED':
         return (
           <span className="px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200 text-[11px] font-semibold flex items-center gap-1.5">
             <StopCircle className="w-3 h-3 text-stone-500" />
-            已取消
+            Cancelled
           </span>
         );
       default:
@@ -157,7 +157,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-bold uppercase tracking-wider text-[#595E68] flex items-center space-x-1.5">
           <Download className="w-3.5 h-3.5 text-[#8D4B00]" />
-          <span>实时下载监控 ({tasks.length})</span>
+          <span>Live Download Monitor ({tasks.length})</span>
         </h3>
       </div>
 
@@ -187,7 +187,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#E5DED4]">
                 <div className="flex items-center space-x-2.5 overflow-hidden">
                   <span className="font-mono text-xs font-semibold text-[#1F2328] truncate max-w-xs">
-                    {task.current_item || `任务: ${task.task_id.slice(0, 8)}...`}
+                    {task.current_item || `Task: ${task.task_id.slice(0, 8)}...`}
                   </span>
                   {getStatusBadge(task.status)}
                 </div>
@@ -199,10 +199,10 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                       onClick={() => handlePause(task.task_id)}
                       disabled={actionLoading[task.task_id]}
                       className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F3ECE2] hover:bg-[#EDE5DA] text-[#1F2328] border border-[#E5DED4] flex items-center space-x-1 transition-colors cursor-pointer"
-                      title="暂停下载"
+                      title="Pause download"
                     >
                       <Pause className="w-3 h-3 text-[#8D4B00]" />
-                      <span>暂停</span>
+                      <span>Pause</span>
                     </button>
                   )}
 
@@ -211,10 +211,10 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                       onClick={() => handleResume(task.task_id)}
                       disabled={actionLoading[task.task_id]}
                       className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#8D4B00] hover:bg-[#743D00] text-white flex items-center space-x-1 transition-colors cursor-pointer"
-                      title="继续下载"
+                      title="Resume download"
                     >
                       <Play className="w-3 h-3 text-white" />
-                      <span>继续</span>
+                      <span>Resume</span>
                     </button>
                   )}
 
@@ -223,10 +223,10 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                       onClick={() => handleCancel(task.task_id)}
                       disabled={actionLoading[task.task_id]}
                       className="px-2.5 py-1 rounded-lg text-xs font-medium bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 flex items-center space-x-1 transition-colors cursor-pointer"
-                      title="取消任务"
+                      title="Cancel task"
                     >
                       <X className="w-3 h-3" />
-                      <span>取消</span>
+                      <span>Cancel</span>
                     </button>
                   )}
 
@@ -234,7 +234,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                     <button
                       onClick={() => onDismissTask(task.task_id)}
                       className="p-1 rounded-lg text-[#898174] hover:text-[#1F2328] hover:bg-[#F3ECE2] transition-colors"
-                      title="移除记录"
+                      title="Dismiss record"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -258,7 +258,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                   <div className="text-[11px] text-[#595E68] font-mono">
                     {formatBytes(task.downloaded_bytes)}
                     {task.total_bytes > 0 && ` / ${formatBytes(task.total_bytes)}`}
-                    {task.total_items > 0 && ` • 已下载 ${task.completed_items}/${task.total_items} 部`}
+                    {task.total_items > 0 && ` • ${task.completed_items}/${task.total_items} items downloaded`}
                   </div>
                 </div>
 
@@ -296,7 +296,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
                   >
                     <Cpu className="w-3.5 h-3.5 text-[#8D4B00]" />
                     <span>
-                      工作线程状态 ({task.threads.length} 线程 • 活动: {task.active_threads})
+                      Worker Threads Status ({task.threads.length} threads • Active: {task.active_threads})
                     </span>
                     {isExpanded ? (
                       <ChevronUp className="w-3.5 h-3.5" />
@@ -336,7 +336,7 @@ export const TaskTracker: React.FC<TaskTrackerProps> = ({
 
                           <div className="flex items-center justify-between text-[10px] text-[#595E68] font-mono">
                             <span className="truncate max-w-[120px]">
-                              {thr.current_file || '空闲中'}
+                              {thr.current_file || 'Idle'}
                             </span>
                             <span>{thr.speed_bps > 0 ? formatSpeed(thr.speed_bps) : `${thr.pct.toFixed(0)}%`}</span>
                           </div>

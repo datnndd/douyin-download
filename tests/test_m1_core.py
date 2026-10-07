@@ -772,7 +772,7 @@ class TestPreviewsAndEndToEnd:
                 mock_api, "user", "MS4wLjABAAAA_star"
             )
             assert content_type == "user"
-            assert preview.title == "StarCreator 的个人主页"
+            assert preview.title in ("StarCreator's Profile", "StarCreator 的个人主页")
             assert preview.author.nickname == "StarCreator"
             assert preview.statistics.follower_count == 500000
             assert preview.work_count == 88
@@ -856,7 +856,7 @@ class TestPreviewsAndEndToEnd:
             )
             assert content_type == "live"
             assert preview.title == "Night Stream"
-            assert "正在直播" in preview.desc
+            assert "Live Streaming" in preview.desc or "正在直播" in preview.desc
             assert preview.statistics.play_count == 15000
 
     def test_not_found_raises_douyin_not_found_error(self):

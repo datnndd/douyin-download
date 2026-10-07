@@ -1,7 +1,23 @@
 [project]
 name = "douyin-download"
 version = "0.1.0"
-description = "Add your description here"
+description = "Douyin Video, Audio, and Image Downloader with FastAPI Web UI"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "brotli>=1.1.0",
+    "fastapi>=0.110.0",
+    "gmssl>=3.2.2",
+    "httpx>=0.27.0",
+    "pycryptodomex>=3.20.0",
+    "pydantic>=2.6.0",
+    "pytest>=7.4.0",
+    "python-dateutil>=2.9.0",
+    "python-json-logger>=2.0.7",
+    "python-multipart>=0.0.9",
+    "pyyaml>=6.0.1",
+    "requests>=2.31.0",
+    "requests-toolbelt>=1.0.0",
+    "tqdm>=4.66.0",
+    "uvicorn>=0.28.0",
+]

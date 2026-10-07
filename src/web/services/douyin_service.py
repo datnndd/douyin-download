@@ -539,8 +539,8 @@ class DouyinService:
         )
 
         preview = PreviewMetadata(
-            title=f"{nickname} 的个人主页",
-            desc=signature or "暂无个人简介",
+            title=f"{nickname}'s Profile",
+            desc=signature or "No bio available",
             author=author,
             cover_url=cover_url,
             statistics=statistics,
@@ -564,12 +564,12 @@ class DouyinService:
         mix_info = first.get("mix_info") or {}
         author_data = first.get("author") or {}
 
-        mix_name = mix_info.get("mix_name") or f"合集 {mix_id}"
+        mix_name = mix_info.get("mix_name") or f"Collection {mix_id}"
         statis = mix_info.get("statis") or {}
         updated_to = statis.get("updated_to_episode", "?")
 
         author = AuthorPreview(
-            nickname=author_data.get("nickname") or "合集作者",
+            nickname=author_data.get("nickname") or "Collection Author",
             avatar_thumb=self._pick_first_url(author_data.get("avatar_thumb")) or "",
             sec_uid=author_data.get("sec_uid") or "",
         )
@@ -582,7 +582,7 @@ class DouyinService:
 
         preview = PreviewMetadata(
             title=mix_name,
-            desc=f"合集更新至第 {updated_to} 集",
+            desc=f"Collection updated to episode {updated_to}",
             author=author,
             cover_url=cover_url,
             work_count=(
@@ -608,8 +608,8 @@ class DouyinService:
         first = aweme_list[0]
         music_data = first.get("music") or {}
 
-        title = music_data.get("title") or f"音乐 {music_id}"
-        owner_nickname = music_data.get("owner_nickname") or "原声作者"
+        title = music_data.get("title") or f"Music {music_id}"
+        owner_nickname = music_data.get("owner_nickname") or "Original Artist"
 
         author = AuthorPreview(
             nickname=owner_nickname,
@@ -625,7 +625,7 @@ class DouyinService:
 
         preview = PreviewMetadata(
             title=title,
-            desc=f"原声音乐 - {owner_nickname}",
+            desc=f"Original Soundtrack - {owner_nickname}",
             author=author,
             cover_url=cover_url,
             work_count=len(aweme_list),
@@ -645,11 +645,11 @@ class DouyinService:
             raise DouyinNotFoundError(f"Livestream room {web_rid} not found.")
 
         is_live = live_dict.get("status") == "2"
-        status_desc = "正在直播" if is_live else "直播已结束"
-        partition = live_dict.get("partition") or "综合"
+        status_desc = "Live Streaming" if is_live else "Stream Ended"
+        partition = live_dict.get("partition") or "General"
 
         author = AuthorPreview(
-            nickname=live_dict.get("nickname") or "主播",
+            nickname=live_dict.get("nickname") or "Streamer",
             avatar_thumb=live_dict.get("avatar") or "",
             sec_uid=live_dict.get("sec_uid") or "",
         )
@@ -663,8 +663,8 @@ class DouyinService:
         )
 
         preview = PreviewMetadata(
-            title=live_dict.get("title") or f"直播间 {web_rid}",
-            desc=f"{status_desc} | 分区: {partition}",
+            title=live_dict.get("title") or f"Live Room {web_rid}",
+            desc=f"{status_desc} | Category: {partition}",
             author=author,
             cover_url=live_dict.get("cover") or "",
             statistics=statistics,
