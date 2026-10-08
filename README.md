@@ -10,7 +10,7 @@
 [![n8n](https://img.shields.io/badge/n8n-Automation-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-**Giải pháp toàn diện tải video, hình ảnh, album ảnh, âm thanh từ Douyin (抖音) không watermark với Web UI hiện đại và hệ thống pipeline tự động hóa n8n.**
+**An all-in-one solution for downloading watermark-free videos, images, photo albums, and audio from Douyin (抖音) with a modern Web UI and an end-to-end n8n automation pipeline.**
 
 [Demo Video](https://youtu.be/XSQflGR09gA) • [Voice-over Demo](https://youtu.be/hOFfKV3Hjf4)
 
@@ -22,202 +22,202 @@
 
 ---
 
-## 🌟 Tính Năng Nổi Bật (Key Features)
+## 🌟 Key Features
 
-- 🖥️ **Giao diện Web UI đơn màn hình (Unified Single-Screen)**: Tích hợp đầy đủ từ nhập liên kết, trích xuất xem trước (Auto-preview), cấu hình tùy chọn và theo dõi tiến trình tải trực tiếp trên một màn hình duy nhất.
-- 🎬 **Hỗ trợ đa dạng nội dung Douyin**:
-  - Video đơn lẻ & Video dạng hình ảnh (Note/Photo Album) không dính logo watermark (1080p/2K).
-  - Tải toàn bộ video trang cá nhân tác giả (User Profile: danh sách video đã đăng, video đã thích).
-  - Bộ sưu tập / Tuyển tập (Mix / Album) và danh sách video theo bài hát gốc (Music).
-  - Phát trực tiếp (Livestream stream recording).
-- ⚙️ **Tùy biến tên tệp (Filename Template Engine)**: Tự do chọn hoặc nhập công thức đặt tên file: `{date}_{title}_{id}`, `{likes}likes_{date}_{title}`, `{author}_{title}_{id}` v.v.
-- ⚡ **Tải đa luồng siêu tốc (Multi-threaded Concurrency)**: Điều chỉnh từ 1 đến 32 luồng tải đồng thời với cơ chế tự động thử lại (Exponential backoff) và tiếp tục tải gián đoạn (HTTP Range requests).
-- 📊 **Theo dõi tiến trình thời gian thực (Live SSE Telemetry)**: Hiển thị tốc độ tải MB/s, phần trăm hoàn thành, danh sách worker threads đang hoạt động.
-- 🤖 **Tự động hóa toàn diện với n8n (Automation Pipeline)**: Thiết lập n8n tự lưu trữ trên VPS, kịch bản tải video, viết lại caption bằng AI, dịch video, ghép phụ đề và tự động đăng tải đa nền tảng (YouTube, TikTok, Facebook).
-- 🛡️ **Bảo mật tuyệt đối (Zero Credential Leakage)**: Cookies, token và API keys của người dùng được bảo vệ an toàn trong `.gitignore`, không bao giờ bị lộ khi push lên GitHub.
+- 🖥️ **Unified Single-Screen Web UI**: Seamlessly integrates URL input, auto-preview extraction, download configuration, and real-time task telemetry on a single interactive screen.
+- 🎬 **Comprehensive Douyin Content Support**:
+  - Watermark-free Single Videos and Photo Albums (Note/Image sets) in original high definition (1080p/2K).
+  - Creator profile bulk downloads (all posted works and liked videos).
+  - Collections / Mixes (compilations) and soundtracks / original music.
+  - Live stream recordings.
+- ⚙️ **Custom Filename Template Engine**: Flexible template formatting with tokens such as `{date}_{title}_{id}`, `{likes}likes_{date}_{title}`, `{author}_{title}_{id}`, etc.
+- ⚡ **High-Speed Multi-Threaded Engine**: Configurable concurrency (1 to 32 worker threads) with automatic exponential backoff retries and HTTP Range resume capabilities.
+- 📊 **Real-Time Telemetry (Server-Sent Events)**: Live transmission speeds (MB/s), overall progress percentage, and individual thread worker monitors.
+- 🤖 **Turnkey n8n Automation Pipeline**: Self-hosted n8n infrastructure on VPS, automated video downloads, AI caption rewrites, automated video translation & subtitle burn-in, and multi-platform publishing (YouTube, TikTok, Facebook).
+- 🛡️ **Zero Credential Leakage**: User cookies, tokens, and API keys are strictly guarded by `.gitignore` and never committed to GitHub.
 
 ---
 
-## 📂 Cấu Trúc Dự Án (Project Structure)
+## 📂 Project Structure
 
 ```text
 douyin-download/
-├── docs/                      # Tài liệu kỹ thuật, kiến trúc & ảnh minh họa
-│   └── images/                # Ảnh chụp giao diện Web UI và sơ đồ n8n
-├── frontend/                  # Mã nguồn giao diện người dùng React 19 + Vite
+├── docs/                      # Technical documentation, architecture & assets
+│   └── images/                # Web UI dashboard screenshots & n8n pipeline diagrams
+├── frontend/                  # React 19 + TypeScript + Vite user interface
 │   ├── src/                   # Components (UnifiedDownloader, MediaLibrary, TaskTracker)
 │   └── package.json
-├── n8n/                       # 🤖 Hệ sinh thái tự động hóa n8n
-│   ├── setup/                 # Cấu hình triển khai VPS (Docker Compose, Dockerfile, Caddy, .env.example)
-│   ├── workflows/             # Toàn bộ file JSON kịch bản n8n (Download, AI Caption, Upload Multi-platform)
-│   └── code/                  # Mã nguồn xử lý video bằng Python (FFmpeg, burn sub, audio sync)
-├── src/                       # Mã nguồn Backend & Core Engine
-│   ├── douyin/                # Trình phân tích API Douyin, giải mã A-Bogus / X-Bogus, tải tệp
-│   └── web/                   # FastAPI REST API, SSE Streaming, Task Manager, Config Manager
-├── tests/                     # Hệ thống kiểm thử toàn diện (Unit, Concurrency, E2E)
-├── webui.py                   # Điểm khởi chạy Web UI tiện lợi chỉ với 1 lệnh
-├── douyinCommand.py           # Giao diện dòng lệnh truyền thống (CLI)
-├── config.example.yml         # Mẫu cấu hình tham khảo
-├── .cookies.example.json      # Mẫu cookie tham khảo
-└── pyproject.toml             # Quản lý phụ thuộc dự án bằng uv
+├── n8n/                       # 🤖 Complete n8n automation ecosystem
+│   ├── setup/                 # VPS deployment infrastructure (Docker Compose, Dockerfile, Caddy, .env.example)
+│   ├── workflows/             # Production-ready n8n workflow JSON exports (Download, AI Caption, Multi-platform Upload)
+│   └── code/                  # Python video processing engine (FFmpeg, subtitle burn-in, audio sync)
+├── src/                       # Backend service & core parsing engine
+│   ├── douyin/                # Douyin API client, A-Bogus / X-Bogus token algorithms, file downloaders
+│   └── web/                   # FastAPI REST APIs, SSE telemetry, task queue, settings manager
+├── tests/                     # Automated test suites (Unit, Concurrency, E2E)
+├── webui.py                   # Single-command launcher for the unified Web UI
+├── douyinCommand.py           # Legacy command-line interface (CLI)
+├── config.example.yml         # Configuration template
+├── .cookies.example.json      # Cookie structure template
+└── pyproject.toml             # uv package and dependency configuration
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Sử Dụng (Quick Start)
+## 🚀 Quick Start
 
-Dự án sử dụng công cụ quản lý gói hiện đại **[`uv`](https://docs.astral.sh/uv/)** để tối ưu tốc độ và sự tiện lợi.
+The project leverages **[`uv`](https://docs.astral.sh/uv/)** for fast, reliable package and environment management.
 
-### 1. Tải Mã Nguồn
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/datnndd/douyin-download.git
 cd douyin-download
 ```
 
-### 2. Cài Đặt Môi Trường
+### 2. Environment Setup
 
-**Sử dụng `uv` (Khuyên dùng):**
+**Using `uv` (Recommended):**
 ```bash
-# uv tự động khởi tạo môi trường ảo và cài đặt thư viện cần thiết
+# uv automatically creates a virtual environment and synchronizes all dependencies
 uv sync
 ```
 
-*Hoặc sử dụng `pip` truyền thống:*
+*Or using traditional `pip`:*
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Trên Windows: .venv\Scripts\activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Khởi Chạy Giao Diện Web UI
+### 3. Launch the Web UI
 
-Chỉ cần chạy lệnh sau:
+Simply run:
 
 ```bash
 uv run python webui.py
 ```
 
-*(Hoặc: `python webui.py` nếu đã kích hoạt môi trường ảo)*
+*(Or `python webui.py` if your virtual environment is already activated)*
 
-Trình duyệt sẽ tự động mở tại địa chỉ: `http://localhost:8000`.
+Your default browser will automatically open to: `http://localhost:8000`.
 
-Bạn có thể tùy chỉnh cổng hoặc địa chỉ nghe:
+To customize the host, port, or disable auto-opening the browser:
 ```bash
 uv run python webui.py --port 8080 --host 0.0.0.0 --no-browser
 ```
 
 ---
 
-## 🖥️ Hướng Dẫn Sử Dụng Web UI Chi Tiết
+## 🖥️ Web UI Walkthrough
 
 <div align="center">
-<img width="850" alt="Giao diện làm việc chính" src="docs/images/webui_preview.png" />
+<img width="850" alt="Main Dashboard Interface" src="docs/images/webui_preview.png" />
 </div>
 
-1. **Nhập liên kết Douyin**:
-   - Dán bất kỳ định dạng link nào vào ô nhập liệu: link rút gọn (`https://v.douyin.com/xxx/`), link web (`https://www.douyin.com/video/xxx`), link hồ sơ tác giả (`https://www.douyin.com/user/xxx`) hoặc toàn bộ đoạn văn bản chia sẻ kèm khẩu lệnh (Kouling). Hệ thống sẽ tự động trích xuất link sạch.
-2. **Xem trước thông tin (Auto-Preview)**:
-   - Hệ thống tự động phân tích và hiển thị thẻ xem trước: Hình đại diện (Avatar), tên kênh, số người theo dõi (Followers), số lượng video đã đăng và mô tả bài viết.
-3. **Cấu hình tùy chọn tải**:
-   - **Tài nguyên cần tải**: Chọn các thành phần cần lưu trữ: Video MP4 không logo, Âm thanh MP3, Ảnh bìa (Cover), Avatar tác giả, Dữ liệu JSON.
-   - **Định dạng tên file (Filename Template)**: Chọn mẫu định dạng có sẵn hoặc nhập công thức tùy chỉnh theo ý muốn.
-   - **Bộ lọc theo thời gian & số lượng**: Đối với kênh người dùng, bạn có thể chọn khoảng ngày đăng (`start_time`, `end_time`) và giới hạn số video cần tải.
-   - **Thư mục lưu trữ & Phân nhóm**: Bật phân nhóm theo thư mục tác giả hoặc lưu phẳng, kèm nút mở thư mục tải về trực tiếp trên máy tính.
-4. **Nhấn Tải Ngay & Theo Dõi Tiến Trình**:
-   - Nhấn **TẢI XUỐNG NGAY**. Thẻ tiến trình bên phải sẽ hiển thị thời gian thực tốc độ truyền (MB/s), phần trăm tải và tình trạng các luồng xử lý.
+1. **Enter Douyin URL**:
+   - Paste any valid Douyin URL format: short links (`https://v.douyin.com/xxx/`), standard video links (`https://www.douyin.com/video/xxx`), creator profile links (`https://www.douyin.com/user/xxx`), or raw text copied from the Douyin mobile app containing Kouling (share codes). The system automatically cleans and extracts the target URL.
+2. **Analyze & Preview**:
+   - Click **Analyze & Preview** (or press `Enter`). The system fetches and renders a tailored preview card: creator avatar, nickname, follower count, total work count, title, and engagement stats.
+3. **Configure Download Options**:
+   - **Assets to Save**: Toggle MP4 videos, MP3 audios, cover images, creator avatars, or metadata JSON.
+   - **Filename Template**: Select preset formulas or craft your custom token template.
+   - **Date Range & Limits**: For author profiles, filter by publication date (`start_time`, `end_time`) and specify the maximum number of works to download.
+   - **Folder Organization**: Group files by creator subfolders or save flat, with a one-click button to open the download folder in Windows Explorer.
+4. **Start Download & Track Progress**:
+   - Click **START DOWNLOAD**. The live telemetry drawer monitors download throughput (MB/s), percentage completed, and active worker thread statuses in real time.
 
 ---
 
-## 🔒 Hướng Dẫn Cấu Hình Cookie & Bảo Vệ Khóa Bí Mật
+## 🔒 Cookie Configuration & Credential Protection
 
 > [!IMPORTANT]
-> **Bảo Vệ Khóa Bí Mật**: Tệp `.cookies.json`, `config.yaml`, `config.yml` và `.env` đã được cấu hình trong `.gitignore`. Hãy yên tâm rằng thông tin đăng nhập của bạn không bao giờ bị đưa lên kho lưu trữ GitHub công khai.
+> **Zero Credential Leakage**: `.cookies.json`, `config.yaml`, `config.yml`, and `.env` are strictly excluded in `.gitignore`. Your private cookies, tokens, and API keys will never be exposed to GitHub.
 
-### Cách Lấy Cookie Douyin (Khi cần tải video trang cá nhân / video chất lượng cao):
+### How to Retrieve Douyin Cookies (Required for user profile downloads & HD streams):
 
-1. Mở trình duyệt và truy cập [Douyin.com](https://www.douyin.com/), sau đó đăng nhập tài khoản.
-2. Nhấn phím `F12` để mở **Developer Tools**, chuyển sang thẻ **Network**.
-3. Nhấp vào bất kỳ yêu cầu mạng nào gửi đến domain `douyin.com` và tìm mục **Request Headers** -> **Cookie**.
-4. Sao chép chuỗi Cookie hoặc các giá trị chính (`msToken`, `ttwid`, `odin_tt`, `passport_csrf_token`, `sid_guard`).
-5. Có 2 cách đưa cookie vào ứng dụng:
-   - **Cách 1 (Trực quan trên Web UI)**: Nhấp vào nút **Cài đặt (Settings)** ở góc trên bên phải màn hình Web UI, dán chuỗi cookie vào và nhấn **Lưu cấu hình**.
-   - **Cách 2 (Qua file cấu hình)**: Tạo tệp `.cookies.json` dựa trên mẫu `.cookies.example.json` hoặc điền vào `config.yaml`.
+1. Open your browser, navigate to [Douyin.com](https://www.douyin.com/), and log in to your account.
+2. Press `F12` to open **Developer Tools**, then navigate to the **Network** tab.
+3. Click any request made to `douyin.com` and locate **Request Headers** -> **Cookie**.
+4. Copy the complete cookie string or primary keys (`msToken`, `ttwid`, `odin_tt`, `passport_csrf_token`, `sid_guard`).
+5. Provide your cookie using either method:
+   - **Method 1 (Direct via Web UI)**: Click the **Settings** icon in the top right corner of the Web UI, paste your cookie string into the Cookie field, and click **Save Settings**.
+   - **Method 2 (Via Config File)**: Create `.cookies.json` following `.cookies.example.json` or configure `config.yaml`.
 
 ---
 
-## 🤖 Hệ Thống Tự Động Hóa n8n (Automation Pipeline)
+## 🤖 n8n Automation Pipeline
 
-Toàn bộ hệ thống tự động hóa được sắp xếp khoa học trong thư mục `n8n/`:
+The end-to-end automation suite is modularly organized in the `n8n/` directory:
 
 <div align="center">
-<img width="850" alt="Sơ đồ kiến trúc tự động hóa n8n" src="docs/images/n8n_pipeline_preview.png" />
+<img width="850" alt="n8n Automation Pipeline Architecture" src="docs/images/n8n_pipeline_preview.png" />
 </div>
 
-### 1. `n8n/setup/` — Triển Khai Môi Trường Tự Động VPS
-- **`docker-compose.yml`**: Khởi chạy cụm container n8n tích hợp Python 3, FFmpeg, yt-dlp, cơ sở dữ liệu Supabase Postgres và lưu trữ S3.
-- **`Caddyfile`**: Cấu hình Reverse Proxy tự động cấp phát chứng chỉ SSL/TLS Let's Encrypt miễn phí.
-- **`Dockerfile`**: Image tùy chỉnh của n8n chứa đầy đủ các công cụ xử lý phương tiện truyền thông.
-- **`.env.example`**: Bản mẫu các biến môi trường để kết nối Database và Storage an toàn.
+### 1. `n8n/setup/` — VPS Infrastructure Deployment
+- **`docker-compose.yml`**: Spins up containerized services including n8n, media processing engine (Python 3, FFmpeg, yt-dlp), Supabase Postgres database, and S3-compatible storage.
+- **`Caddyfile`**: Reverse proxy with automated Let's Encrypt SSL/TLS certificates.
+- **`Dockerfile`**: Customized n8n image pre-installed with multimedia processing binaries.
+- **`.env.example`**: Secure environment variable template for credentials, database connections, and volume paths.
 
-**Cách triển khai trên VPS:**
+**Deployment on VPS:**
 ```bash
 cd n8n/setup
 cp .env.example .env
-# Chỉnh sửa thông tin domain và database trong .env
+# Edit your domain name, credentials, and volume paths in .env
 docker compose up -d --build
 ```
 
-### 2. `n8n/workflows/` — Kho Kịch Bản Tự Động Hóa (Workflows)
-Chứa các kịch bản n8n hoàn chỉnh sẵn sàng nhập (Import) trực tiếp (tên file tương ứng mã ID export n8n):
-- **`download-video`** (`43UcYNxgLe1cFhJO.json`): Lắng nghe Webhook, kích hoạt giải mã Douyin API và tải video chất lượng gốc.
-- **`translate_video`** (`translate_video.json`): Quy trình nhận diện giọng nói, sử dụng Google Gemini / AI để dịch nội dung và đồng bộ thời gian.
-- **`Rewrite Caption`** (`4ztsY8jthqi93eOg.json`): Tự động viết lại tiêu đề, hashtag chuẩn SEO phù hợp với từng nền tảng mạng xã hội.
-- **`Tiktok_Upload`** (`CRT2k3vvJYUgmhhh.json`), **`Youtube_Upload`** (`9V630z7TX1PtzYag.json`), **`Facebook_Upload`** (`OMkoDj41I7xhE4dh.json`): Tự động xuất bản video lên kênh YouTube Shorts, TikTok và Facebook Reels.
-- **`Tools / Backup WF`** (`JJZrYXoUevCmr4Zj.json`), **`Tool/Backup Credential`** (`M58qhLcPIQj3QfDj.json`): Tự động sao lưu workflow và credentials lên GitHub.
-- **`Restore your workflows from GitHub`** (`YIuFcDeRfySsfgYU.json`), **`Restore your credentials from GitHub`** (`yrrGA1zqPuPnLSv1.json`): Tự động khôi phục workflow và credentials từ GitHub.
+### 2. `n8n/workflows/` — Production Workflows
+Pre-built, import-ready n8n workflows (JSON filenames map directly to n8n export IDs):
+- **`download-video`** (`43UcYNxgLe1cFhJO.json`): Listens for incoming Webhooks, queries Douyin APIs, and downloads source media.
+- **`translate_video`** (`translate_video.json`): Speech recognition pipeline, AI translation via Google Gemini / LLMs, and subtitle timestamp alignment.
+- **`Rewrite Caption`** (`4ztsY8jthqi93eOg.json`): Generates engaging social media captions and SEO hashtags tailored for target platforms.
+- **`Tiktok_Upload`** (`CRT2k3vvJYUgmhhh.json`), **`Youtube_Upload`** (`9V630z7TX1PtzYag.json`), **`Facebook_Upload`** (`OMkoDj41I7xhE4dh.json`): Automated publishing to TikTok, YouTube Shorts, and Facebook Reels.
+- **`Tools / Backup WF`** (`JJZrYXoUevCmr4Zj.json`), **`Tool/Backup Credential`** (`M58qhLcPIQj3QfDj.json`): Automated backup of workflows and credentials to GitHub.
+- **`Restore your workflows from GitHub`** (`YIuFcDeRfySsfgYU.json`), **`Restore your credentials from GitHub`** (`yrrGA1zqPuPnLSv1.json`): Automated restoration of workflows and credentials from GitHub.
 
-### 3. `n8n/code/` — Động Cơ Xử Lý Video (Video Processing Engine)
-- **`src/build_out.py`**: Script Python chạy trực tiếp trong container n8n, đảm nhận:
-  - Ghép các đoạn âm thanh TTS chunks (PCM 24000Hz).
-  - Tự động gắn phụ đề tiếng Việt với phông chữ đẹp mắt (Burn-in subtitles via FFmpeg).
-  - Xuất ra tệp video chuẩn định dạng mạng xã hội (`out.mp4`).
+### 3. `n8n/code/` — Video Processing Engine
+- **`src/build_out.py`**: Python script executed within the container responsible for:
+  - Concatenating TTS audio segments (PCM 24000Hz).
+  - Burning styled subtitles onto video streams via FFmpeg.
+  - Exporting web-ready output videos (`out.mp4`).
 
 ---
 
-## 🧪 Kiểm Thử & Xác Minh Hệ Thống (Testing)
+## 🧪 Testing & Verification
 
-Dự án sở hữu bộ kiểm thử tự động toàn diện với độ bao phủ 100%:
+The project includes comprehensive test suites with 100% pass coverage:
 
 ```bash
-# Chạy toàn bộ 194 kịch bản kiểm thử E2E backend:
+# Run all 194 E2E backend test cases:
 uv run python tests/run_tests.py
 
-# Kiểm tra biên dịch gói Frontend React 19:
+# Verify React 19 production build:
 cd frontend
 npm run build
 ```
 
 ---
 
-## 🔗 Liên Kết Được Hỗ Trợ (Supported Links)
+## 🔗 Supported URL Formats
 
-| Thể Loại | Định Dạng URL Mẫu |
+| Content Type | Example URL Structure |
 | :--- | :--- |
-| **Video đơn lẻ / Ảnh** | `https://v.douyin.com/xxxxx/`<br/>`https://www.douyin.com/video/xxxxx`<br/>`https://www.douyin.com/note/xxxxx` |
-| **Trang tác giả (Profile)** | `https://www.douyin.com/user/MS4wLjABAAAA...` |
-| **Bộ sưu tập (Mix)** | `https://www.douyin.com/collection/xxxxx` |
-| **Bài hát gốc (Music)** | `https://www.douyin.com/music/xxxxx` |
-| **Phát trực tiếp (Live)** | `https://live.douyin.com/xxxxx` |
+| **Single Video / Photo Album** | `https://v.douyin.com/xxxxx/`<br/>`https://www.douyin.com/video/xxxxx`<br/>`https://www.douyin.com/note/xxxxx` |
+| **Creator Profile** | `https://www.douyin.com/user/MS4wLjABAAAA...` |
+| **Collection / Mix** | `https://www.douyin.com/collection/xxxxx` |
+| **Soundtrack / Music** | `https://www.douyin.com/music/xxxxx` |
+| **Live Stream** | `https://live.douyin.com/xxxxx` |
 
 ---
 
-## 🙏 Ghi Chú & Bản Quyền (Credits)
+## 🙏 Credits & Acknowledgments
 
-Dự án được xây dựng và phát triển dựa trên nền tảng tham khảo từ [jiji262/douyin-downloader](https://github.com/jiji262/douyin-downloader). Xin trân trọng cảm ơn tác giả gốc vì sự đóng góp tuyệt vời cho cộng đồng mã nguồn mở.
+This project is built and expanded upon foundations from [jiji262/douyin-downloader](https://github.com/jiji262/douyin-downloader). Sincere thanks to the original author for their contributions to the open-source community.
 
 <div align="center">
 
-### ⭐ Hãy tặng 1 Star cho Repository nếu bạn thấy dự án hữu ích!
+### ⭐ Star this repository if you find it helpful!
 
 </div>
