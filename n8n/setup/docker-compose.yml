@@ -13,40 +13,40 @@ services:
     environment:
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
       # === Database: Supabase Postgres ===
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=your-host
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=postgres
-      - DB_POSTGRESDB_USER=your-user
-      - DB_POSTGRESDB_PASSWORD=your-password
-      - DB_POSTGRESDB_SSL=true
-      - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=false
+      - DB_TYPE=${DB_TYPE:-postgresdb}
+      - DB_POSTGRESDB_HOST=${DB_POSTGRESDB_HOST:-your-host}
+      - DB_POSTGRESDB_PORT=${DB_POSTGRESDB_PORT:-5432}
+      - DB_POSTGRESDB_DATABASE=${DB_POSTGRESDB_DATABASE:-postgres}
+      - DB_POSTGRESDB_USER=${DB_POSTGRESDB_USER:-your-user}
+      - DB_POSTGRESDB_PASSWORD=${DB_POSTGRESDB_PASSWORD:-your-password}
+      - DB_POSTGRESDB_SSL=${DB_POSTGRESDB_SSL:-true}
+      - DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED=${DB_POSTGRESDB_SSL_REJECT_UNAUTHORIZED:-false}
 
       # === Binary data: S3-compatible storage ===
-      - N8N_BINARY_DATA_MODE=s3
-      - N8N_S3_BUCKET=your-bucket
-      - N8N_S3_REGION=your-region
-      - N8N_S3_ACCESS_KEY_ID=your-access-key-id
-      - N8N_S3_SECRET_ACCESS_KEY=your-secret-access-key
-      - N8N_S3_ENDPOINT=https://your-endpoint.storage.supabase.co/storage/v1/s3
-      - N8N_S3_FORCE_PATH_STYLE=true
+      - N8N_BINARY_DATA_MODE=${N8N_BINARY_DATA_MODE:-s3}
+      - N8N_S3_BUCKET=${N8N_S3_BUCKET:-your-bucket}
+      - N8N_S3_REGION=${N8N_S3_REGION:-your-region}
+      - N8N_S3_ACCESS_KEY_ID=${N8N_S3_ACCESS_KEY_ID:-your-access-key-id}
+      - N8N_S3_SECRET_ACCESS_KEY=${N8N_S3_SECRET_ACCESS_KEY:-your-secret-access-key}
+      - N8N_S3_ENDPOINT=${N8N_S3_ENDPOINT:-https://your-endpoint.storage.supabase.co/storage/v1/s3}
+      - N8N_S3_FORCE_PATH_STYLE=${N8N_S3_FORCE_PATH_STYLE:-true}
 
       # === Executions & housekeeping ===
       - N8N_EXECUTIONS_DATA_PRUNE=true
-      - N8N_EXECUTIONS_DATA_MAX_AGE=168            # 7 ngày (giờ)
+      - N8N_EXECUTIONS_DATA_MAX_AGE=168            # 7 days
       - N8N_EXECUTIONS_DATA_PRUNE_MAX_COUNT=5000
       - N8N_EXECUTIONS_DATA_SAVE_ON_DISK=false
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
 
-      # === Bảo mật & runners ===
+      # === Security & runners ===
       - N8N_RUNNERS_ENABLED=true
       - N8N_BLOCK_ENV_ACCESS_IN_NODE=true
       - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
 
       # === Timezone & host ===
-      - TZ=Asia/Bangkok
-      - N8N_HOST=your-domain
-      - WEBHOOK_URL=your-webhook-url(domain)
+      - TZ=${TZ:-Asia/Bangkok}
+      - N8N_HOST=${N8N_HOST:-your-domain}
+      - WEBHOOK_URL=${WEBHOOK_URL:-https://your-domain}
 
     volumes:
       # Volume cho config n8n (encryption key, settings, v.v.)

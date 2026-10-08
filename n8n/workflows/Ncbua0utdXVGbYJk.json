@@ -700,10 +700,12 @@
       ]
     }
   },
-  "createdAt": "2025-11-03T15:40:32.918Z",
-  "id": "43UcYNxgLe1cFhJO",
+  "createdAt": "2025-10-28T09:29:37.424Z",
+  "id": "Ncbua0utdXVGbYJk",
   "isArchived": false,
-  "meta": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
   "name": "download-video",
   "nodes": [
     {
@@ -716,7 +718,7 @@
             {}
           ]
         },
-        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=YOUR_MS_TOKEN; ttwid=YOUR_TTWID; odin_tt=YOUR_ODIN_TT; passport_csrf_token=YOUR_PASSPORT_CSRF_TOKEN; sid_guard=YOUR_SID_GUARD;\"\n}",
         "options": {
           "response": {
             "response": {
@@ -810,7 +812,7 @@
       "alwaysOutputData": true,
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -843,7 +845,7 @@
       "name": "Create folder",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -1071,7 +1073,7 @@
       "name": "Get row(s) in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -1127,7 +1129,7 @@
             {}
           ]
         },
-        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=YOUR_MS_TOKEN; ttwid=YOUR_TTWID; odin_tt=YOUR_ODIN_TT; passport_csrf_token=YOUR_PASSPORT_CSRF_TOKEN; sid_guard=YOUR_SID_GUARD;\"\n}",
         "options": {
           "response": {
             "response": {
@@ -1242,7 +1244,7 @@
         "url": "={{ $json.awemes.music_url }}",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=YOUR_MS_TOKEN; ttwid=YOUR_TTWID; odin_tt=YOUR_ODIN_TT; passport_csrf_token=YOUR_PASSPORT_CSRF_TOKEN; sid_guard=YOUR_SID_GUARD;\"\n}",
         "options": {
           "response": {
             "response": {
@@ -1291,7 +1293,7 @@
       "name": "Upload file3",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       },
@@ -1302,7 +1304,7 @@
         "url": "={{ $json.awemes.video_url }}",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=YOUR_MS_TOKEN; ttwid=YOUR_TTWID; odin_tt=YOUR_ODIN_TT; passport_csrf_token=YOUR_PASSPORT_CSRF_TOKEN; sid_guard=YOUR_SID_GUARD;\"\n}",
         "options": {
           "batching": {
             "batch": {}
@@ -1418,7 +1420,7 @@
       "name": "Upload file4",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -1706,16 +1708,6 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": true
-            },
-            {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -1736,7 +1728,7 @@
       "executeOnce": false,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -1798,7 +1790,7 @@
       "name": "Create folder5",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -1830,7 +1822,7 @@
       "name": "Upload file5",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -1840,7 +1832,7 @@
         "url": "={{ $json['awemes.image_urls'] }}",
         "sendHeaders": true,
         "specifyHeaders": "json",
-        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=710-fIIacqPfoNUNM8EKjH2ev0veFV2YZCtCfs_HoN7kjpBKubLAODdh0nStKywolHK2nsJFHmdimUN23q-lo41pxjuiNMoqG1p_yUoIKU0CJ9bX-Q0638LXozcxspQnrzDnHB4M_3Hu3GljVuPYvv-8nHrxp4Xqkw-Bcr0MeothxDuPtHlEBA==; ttwid=1%7Cxo2A_Uas39HcSPeQYZRGlCLpHonxCq5l8gMlrUPsh3I%7C1733400452%7C9f770c01cd093794153133a14108c93b5b6e6e18971372c21ecffe37f1938da0; odin_tt=a19f20351de5ed35a078f09115d098328b025656113ec0e35dfc4f7e1cf04dea5edd7d8176cf7070e0ff8f53414adeb8; passport_csrf_token=c2a7091feddce96551be4436e03ca3f3; sid_guard=5e5adf6c506e880b1e0959afb5f6cb80%7C1739188609%7C5183984%7CFri%2C+11-Apr-2025+11%3A56%3A33+GMT;\"\n}",
+        "jsonHeaders": "{\n  \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36\",\n  \"referer\": \"https://www.douyin.com/\",\n  \"accept\": \"application/json, text/plain, */*\",\n  \"accept-language\": \"zh-CN,zh;q=0.9,en;q=0.8\",\n  \"accept-encoding\": \"gzip, deflate, br\",\n  \"sec-ch-ua\": \"\\\"Chromium\\\";v=\\\"122\\\", \\\"Not(A:Brand\\\";v=\\\"24\\\", \\\"Google Chrome\\\";v=\\\"122\\\"\",\n  \"sec-ch-ua-mobile\": \"?0\",\n  \"sec-ch-ua-platform\": \"\\\"macOS\\\"\",\n  \"sec-fetch-dest\": \"empty\",\n  \"sec-fetch-mode\": \"cors\",\n  \"sec-fetch-site\": \"same-origin\",\n  \"Cookie\": \"msToken=YOUR_MS_TOKEN; ttwid=YOUR_TTWID; odin_tt=YOUR_ODIN_TT; passport_csrf_token=YOUR_PASSPORT_CSRF_TOKEN; sid_guard=YOUR_SID_GUARD;\"\n}",
         "options": {
           "response": {
             "response": {
@@ -2160,16 +2152,6 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": true
-            },
-            {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -2187,7 +2169,7 @@
       "name": "Append or update row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -2476,16 +2458,6 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": true
-            },
-            {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -2503,7 +2475,7 @@
       "name": "Append or update row in sheet2",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -2820,16 +2792,6 @@
               "removed": true
             },
             {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
               "id": "row_number",
               "displayName": "row_number",
               "required": false,
@@ -2856,7 +2818,7 @@
       "name": "Update row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       },
@@ -2932,7 +2894,7 @@
       "name": "Share folder",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -2964,7 +2926,7 @@
       "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
       "credentials": {
         "discordBotApi": {
-          "id": "FLztLqm2b4yJQZQr",
+          "id": "AxRpWXsXRmyxC1sZ",
           "name": "Discord Bot account"
         }
       }
@@ -2996,7 +2958,7 @@
       "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
       "credentials": {
         "discordBotApi": {
-          "id": "FLztLqm2b4yJQZQr",
+          "id": "AxRpWXsXRmyxC1sZ",
           "name": "Discord Bot account"
         }
       }
@@ -3030,7 +2992,7 @@
       "waitBetweenTries": 5000,
       "credentials": {
         "discordBotApi": {
-          "id": "FLztLqm2b4yJQZQr",
+          "id": "AxRpWXsXRmyxC1sZ",
           "name": "Discord Bot account"
         }
       }
@@ -3351,7 +3313,7 @@
       "alwaysOutputData": false,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -3398,7 +3360,7 @@
       "webhookId": "22a28d79-42ce-4c6d-b862-7131770bcf3a",
       "credentials": {
         "discordBotApi": {
-          "id": "FLztLqm2b4yJQZQr",
+          "id": "AxRpWXsXRmyxC1sZ",
           "name": "Discord Bot account"
         }
       }
@@ -3713,16 +3675,6 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": true
-            },
-            {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -3743,7 +3695,7 @@
       "executeOnce": false,
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -3775,7 +3727,7 @@
       "name": "Upload file",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "bDurVCQfDdQLdLxq",
+          "id": "iZAUuMZ1fszW0dzW",
           "name": "Google Drive account"
         }
       }
@@ -4067,16 +4019,6 @@
               "type": "string",
               "canBeUsedToMatch": true,
               "removed": true
-            },
-            {
-              "id": "Post_url",
-              "displayName": "Post_url",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -4096,7 +4038,7 @@
       "name": "Append or update row in sheet3",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "axW4sU6Os4kS4kW1",
+          "id": "OL1jwU1jKBHthASq",
           "name": "Google Sheets account"
         }
       }
@@ -4161,28 +4103,116 @@
       "waitBetweenTries": 5000,
       "credentials": {
         "discordBotApi": {
-          "id": "FLztLqm2b4yJQZQr",
+          "id": "AxRpWXsXRmyxC1sZ",
           "name": "Discord Bot account"
         }
       }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.postiznguyendoandat.click",
+            "user-agent": "axios/1.8.4",
+            "content-length": "1512",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "via": "1.1 Caddy",
+            "x-forwarded-for": "208.77.246.49",
+            "x-forwarded-host": "n8n.postiznguyendoandat.click",
+            "x-forwarded-proto": "https"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event_type": "message_create",
+            "timestamp": 1762009475457,
+            "content": {
+              "text": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/",
+              "type": "message_create"
+            },
+            "author": {
+              "id": "898880888488726558",
+              "username": "doanda1",
+              "discriminator": "0"
+            },
+            "channel": {
+              "id": "1415874586242977904",
+              "name": "vuivui-ngaungau",
+              "type": "text"
+            },
+            "guild": {
+              "id": "1393074976516608160",
+              "name": "n8n"
+            },
+            "message_id": "1434196431094157333",
+            "original_message": {
+              "channelId": "1415874586242977904",
+              "guildId": "1393074976516608160",
+              "id": "1434196431094157333",
+              "createdTimestamp": 1762009475254,
+              "type": 0,
+              "system": false,
+              "content": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/",
+              "authorId": "898880888488726558",
+              "pinned": false,
+              "tts": false,
+              "nonce": "1434196431689744384",
+              "embeds": [],
+              "components": [],
+              "attachments": [],
+              "stickers": [],
+              "position": null,
+              "roleSubscriptionData": null,
+              "resolved": null,
+              "editedTimestamp": null,
+              "mentions": {
+                "everyone": false,
+                "users": [],
+                "roles": [],
+                "crosspostedChannels": [],
+                "repliedUser": null,
+                "members": [],
+                "channels": []
+              },
+              "webhookId": null,
+              "groupActivityApplicationId": null,
+              "applicationId": null,
+              "activity": null,
+              "flags": 0,
+              "reference": null,
+              "interactionMetadata": null,
+              "interaction": null,
+              "poll": null,
+              "messageSnapshots": [],
+              "call": null,
+              "cleanContent": "6.94 复制打开抖音，看看【simple的作品】南村群童欺我老无力   https://v.douyin.com/WiDsqky8dq8/ U@Y.ZM 07/09 zTL:/"
+            }
+          },
+          "webhookUrl": "https://n8n.postiznguyendoandat.click/webhook/vuivui-ngaungau",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
   "settings": {
     "executionOrder": "v1"
   },
   "shared": [
     {
-      "updatedAt": "2025-11-03T15:40:32.918Z",
-      "createdAt": "2025-11-03T15:40:32.918Z",
+      "createdAt": "2025-10-28T09:29:37.427Z",
+      "updatedAt": "2025-10-28T09:29:37.427Z",
       "role": "workflow:owner",
-      "workflowId": "43UcYNxgLe1cFhJO",
-      "projectId": "aQi6qe5AoeX33z1k"
+      "workflowId": "Ncbua0utdXVGbYJk",
+      "projectId": "8KGMznsTX2ygCfnB"
     }
   ],
   "staticData": null,
   "tags": [],
   "triggerCount": 4,
-  "updatedAt": "2025-11-06T12:50:28.655Z",
-  "versionId": "371de0d6-41e2-4b96-b08c-e30e178fb557"
+  "updatedAt": "2025-11-01T15:06:34.000Z",
+  "versionId": "b48615f1-6f57-4ed6-a55b-eaa6e7b30bb6"
 }

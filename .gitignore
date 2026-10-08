@@ -1,16 +1,44 @@
+# Logs & Runtime
 logs/
+*.log
 __pycache__/
 *.pyc
 .venv/
 data.db
+TestDownloads/
+tmp_test/
+.pytest_cache/
+
+# User configurations & secrets (NEVER commit credentials)
 config.yaml
-Downloaded/
+config.yml
+!config.example.yml
+.cookies.json
+!cookies.example.json
+!.cookies.example.json
+.env
+.env.*
+!.env.example
+*.env
+
+# IDE & OS
 .idea/
+.vscode/
+.DS_Store
+Thumbs.db
 
 # Harness core maintenance binary
 scripts/bin/harness
 scripts/bin/harness.exe
 
+# Media downloads
+Downloaded/
+
 # Frontend
 frontend/node_modules/
 
+# n8n runtime data & persistent volumes
+n8n/**/files/
+n8n/**/.env
+n8n/**/data/
+n8n/setup/.env

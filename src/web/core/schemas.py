@@ -187,7 +187,7 @@ class AuthorPreview(BaseModel):
 
 
 class PreviewMetadata(BaseModel):
-    """Detailed preview payload for Step 1 preview card."""
+    """Detailed preview payload for media and creator content preview cards."""
 
     model_config = ConfigDict(populate_by_name=True, from_attributes=True)
 
