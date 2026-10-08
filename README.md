@@ -169,12 +169,13 @@ docker compose up -d --build
 ```
 
 ### 2. `n8n/workflows/` — Kho Kịch Bản Tự Động Hóa (Workflows)
-Chứa các kịch bản n8n hoàn chỉnh sẵn sàng nhập (Import) trực tiếp:
-- **`download-video.json`**: Lắng nghe Webhook, kích hoạt giải mã Douyin API và tải video chất lượng gốc.
-- **`translate_video.json`**: Quy trình nhận diện giọng nói, sử dụng Google Gemini / AI để dịch nội dung và đồng bộ thời gian.
-- **`Rewrite Caption.json`**: Tự động viết lại tiêu đề, hashtag chuẩn SEO phù hợp với từng nền tảng mạng xã hội.
-- **`Tiktok_Upload.json`**, **`Youtube_Upload.json`**, **`Facebook_Upload.json`**: Tự động xuất bản video lên kênh YouTube Shorts, TikTok và Facebook Reels.
-- **`Tools / Backup WF.json`**, **`Backup Credential.json`**: Tự động sao lưu và khôi phục workflow lên GitHub.
+Chứa các kịch bản n8n hoàn chỉnh sẵn sàng nhập (Import) trực tiếp (tên file tương ứng mã ID export n8n):
+- **`download-video`** (`43UcYNxgLe1cFhJO.json`): Lắng nghe Webhook, kích hoạt giải mã Douyin API và tải video chất lượng gốc.
+- **`translate_video`** (`translate_video.json`): Quy trình nhận diện giọng nói, sử dụng Google Gemini / AI để dịch nội dung và đồng bộ thời gian.
+- **`Rewrite Caption`** (`4ztsY8jthqi93eOg.json`): Tự động viết lại tiêu đề, hashtag chuẩn SEO phù hợp với từng nền tảng mạng xã hội.
+- **`Tiktok_Upload`** (`CRT2k3vvJYUgmhhh.json`), **`Youtube_Upload`** (`9V630z7TX1PtzYag.json`), **`Facebook_Upload`** (`OMkoDj41I7xhE4dh.json`): Tự động xuất bản video lên kênh YouTube Shorts, TikTok và Facebook Reels.
+- **`Tools / Backup WF`** (`JJZrYXoUevCmr4Zj.json`), **`Tool/Backup Credential`** (`M58qhLcPIQj3QfDj.json`): Tự động sao lưu workflow và credentials lên GitHub.
+- **`Restore your workflows from GitHub`** (`YIuFcDeRfySsfgYU.json`), **`Restore your credentials from GitHub`** (`yrrGA1zqPuPnLSv1.json`): Tự động khôi phục workflow và credentials từ GitHub.
 
 ### 3. `n8n/code/` — Động Cơ Xử Lý Video (Video Processing Engine)
 - **`src/build_out.py`**: Script Python chạy trực tiếp trong container n8n, đảm nhận:

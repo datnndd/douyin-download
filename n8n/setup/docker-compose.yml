@@ -57,7 +57,7 @@ services:
 
       # 🔥 Thư mục Python trên host: /home/node/video_process
       # -> Trong container: /data/video_process
-      - /home/ubuntu/video_process:/data/video_process
+      - ${VIDEO_PROCESS_HOST_PATH:-/home/ubuntu/video_process}:/data/video_process
 
     networks:
       - n8n_network
