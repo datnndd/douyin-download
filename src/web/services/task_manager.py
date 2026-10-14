@@ -162,6 +162,9 @@ class TaskManager:
         self._global_subscribers: Set[asyncio.Queue] = set()
         self._sub_lock: threading.Lock = threading.Lock()
 
+        # Task completion callbacks: task_id -> list of callables
+        self._completion_callbacks: Dict[str, List[Callable[[TaskRecord, TaskStatus], None]]] = {}
+
         # Event loop reference for thread-safe event scheduling
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._throttle_seconds: float = 0.250  # 250ms throttle limit
@@ -247,6 +250,29 @@ class TaskManager:
         # Sort by creation time descending
         records.sort(key=lambda r: r.created_at, reverse=True)
         return [r.to_detail_response() for r in records]
+
+    def register_completion_callback(
+        self, task_id: str, callback: Callable[[TaskRecord, TaskStatus], None]
+    ) -> None:
+        """Register a callback to be invoked upon task completion/failure/cancellation."""
+        with self._task_lock:
+            task = self._tasks.get(task_id)
+            if task and task.status in (
+                TaskStatus.COMPLETED,
+                TaskStatus.FAILED,
+                TaskStatus.CANCELLED,
+            ):
+                try:
+                    callback(task, task.status)
+                except Exception as e:
+                    logger.error(
+                        f"Error in immediate completion callback for {task_id}: {e}"
+                    )
+                return
+
+            if task_id not in self._completion_callbacks:
+                self._completion_callbacks[task_id] = []
+            self._completion_callbacks[task_id].append(callback)
 
     def cancel_task(self, task_id: str) -> bool:
         """
@@ -670,6 +696,16 @@ class TaskManager:
         if not key or cancel_event.is_set():
             return []
 
+        if getattr(req, "aweme_ids", None):
+            items = []
+            for aid in req.aweme_ids:
+                if cancel_event.is_set():
+                    break
+                aweme = api.getAwemeInfoApi(aid)
+                if aweme:
+                    items.append(aweme)
+            return items
+
         if key_type == "aweme":
             aweme = api.getAwemeInfoApi(key)
             return [aweme] if aweme else []
@@ -738,6 +774,19 @@ class TaskManager:
         # Prune subscriber queues to prevent memory leak
         with self._sub_lock:
             self._subscribers.pop(record.task_id, None)
+
+        # Trigger registered completion callbacks
+        callbacks = []
+        with self._task_lock:
+            callbacks = self._completion_callbacks.pop(record.task_id, [])
+        for cb in callbacks:
+            try:
+                cb(record, final_status)
+            except Exception as e:
+                logger.error(
+                    f"Error executing completion callback for task {record.task_id}: {e}",
+                    exc_info=True,
+                )
 
     def shutdown(self, wait: bool = True) -> None:
         """Gracefully shutdown background executor."""

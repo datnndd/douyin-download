@@ -49,6 +49,24 @@ async def submit_download_endpoint(payload: DownloadRequest) -> TaskResponse:
 
     try:
         task_resp = manager.submit_task(payload, douyin_service=service)
+
+        # Optional auto-track creator if enabled in settings
+        try:
+            import asyncio
+            from src.web.core.config import ConfigManager
+            from src.web.services.tracker_service import TrackerService
+            cfg = ConfigManager.get_instance().get_settings()
+            if cfg.auto_track_downloads and payload.key_type == "user" and payload.key:
+                ts = TrackerService.get_instance()
+                if not ts.database.get_tracked_creator(payload.key):
+                    asyncio.create_task(
+                        asyncio.to_thread(
+                            ts.track_creator, None, payload.key, None, None, None, payload.cookie
+                        )
+                    )
+        except Exception as te:
+            logger.debug(f"Auto-track creator check skipped: {te}")
+
         return task_resp
     except Exception as e:
         logger.error(f"Failed to submit download task: {e}", exc_info=True)

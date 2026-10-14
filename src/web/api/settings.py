@@ -48,6 +48,11 @@ async def update_settings_endpoint(payload: Dict[str, Any]) -> SettingsModel:
         current_data.update({k: v for k, v in payload.items() if v is not None})
         new_settings = SettingsModel(**current_data)
         updated = manager.update_settings(new_settings)
+        try:
+            from src.web.services.tracker_service import TrackerService
+            TrackerService.get_instance().start_background_worker(updated.tracker_interval_hours)
+        except Exception as te:
+            logger.debug(f"Could not update tracker worker: {te}")
         return updated
     except Exception as e:
         logger.error(f"Failed to update settings: {e}", exc_info=True)

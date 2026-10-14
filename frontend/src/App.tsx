@@ -1,34 +1,42 @@
-// frontend/src/App.tsx
-
 import React, { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { UnifiedDownloader } from './components/UnifiedDownloader';
 import { TaskTracker } from './components/TaskTracker';
 import { MediaLibrary } from './components/MediaLibrary';
+import { TrackedCreators } from './components/TrackedCreators';
 import { SettingsModal } from './components/SettingsModal';
 import {
   DownloadProgressEvent,
   SettingsModel,
   TaskDetailResponse,
   TaskResponse,
+  TrackerStats,
 } from './types/api';
 import { api } from './services/api';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'downloader' | 'library'>('downloader');
+  const [activeTab, setActiveTab] = useState<'downloader' | 'library' | 'tracker'>('downloader');
   const [tasks, setTasks] = useState<TaskDetailResponse[]>([]);
   const [settings, setSettings] = useState<SettingsModel | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [backendHealthy, setBackendHealthy] = useState(true);
+  const [trackerStats, setTrackerStats] = useState<TrackerStats>({
+    total_tracked_creators: 0,
+    total_pending_videos: 0,
+  });
 
   // Initial load
   useEffect(() => {
     loadSettings();
     loadTasks();
+    loadTrackerStats();
     checkHealth();
 
-    // Check health periodically
-    const healthInterval = setInterval(checkHealth, 10000);
+    // Check health & tracker stats periodically
+    const healthInterval = setInterval(() => {
+      checkHealth();
+      loadTrackerStats();
+    }, 10000);
     return () => clearInterval(healthInterval);
   }, []);
 
@@ -124,6 +132,15 @@ export const App: React.FC = () => {
     }
   };
 
+  const loadTrackerStats = async () => {
+    try {
+      const data = await api.getTrackerStats();
+      setTrackerStats(data);
+    } catch (e) {
+      console.warn('Could not load tracker stats:', e);
+    }
+  };
+
   const handleOpenFolder = async () => {
     try {
       await api.openFolder('');
@@ -150,6 +167,7 @@ export const App: React.FC = () => {
       updated_at: new Date().toISOString(),
     };
     setTasks((prev) => [newTask, ...prev]);
+    loadTrackerStats();
   };
 
   const handleDismissTask = (taskId: string) => {
@@ -173,6 +191,7 @@ export const App: React.FC = () => {
         onOpenFolder={handleOpenFolder}
         activeTaskCount={activeRunningCount}
         isBackendHealthy={backendHealthy}
+        trackedPendingCount={trackerStats.total_pending_videos}
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -180,7 +199,10 @@ export const App: React.FC = () => {
           <>
             <UnifiedDownloader
               settings={settings}
-              onDownloadStarted={handleDownloadStarted}
+              onDownloadStarted={(task) => {
+                handleDownloadStarted(task);
+                loadTrackerStats();
+              }}
               onOpenFolder={handleOpenFolder}
             />
 
@@ -191,6 +213,14 @@ export const App: React.FC = () => {
               onDismissTask={handleDismissTask}
             />
           </>
+        ) : activeTab === 'tracker' ? (
+          <TrackedCreators
+            onDownloadStarted={(task) => {
+              handleDownloadStarted(task);
+              loadTrackerStats();
+            }}
+            onRefreshStats={loadTrackerStats}
+          />
         ) : (
           <MediaLibrary onOpenFolder={handleOpenFolder} />
         )}

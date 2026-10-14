@@ -97,6 +97,7 @@ export interface DownloadRequest {
   increase?: Record<string, boolean>;
   database?: boolean;
   cookie?: string;
+  aweme_ids?: string[];
 }
 
 export interface TaskResponse {
@@ -165,6 +166,8 @@ export interface SettingsModel {
   number: Record<string, number>;
   increase: Record<string, boolean>;
   filter: FilterOptions;
+  auto_track_downloads?: boolean;
+  tracker_interval_hours?: number;
 }
 
 export interface MediaItem {
@@ -199,3 +202,46 @@ export interface HealthResponse {
   disk_space: Record<string, any>;
   active_tasks: number;
 }
+
+export interface TrackedVideoItem {
+  aweme_id: string;
+  sec_uid: string;
+  create_time?: number;
+  title?: string;
+  status: string;
+  downloaded_at?: string;
+}
+
+export interface TrackedCreator {
+  sec_uid: string;
+  unique_id?: string;
+  nickname?: string;
+  avatar_thumb?: string;
+  last_aweme_id?: string;
+  last_aweme_time?: number;
+  pending_new_count: number;
+  last_checked_at?: string;
+  last_downloaded_at?: string;
+  created_at?: string;
+  pending_videos?: TrackedVideoItem[];
+}
+
+export interface TrackCreatorRequest {
+  url?: string;
+  sec_uid?: string;
+  nickname?: string;
+  avatar_thumb?: string;
+  unique_id?: string;
+}
+
+export interface TrackerStats {
+  total_tracked_creators: number;
+  total_pending_videos: number;
+}
+
+export interface CheckAllResponse {
+  total_checked: number;
+  new_videos_detected: number;
+  creators_with_new: number;
+}
+

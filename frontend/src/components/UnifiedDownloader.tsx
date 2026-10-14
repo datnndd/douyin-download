@@ -28,6 +28,7 @@ import {
   MessageCircle,
   Music,
   Play,
+  Plus,
   Radio,
   RefreshCw,
   Search,
@@ -47,6 +48,7 @@ import {
   PreviewMetadata,
   SettingsModel,
   TaskResponse,
+  TrackedCreator,
 } from '../types/api';
 import { api } from '../services/api';
 
@@ -171,6 +173,81 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
       setShowUserFilters(true);
     }
   }, [isUserProfile]);
+
+  // Creator Tracker state
+  const [trackedStatus, setTrackedStatus] = useState<TrackedCreator | null>(null);
+  const [trackingLoading, setTrackingLoading] = useState(false);
+  const [updatingTracker, setUpdatingTracker] = useState(false);
+  const [checkingTracker, setCheckingTracker] = useState(false);
+
+  // Check tracked creator status whenever parsedData changes
+  useEffect(() => {
+    const secUid = parsedData?.key;
+    const isUser = parsedData?.key_type === 'user' || parsedData?.content_type === 'user';
+    if (isUser && secUid) {
+      api.getTrackedCreator(secUid)
+        .then((creator) => setTrackedStatus(creator))
+        .catch(() => setTrackedStatus(null));
+    } else {
+      setTrackedStatus(null);
+    }
+  }, [parsedData]);
+
+  const handleTrackCreator = async () => {
+    const secUid = parsedData?.key || parsedData?.preview?.author?.sec_uid;
+    if (!secUid) return;
+    setTrackingLoading(true);
+    try {
+      const creator = await api.trackCreator({
+        url: parsedData?.url,
+        sec_uid: secUid,
+        nickname: parsedData?.preview?.author?.nickname,
+        avatar_thumb:
+          parsedData?.preview?.author?.avatar_thumb ||
+          parsedData?.preview?.author?.avatar ||
+          parsedData?.preview?.cover_url,
+        unique_id:
+          parsedData?.preview?.author?.unique_id ||
+          parsedData?.preview?.author?.short_id,
+      });
+      setTrackedStatus(creator);
+    } catch (err: any) {
+      alert(`Failed to track creator: ${err.message}`);
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
+
+  const handleOneClickUpdate = async () => {
+    const secUid = trackedStatus?.sec_uid || parsedData?.key;
+    if (!secUid) return;
+    setUpdatingTracker(true);
+    try {
+      const task = await api.updateCreatorVideos(secUid);
+      onDownloadStarted(task);
+      setTrackedStatus((prev) =>
+        prev ? { ...prev, pending_new_count: 0, pending_videos: [] } : null
+      );
+    } catch (err: any) {
+      alert(`1-Click update failed: ${err.message}`);
+    } finally {
+      setUpdatingTracker(false);
+    }
+  };
+
+  const handleCheckCreatorUpdates = async () => {
+    const secUid = trackedStatus?.sec_uid || parsedData?.key;
+    if (!secUid) return;
+    setCheckingTracker(true);
+    try {
+      const updated = await api.checkCreatorUpdates(secUid);
+      setTrackedStatus(updated);
+    } catch (err: any) {
+      alert(`Check updates failed: ${err.message}`);
+    } finally {
+      setCheckingTracker(false);
+    }
+  };
 
   // Parse handler
   const handleParse = async (targetUrl?: string, isSilent = false) => {
@@ -434,10 +511,32 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             </div>
 
             <div className="overflow-hidden flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <h3 className="text-sm sm:text-base font-bold text-[#1F2328] truncate">
                   {author?.nickname || preview.title || 'Douyin Creator'}
                 </h3>
+
+                {/* Track Status Badge or Track Button */}
+                {trackedStatus ? (
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold flex items-center gap-1 shadow-2xs">
+                    <Check className="w-3 h-3 text-emerald-600 stroke-[2.5]" />
+                    <span>Tracked</span>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleTrackCreator}
+                    disabled={trackingLoading}
+                    className="flex items-center space-x-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#F3ECE2] hover:bg-[#EDE5DA] text-[#8D4B00] border border-[#E5DED4] transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                  >
+                    {trackingLoading ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Plus className="w-3 h-3 stroke-[2.5]" />
+                    )}
+                    <span>{trackingLoading ? 'Tracking...' : '+ Track Creator'}</span>
+                  </button>
+                )}
               </div>
               <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[#595E68] font-mono">
                 {uniqueHandle ? (
@@ -511,6 +610,43 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
             </div>
           </div>
 
+          {/* 1-Click Update Banner for Tracked Creator */}
+          {trackedStatus && trackedStatus.pending_new_count > 0 && (
+            <div className="p-3.5 rounded-xl bg-[#F3ECE2] border border-[#8D4B00]/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-fadeIn">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#8D4B00] text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-[#8D4B00] block tracking-wide">
+                    {trackedStatus.pending_new_count} NEW {trackedStatus.pending_new_count === 1 ? 'VIDEO' : 'VIDEOS'} DETECTED
+                  </span>
+                  <span className="text-[10px] text-[#595E68]">
+                    Click Update to download only newly uploaded videos without re-downloading existing media.
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOneClickUpdate}
+                disabled={updatingTracker}
+                className="flex items-center justify-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#8D4B00] hover:bg-[#723C00] text-white shadow-xs transition-all disabled:opacity-50 cursor-pointer shrink-0"
+              >
+                {updatingTracker ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Download className="w-3.5 h-3.5 stroke-[2.2]" />
+                )}
+                <span>
+                  {updatingTracker
+                    ? 'Updating...'
+                    : `UPDATE (${trackedStatus.pending_new_count} NEW)`}
+                </span>
+              </button>
+            </div>
+          )}
+
           {/* Quick Action Buttons directly inside Creator Card */}
           <div className="pt-2 border-t border-[#E5DED4]/70 flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-semibold text-[#898174]">Quick Presets:</span>
@@ -544,6 +680,22 @@ export const UnifiedDownloader: React.FC<UnifiedDownloaderProps> = ({
               <Calendar className="w-3.5 h-3.5" />
               <span>Filter by Date Range</span>
             </button>
+            {trackedStatus && trackedStatus.pending_new_count === 0 && (
+              <button
+                type="button"
+                onClick={handleCheckCreatorUpdates}
+                disabled={checkingTracker}
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[#595E68] border border-[#E5DED4] hover:bg-[#F3ECE2] hover:text-[#8D4B00] transition-all cursor-pointer"
+                title="Check for newly uploaded videos"
+              >
+                <RefreshCw
+                  className={`w-3.5 h-3.5 ${
+                    checkingTracker ? 'animate-spin text-[#8D4B00]' : ''
+                  }`}
+                />
+                <span>{checkingTracker ? 'Checking...' : 'Check Updates'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

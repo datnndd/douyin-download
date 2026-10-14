@@ -13,6 +13,7 @@ import {
   Save,
   Settings,
   Sliders,
+  Users,
   X,
 } from 'lucide-react';
 import { SettingsModel } from '../types/api';
@@ -265,6 +266,53 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     />
                     <span>Enable SQLite deduplication</span>
                   </label>
+                </div>
+              </div>
+
+              {/* Creator Tracking Section */}
+              <div className="space-y-3 pt-3 border-t border-[#E5DED4]">
+                <h3 className="text-xs font-bold text-[#1F2328] uppercase tracking-wide flex items-center space-x-1.5">
+                  <Users className="w-3.5 h-3.5 text-[#8D4B00]" />
+                  <span>Creator Tracker</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <label className="flex items-center space-x-2 cursor-pointer text-xs text-[#1F2328]">
+                    <input
+                      type="checkbox"
+                      checked={settings.auto_track_downloads ?? true}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          auto_track_downloads: e.target.checked,
+                        })
+                      }
+                      className="accent-[#8D4B00] w-4 h-4 rounded"
+                    />
+                    <span>Auto-track creators on download</span>
+                  </label>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#1F2328] mb-1">
+                      Background Check Interval
+                    </label>
+                    <select
+                      value={settings.tracker_interval_hours ?? 0}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          tracker_interval_hours: parseInt(e.target.value, 10),
+                        })
+                      }
+                      className="w-full px-3 py-1.5 text-xs rounded-xl border border-[#E5DED4] bg-white text-[#1F2328] focus:border-[#8D4B00] focus:outline-hidden"
+                    >
+                      <option value={0}>Disabled (On-demand only)</option>
+                      <option value={1}>Every 1 hour</option>
+                      <option value={6}>Every 6 hours</option>
+                      <option value={12}>Every 12 hours</option>
+                      <option value={24}>Every 24 hours</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </form>

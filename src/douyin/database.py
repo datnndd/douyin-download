@@ -17,7 +17,7 @@ def _j(value: Any) -> str:
 class Database:
     def __init__(self, path: str = "data.db") -> None:
         self.path = path
-        self.conn = sqlite3.connect(self.path)
+        self.conn = sqlite3.connect(self.path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self._prepare()
         self.migrate()
@@ -164,6 +164,33 @@ class Database:
                     FOREIGN KEY (sec_uid)  REFERENCES dim_user(sec_uid)  ON DELETE CASCADE,
                     FOREIGN KEY (aweme_id) REFERENCES fact_aweme(aweme_id) ON DELETE CASCADE
                 );
+
+                -- Creator Tracker tables (lightweight metadata only)
+                CREATE TABLE IF NOT EXISTS tracked_creators (
+                    sec_uid            TEXT PRIMARY KEY,
+                    unique_id          TEXT,
+                    nickname           TEXT,
+                    avatar_thumb       TEXT,
+                    last_aweme_id      TEXT,
+                    last_aweme_time    INTEGER,
+                    pending_new_count  INTEGER DEFAULT 0,
+                    last_checked_at    TEXT,
+                    last_downloaded_at TEXT,
+                    created_at         TEXT DEFAULT (datetime('now'))
+                );
+                CREATE INDEX IF NOT EXISTS idx_tracked_creators_pending ON tracked_creators(pending_new_count);
+
+                CREATE TABLE IF NOT EXISTS tracked_video_log (
+                    aweme_id           TEXT PRIMARY KEY,
+                    sec_uid            TEXT NOT NULL,
+                    create_time        INTEGER,
+                    title              TEXT,
+                    status             TEXT DEFAULT 'pending',
+                    downloaded_at      TEXT,
+                    FOREIGN KEY (sec_uid) REFERENCES tracked_creators(sec_uid) ON DELETE CASCADE
+                );
+                CREATE INDEX IF NOT EXISTS idx_tracked_video_sec_uid ON tracked_video_log(sec_uid);
+                CREATE INDEX IF NOT EXISTS idx_tracked_video_status ON tracked_video_log(sec_uid, status);
                 """
             )
 
@@ -464,6 +491,209 @@ class Database:
             return cur.fetchone() is not None
         finally:
             cur.close()
+
+    # ---------------------------- Creator Tracker ---------------------------- #
+    def upsert_tracked_creator(
+        self,
+        sec_uid: str,
+        unique_id: Optional[str] = None,
+        nickname: Optional[str] = None,
+        avatar_thumb: Optional[str] = None,
+        last_aweme_id: Optional[str] = None,
+        last_aweme_time: Optional[int] = None,
+    ) -> None:
+        if not sec_uid:
+            return
+        with self.tx() as cur:
+            cur.execute(
+                """
+                INSERT INTO tracked_creators(
+                    sec_uid, unique_id, nickname, avatar_thumb, last_aweme_id, last_aweme_time,
+                    last_checked_at, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+                ON CONFLICT(sec_uid) DO UPDATE SET
+                    unique_id = COALESCE(excluded.unique_id, tracked_creators.unique_id),
+                    nickname = COALESCE(excluded.nickname, tracked_creators.nickname),
+                    avatar_thumb = COALESCE(excluded.avatar_thumb, tracked_creators.avatar_thumb),
+                    last_aweme_id = COALESCE(excluded.last_aweme_id, tracked_creators.last_aweme_id),
+                    last_aweme_time = COALESCE(excluded.last_aweme_time, tracked_creators.last_aweme_time),
+                    last_checked_at = datetime('now');
+                """,
+                (sec_uid, unique_id, nickname, avatar_thumb, last_aweme_id, last_aweme_time),
+            )
+
+    def get_tracked_creator(self, sec_uid: str) -> Optional[sqlite3.Row]:
+        cur = self.conn.cursor()
+        try:
+            cur.execute("SELECT * FROM tracked_creators WHERE sec_uid = ?", (sec_uid,))
+            return cur.fetchone()
+        finally:
+            cur.close()
+
+    def list_tracked_creators(self) -> List[sqlite3.Row]:
+        cur = self.conn.cursor()
+        try:
+            cur.execute("SELECT * FROM tracked_creators ORDER BY pending_new_count DESC, created_at DESC")
+            return cur.fetchall()
+        finally:
+            cur.close()
+
+    def delete_tracked_creator(self, sec_uid: str) -> bool:
+        with self.tx() as cur:
+            cur.execute("DELETE FROM tracked_video_log WHERE sec_uid = ?", (sec_uid,))
+            cur.execute("DELETE FROM tracked_creators WHERE sec_uid = ?", (sec_uid,))
+            return cur.rowcount > 0
+
+    def sync_tracked_videos(
+        self,
+        sec_uid: str,
+        new_videos: List[Dict[str, Any]],
+        last_aweme_id: Optional[str] = None,
+        last_aweme_time: Optional[int] = None,
+    ) -> int:
+        added_count = 0
+        with self.tx() as cur:
+            for v in new_videos:
+                aid = str(v.get("aweme_id") or "")
+                if not aid:
+                    continue
+                ctime = _int_or_none(v.get("create_time")) or 0
+                raw_title = v.get("desc") or v.get("title") or ""
+                desc = str(raw_title)[:256]
+                cur.execute(
+                    """
+                    INSERT INTO tracked_video_log(aweme_id, sec_uid, create_time, title, status)
+                    VALUES (?, ?, ?, ?, 'pending')
+                    ON CONFLICT(aweme_id) DO NOTHING;
+                    """,
+                    (aid, sec_uid, ctime, desc),
+                )
+                if cur.rowcount > 0:
+                    added_count += 1
+
+            # Recalculate pending count
+            cur.execute(
+                "SELECT COUNT(*) FROM tracked_video_log WHERE sec_uid = ? AND status = 'pending'",
+                (sec_uid,),
+            )
+            pending_count = cur.fetchone()[0]
+
+            if last_aweme_id:
+                cur.execute(
+                    """
+                    UPDATE tracked_creators
+                    SET last_aweme_id = ?,
+                        last_aweme_time = COALESCE(?, last_aweme_time),
+                        pending_new_count = ?,
+                        last_checked_at = datetime('now')
+                    WHERE sec_uid = ?
+                    """,
+                    (last_aweme_id, last_aweme_time, pending_count, sec_uid),
+                )
+            else:
+                cur.execute(
+                    """
+                    UPDATE tracked_creators
+                    SET pending_new_count = ?,
+                        last_checked_at = datetime('now')
+                    WHERE sec_uid = ?
+                    """,
+                    (pending_count, sec_uid),
+                )
+        return added_count
+
+    def mark_tracked_videos_downloaded(
+        self,
+        sec_uid: str,
+        aweme_ids: Optional[List[str]] = None,
+        new_last_aweme_id: Optional[str] = None,
+        new_last_aweme_time: Optional[int] = None,
+    ) -> int:
+        with self.tx() as cur:
+            if aweme_ids:
+                placeholders = ",".join("?" for _ in aweme_ids)
+                cur.execute(
+                    f"""
+                    UPDATE tracked_video_log
+                    SET status = 'downloaded', downloaded_at = datetime('now')
+                    WHERE sec_uid = ? AND aweme_id IN ({placeholders}) AND status = 'pending'
+                    """,
+                    [sec_uid] + list(aweme_ids),
+                )
+            else:
+                cur.execute(
+                    """
+                    UPDATE tracked_video_log
+                    SET status = 'downloaded', downloaded_at = datetime('now')
+                    WHERE sec_uid = ? AND status = 'pending'
+                    """,
+                    (sec_uid,),
+                )
+            updated_count = cur.rowcount
+
+            # Recalculate pending count
+            cur.execute(
+                "SELECT COUNT(*) FROM tracked_video_log WHERE sec_uid = ? AND status = 'pending'",
+                (sec_uid,),
+            )
+            pending_count = cur.fetchone()[0]
+
+            if new_last_aweme_id:
+                cur.execute(
+                    """
+                    UPDATE tracked_creators
+                    SET last_aweme_id = ?,
+                        last_aweme_time = COALESCE(?, last_aweme_time),
+                        pending_new_count = ?,
+                        last_downloaded_at = datetime('now')
+                    WHERE sec_uid = ?
+                    """,
+                    (new_last_aweme_id, new_last_aweme_time, pending_count, sec_uid),
+                )
+            else:
+                cur.execute(
+                    """
+                    UPDATE tracked_creators
+                    SET pending_new_count = ?,
+                        last_downloaded_at = datetime('now')
+                    WHERE sec_uid = ?
+                    """,
+                    (pending_count, sec_uid),
+                )
+        return updated_count
+
+    def get_pending_videos(self, sec_uid: str) -> List[sqlite3.Row]:
+        cur = self.conn.cursor()
+        try:
+            cur.execute(
+                """
+                SELECT aweme_id, sec_uid, create_time, title, status, downloaded_at
+                FROM tracked_video_log
+                WHERE sec_uid = ? AND status = 'pending'
+                ORDER BY create_time DESC
+                """,
+                (sec_uid,),
+            )
+            return cur.fetchall()
+        finally:
+            cur.close()
+
+    def get_tracker_summary(self) -> Dict[str, int]:
+        cur = self.conn.cursor()
+        try:
+            cur.execute("SELECT COUNT(*) FROM tracked_creators")
+            total_creators = cur.fetchone()[0]
+            cur.execute(
+                "SELECT COUNT(*) FROM tracked_video_log WHERE status = 'pending'"
+            )
+            total_pending = cur.fetchone()[0]
+            return {
+                "total_tracked_creators": total_creators,
+                "total_pending_videos": total_pending,
+            }
+        finally:
+            cur.close()
+
 
 
 # ---------------------------- Utils ---------------------------- #

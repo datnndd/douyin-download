@@ -281,6 +281,8 @@ def _update_yaml_in_place_regex(original_text: str, settings: SettingsModel) -> 
     text = replace_root_scalar(
         text, "end_time", json.dumps(settings.end_time or "")
     )
+    text = replace_root_scalar(text, "auto_track_downloads", settings.auto_track_downloads)
+    text = replace_root_scalar(text, "tracker_interval_hours", settings.tracker_interval_hours)
 
     # 2. Update mode sequence
     if settings.mode is not None:
@@ -382,6 +384,8 @@ def load_config_file(config_path: Union[str, Path] = "config.yaml") -> SettingsM
                 )
             ),
             filter=filter_opts,
+            auto_track_downloads=bool(raw_data.get("auto_track_downloads", True)),
+            tracker_interval_hours=max(0, int(raw_data.get("tracker_interval_hours", 0))),
         )
         return settings
 
@@ -431,6 +435,8 @@ def save_config_file(
         data["mode"] = list(settings.mode)
         data["number"] = dict(settings.number)
         data["increase"] = dict(settings.increase)
+        data["auto_track_downloads"] = settings.auto_track_downloads
+        data["tracker_interval_hours"] = settings.tracker_interval_hours
 
         if "cookie" in data and not settings.cookies and settings.raw_cookie:
             data["cookie"] = settings.raw_cookie
@@ -486,6 +492,8 @@ def save_config_file(
             "mode": settings.mode,
             "number": settings.number,
             "increase": settings.increase,
+            "auto_track_downloads": settings.auto_track_downloads,
+            "tracker_interval_hours": settings.tracker_interval_hours,
             "cookies": settings.cookies,
             "filter": settings.filter.model_dump(),
         }

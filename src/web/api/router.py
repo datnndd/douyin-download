@@ -12,6 +12,7 @@ from src.web.api.parse import router as parse_router
 from src.web.api.settings import router as settings_router
 from src.web.api.stream import router as stream_router
 from src.web.api.system import router as system_router
+from src.web.api.tracker import router as tracker_router
 
 api_router = APIRouter(prefix="/api")
 
@@ -22,3 +23,4 @@ api_router.include_router(stream_router)
 api_router.include_router(settings_router)
 api_router.include_router(media_router)
 api_router.include_router(system_router)
+api_router.include_router(tracker_router)

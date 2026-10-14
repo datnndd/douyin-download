@@ -11,6 +11,10 @@ import {
   SettingsModel,
   TaskDetailResponse,
   TaskResponse,
+  CheckAllResponse,
+  TrackCreatorRequest,
+  TrackedCreator,
+  TrackerStats,
 } from '../types/api';
 
 const BASE_URL = '';
@@ -113,6 +117,69 @@ export const api = {
   async getHealth(): Promise<HealthResponse> {
     const res = await fetch(`${BASE_URL}/api/health`);
     return handleResponse<HealthResponse>(res);
+  },
+
+  // -------------------------------------------------------------------------
+  // Creator Tracker Endpoints
+  // -------------------------------------------------------------------------
+
+  async getTrackedCreators(): Promise<TrackedCreator[]> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators`);
+    return handleResponse<TrackedCreator[]>(res);
+  },
+
+  async getTrackedCreator(secUid: string): Promise<TrackedCreator> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators/${encodeURIComponent(secUid)}`);
+    return handleResponse<TrackedCreator>(res);
+  },
+
+  async trackCreator(payload: TrackCreatorRequest): Promise<TrackedCreator> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return handleResponse<TrackedCreator>(res);
+  },
+
+  async untrackCreator(secUid: string): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators/${encodeURIComponent(secUid)}`, {
+      method: 'DELETE',
+    });
+    return handleResponse<{ success: boolean; message: string }>(res);
+  },
+
+  async checkCreatorUpdates(secUid: string): Promise<TrackedCreator> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators/${encodeURIComponent(secUid)}/check`, {
+      method: 'POST',
+    });
+    return handleResponse<TrackedCreator>(res);
+  },
+
+  async checkAllCreatorUpdates(): Promise<CheckAllResponse> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators/check-all`, {
+      method: 'POST',
+    });
+    return handleResponse<CheckAllResponse>(res);
+  },
+
+  async updateCreatorVideos(secUid: string): Promise<TaskResponse> {
+    const res = await fetch(`${BASE_URL}/api/tracker/creators/${encodeURIComponent(secUid)}/update`, {
+      method: 'POST',
+    });
+    return handleResponse<TaskResponse>(res);
+  },
+
+  async updateAllTrackedCreators(): Promise<TaskResponse[]> {
+    const res = await fetch(`${BASE_URL}/api/tracker/update-all`, {
+      method: 'POST',
+    });
+    return handleResponse<TaskResponse[]>(res);
+  },
+
+  async getTrackerStats(): Promise<TrackerStats> {
+    const res = await fetch(`${BASE_URL}/api/tracker/stats`);
+    return handleResponse<TrackerStats>(res);
   },
 
   subscribeToStream(

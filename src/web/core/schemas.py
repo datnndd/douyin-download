@@ -328,6 +328,9 @@ class DownloadRequest(BaseModel):
     cookie: Optional[str] = Field(
         default=None, description="Optional custom cookie string override"
     )
+    aweme_ids: Optional[List[str]] = Field(
+        default=None, description="Optional explicit list of aweme_ids to download"
+    )
 
 
 class TaskResponse(BaseModel):
@@ -489,6 +492,15 @@ class SettingsModel(BaseModel):
         }
     )
     filter: FilterOptions = Field(default_factory=FilterOptions)
+    auto_track_downloads: bool = Field(
+        default=True,
+        description="Automatically track creator upon downloading their content",
+    )
+    tracker_interval_hours: int = Field(
+        default=0,
+        ge=0,
+        description="Hours between background tracker checks (0 = disabled)",
+    )
 
 
 # ==============================================================================
@@ -551,3 +563,77 @@ class HealthResponse(BaseModel):
     version: str = "1.0.0"
     disk_space: Dict[str, Any] = Field(default_factory=dict)
     active_tasks: int = 0
+
+
+# ==============================================================================
+# Creator Tracker Models
+# ==============================================================================
+
+
+class TrackCreatorRequest(BaseModel):
+    """Request payload for POST /api/tracker/creators."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    url: Optional[str] = Field(
+        default=None, description="Douyin creator profile URL or share text"
+    )
+    sec_uid: Optional[str] = Field(
+        default=None, description="Douyin creator sec_uid"
+    )
+    nickname: Optional[str] = Field(default=None, description="Creator nickname override")
+    avatar_thumb: Optional[str] = Field(default=None, description="Avatar thumbnail URL")
+    unique_id: Optional[str] = Field(default=None, description="Douyin unique handle")
+
+
+class TrackedVideoItem(BaseModel):
+    """Lightweight representation of a tracked video upload."""
+
+    model_config = ConfigDict(populate_by_name=True, from_attributes=True)
+
+    aweme_id: str = Field(..., description="Douyin Aweme ID")
+    sec_uid: str = Field(..., description="Creator sec_uid")
+    create_time: Optional[int] = Field(default=0, description="Unix timestamp of post")
+    title: Optional[str] = Field(default="", description="Post caption/title (truncated)")
+    status: str = Field(default="pending", description="'pending' or 'downloaded'")
+    downloaded_at: Optional[str] = Field(default=None, description="Timestamp of download")
+
+
+class TrackedCreatorResponse(BaseModel):
+    """Details of a tracked Douyin creator."""
+
+    model_config = ConfigDict(populate_by_name=True, from_attributes=True)
+
+    sec_uid: str = Field(..., description="Unique Douyin creator security ID")
+    unique_id: Optional[str] = Field(default=None, description="Douyin handle/ID")
+    nickname: Optional[str] = Field(default=None, description="Creator display name")
+    avatar_thumb: Optional[str] = Field(default=None, description="Avatar thumbnail URL")
+    last_aweme_id: Optional[str] = Field(default=None, description="Baseline latest video ID")
+    last_aweme_time: Optional[int] = Field(default=None, description="Baseline latest video create time")
+    pending_new_count: int = Field(default=0, description="Number of new videos awaiting download")
+    last_checked_at: Optional[str] = Field(default=None, description="Last check timestamp")
+    last_downloaded_at: Optional[str] = Field(default=None, description="Last download timestamp")
+    created_at: Optional[str] = Field(default=None, description="Date added to tracker")
+    pending_videos: Optional[List[TrackedVideoItem]] = Field(
+        default=None, description="List of pending videos if requested"
+    )
+
+
+class TrackerStatsResponse(BaseModel):
+    """Summary statistics for tracked creators badge and overview."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    total_tracked_creators: int = Field(default=0, description="Count of tracked creators")
+    total_pending_videos: int = Field(default=0, description="Count of pending new videos")
+
+
+class CheckAllResponse(BaseModel):
+    """Response payload for POST /api/tracker/creators/check-all."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    total_checked: int = Field(default=0, description="Number of creators checked")
+    new_videos_detected: int = Field(default=0, description="Number of new videos found")
+    creators_with_new: int = Field(default=0, description="Number of creators that have updates")
+

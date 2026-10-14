@@ -32,6 +32,7 @@ TIER_FILES = {
     2: ("Tier 2: Boundary & Corner Cases", "tests/test_tier2_boundaries.py"),
     3: ("Tier 3: Cross-Feature Pairwise", "tests/test_tier3_pairwise.py"),
     4: ("Tier 4: Real-World Application Workflows", "tests/test_tier4_realworld.py"),
+    5: ("Tier 5: Creator Video Tracker", "tests/test_tracker_service.py"),
 }
 
 
@@ -89,12 +90,12 @@ def run_tier(tier_num: int, tier_name: str, test_file: str, verbose: bool = Fals
 
 def main():
     parser = argparse.ArgumentParser(description="Douyin Web Downloader Test Runner")
-    parser.add_argument("--tier", type=int, choices=[1, 2, 3, 4], help="Execute specific tier only")
+    parser.add_argument("--tier", type=int, choices=[1, 2, 3, 4, 5], help="Execute specific tier only")
     parser.add_argument("--all", action="store_true", default=True, help="Execute all tiers (default)")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose test execution output")
     args = parser.parse_args()
 
-    selected_tiers = [args.tier] if args.tier else [1, 2, 3, 4]
+    selected_tiers = [args.tier] if args.tier else [1, 2, 3, 4, 5]
 
     print("\n" + "=" * 78)
     print("  DOUYIN WEB DOWNLOADER — COMPREHENSIVE E2E TEST SUITE RUNNER")

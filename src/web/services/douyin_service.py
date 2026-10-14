@@ -135,12 +135,23 @@ class DouyinService:
     Provides non-blocking link resolution and preview extraction.
     """
 
+    _instance: Optional["DouyinService"] = None
+    _singleton_lock: threading.Lock = threading.Lock()
+
     def __init__(
         self, default_cookie: Optional[str] = None, database_path: Optional[str] = None
     ):
         self._default_cookie = default_cookie
         self._database_path = database_path
         self._local = threading.local()
+
+    @classmethod
+    def get_instance(cls) -> "DouyinService":
+        if cls._instance is None:
+            with cls._singleton_lock:
+                if cls._instance is None:
+                    cls._instance = cls()
+        return cls._instance
 
     def _get_api(self, cookie: Optional[str] = None) -> DouyinApi:
         """Retrieve or initialize thread-local DouyinApi instance with cookie isolation."""
@@ -780,6 +791,16 @@ class DouyinService:
 
         if not key or (cancel_event and cancel_event.is_set()):
             return []
+
+        if getattr(req, "aweme_ids", None):
+            items: List[Dict[str, Any]] = []
+            for aid in req.aweme_ids:
+                if cancel_event and cancel_event.is_set():
+                    break
+                aweme = api.getAwemeInfoApi(aid)
+                if aweme:
+                    items.append(aweme)
+            return items
 
         if key_type == "aweme":
             aweme = api.getAwemeInfoApi(key)

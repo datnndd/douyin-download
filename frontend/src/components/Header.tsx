@@ -1,15 +1,14 @@
-// frontend/src/components/Header.tsx
-
 import React from 'react';
-import { Download, Film, FolderOpen, RefreshCw, Settings, Sparkles } from 'lucide-react';
+import { Download, Film, FolderOpen, RefreshCw, Settings, Sparkles, Users } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'downloader' | 'library';
-  setActiveTab: (tab: 'downloader' | 'library') => void;
+  activeTab: 'downloader' | 'library' | 'tracker';
+  setActiveTab: (tab: 'downloader' | 'library' | 'tracker') => void;
   onOpenSettings: () => void;
   onOpenFolder: () => void;
   activeTaskCount: number;
   isBackendHealthy: boolean;
+  trackedPendingCount?: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenFolder,
   activeTaskCount,
   isBackendHealthy,
+  trackedPendingCount = 0,
 }) => {
   return (
     <header className="sticky top-0 z-30 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#E5DED4] px-6 py-3 transition-all">
@@ -58,6 +58,22 @@ export const Header: React.FC<HeaderProps> = ({
             {activeTaskCount > 0 && (
               <span className="ml-1 px-1.5 py-0.2 bg-[#8D4B00] text-white text-[10px] rounded-full font-bold">
                 {activeTaskCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('tracker')}
+            className={`flex items-center space-x-2 px-4 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              activeTab === 'tracker'
+                ? 'bg-[#FAF8F5] text-[#8D4B00] shadow-sm font-semibold'
+                : 'text-[#595E68] hover:text-[#1F2328]'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Tracked Creators</span>
+            {trackedPendingCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 bg-[#8D4B00] text-white text-[10px] rounded-full font-bold animate-pulse">
+                {trackedPendingCount}
               </span>
             )}
           </button>
