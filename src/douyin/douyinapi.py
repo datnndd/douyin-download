@@ -43,6 +43,11 @@ class DouyinApi(object):
         self.timeout = 60
         self.max_consecutive_errors = 3
         self.database = Database(database_path) if database_path else None
+        try:
+            from src.web.core.config import ConfigManager
+            cookie = ConfigManager.get_instance().resolve_cookie_header(cookie) or None
+        except Exception:
+            pass
         self.cookie = cookie
 
         self.session = requests.Session()
@@ -159,11 +164,86 @@ class DouyinApi(object):
 
         return key_type, key
 
+    def _get_aweme_via_share_page(self, aweme_id: str):
+        """
+        Fallback extraction using Douyin official reflow share page.
+        Bypasses ArgusSecurityPlugin WAF risk control blocks on direct PC web API.
+        """
+        if not aweme_id:
+            return None
+
+        cookie_str = getattr(self, "cookie", None) or douyin_headers.get("Cookie") or ""
+        if "ttwid" not in cookie_str:
+            try:
+                ttwid_val = utils.getttwid()
+                if ttwid_val:
+                    cookie_str = f"ttwid={ttwid_val}; {cookie_str}".strip("; ")
+            except Exception:
+                pass
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        }
+        if cookie_str:
+            headers["Cookie"] = cookie_str
+
+        url = f"https://www.iesdouyin.com/share/video/{aweme_id}"
+        try:
+            resp = self.session.get(url, headers=headers, timeout=10)
+            if resp.status_code != 200 or not resp.text:
+                return None
+
+            match = re.search(r'window\._ROUTER_DATA\s*=\s*(.*?);?\s*</script>', resp.text)
+            if not match:
+                return None
+
+            data = json.loads(match.group(1))
+            loader = data.get("loaderData", {})
+            item = None
+            for k, v in loader.items():
+                if isinstance(v, dict) and "videoInfoRes" in v:
+                    items = v["videoInfoRes"].get("item_list", [])
+                    if items:
+                        item = items[0]
+                        break
+
+            if not item:
+                return None
+
+            # Prioritize watermark-free URL if available
+            video_dict = item.get("video", {})
+            play_addr = video_dict.get("play_addr", {})
+            url_list = play_addr.get("url_list", [])
+            if url_list:
+                clean_urls = []
+                for u in url_list:
+                    if "/playwm/" in u:
+                        clean_urls.append(u.replace("/playwm/", "/play/"))
+                    clean_urls.append(u)
+                play_addr["url_list"] = list(dict.fromkeys(clean_urls))
+
+            self.result.clearDict(self.result.awemeDict)
+            aweme_type = 1 if item.get("images") else 0
+            self.result.dataConvert(aweme_type, self.result.awemeDict, item)
+
+            aweme_data = copy.deepcopy(self.result.awemeDict)
+            if self.database and aweme_data:
+                self.database.upsert_aweme(aweme_data, is_user_post=True)
+
+            logger.info(f"Successfully resolved aweme {aweme_id} via reflow share page fallback.")
+            return self.result.awemeDict
+        except Exception as e:
+            logger.debug(f"Reflow share page extraction failed for {aweme_id}: {e}")
+            return None
+
     def getAwemeInfoApi(self, aweme_id):
         if aweme_id is None:
             return None
         start = time.time()
         while True:
+            response = None
             try:
                 detail_params = {
                     "aweme_id": aweme_id,
@@ -199,7 +279,7 @@ class DouyinApi(object):
                     "show_live_replay_strategy": "1",
                     "time_list_query": "0",
                     "whale_cut_token": "",
-                    "uifid": "",
+                    # uifid is dynamically attached from active cookies if available
                     "update_version_code": "170400",
                     "msToken": ""
                 }
@@ -212,26 +292,43 @@ class DouyinApi(object):
                 response = self.session.get(url=jx_url, headers=headers, timeout=10)
 
                 if response.status_code in (403, 429) or "ArgusSecurity" in response.text:
-                    logger.warning(
-                        f"Douyin WAF risk control triggered (HTTP {response.status_code}: {response.text[:80].strip()}), backing off..."
+                    logger.info(
+                        f"Douyin WAF risk control encountered (HTTP {response.status_code}: {response.text[:80].strip()}), switching to reflow share page..."
                     )
+                    fallback = self._get_aweme_via_share_page(aweme_id)
+                    if fallback:
+                        return fallback
+                    logger.warning("Reflow share page fallback failed, backing off...")
                     time.sleep(2 + random.uniform(1.0, 2.5))
                     if time.time() - start > self.timeout:
                         raise RuntimeError(f"Douyin WAF risk control triggered (HTTP {response.status_code}: {response.text[:80].strip()})")
                     continue
 
                 if len(response.text) == 0:
-                    logger.warning("Single API Video returned an empty response, retrying...")
+                    logger.warning("Single API Video returned an empty response, attempting reflow share page fallback...")
+                    fallback = self._get_aweme_via_share_page(aweme_id)
+                    if fallback:
+                        return fallback
                     time.sleep(1 + random.uniform(0.5, 1.5))
                     if time.time() - start > self.timeout:
                         return None
                     continue
 
-                datadict = json.loads(response.text)
+                try:
+                    datadict = json.loads(response.text)
+                except Exception:
+                    fallback = self._get_aweme_via_share_page(aweme_id)
+                    if fallback:
+                        return fallback
+                    datadict = None
+
                 if datadict is not None and datadict.get("status_code") == 0:
                     break
                 else:
-                    logger.warning(f"Single API Video returned non-zero status: {datadict.get('status_code') if datadict else 'None'}")
+                    logger.warning(f"Single API Video returned non-zero status: {datadict.get('status_code') if datadict else 'None'}, attempting fallback...")
+                    fallback = self._get_aweme_via_share_page(aweme_id)
+                    if fallback:
+                        return fallback
                     time.sleep(1 + random.uniform(0.5, 1.5))
                     if time.time() - start > self.timeout:
                         return None
@@ -240,6 +337,9 @@ class DouyinApi(object):
                 raise
             except Exception as e:
                 logger.error(f"Error in getAwemeInfoApi: {str(e)} | status={getattr(response, 'status_code', None)} | text_len={len(getattr(response, 'text', ''))} | sample={repr(getattr(response, 'text', '')[:200])}")
+                fallback = self._get_aweme_via_share_page(aweme_id)
+                if fallback:
+                    return fallback
                 end = time.time()
                 if end - start > self.timeout:
                     return None
@@ -317,6 +417,7 @@ class DouyinApi(object):
         consecutive_errors = 0
 
         while True:
+            response = None
             try:
                 detail_params = f'sec_user_id={sec_uid}&count={count}&max_cursor={max_cursor}&{self._COMMON_PARAMS}'
 
@@ -331,6 +432,17 @@ class DouyinApi(object):
                     return None
 
                 res = self.session.get(url=url, headers=self._get_headers(), timeout=self.timeout)
+                if res.status_code in (403, 429) or "ArgusSecurity" in res.text:
+                    consecutive_errors += 1
+                    logger.warning(
+                        f"Douyin WAF risk control triggered on User Posts (HTTP {res.status_code}: {res.text[:80].strip()}) (error {consecutive_errors}/{self.max_consecutive_errors})"
+                    )
+                    if consecutive_errors >= self.max_consecutive_errors:
+                        logger.error("Max consecutive errors reached, stopping.")
+                        break
+                    time.sleep(2 + random.uniform(0, 1))
+                    continue
+
                 if len(res.text) == 0:
                     consecutive_errors += 1
                     logger.warning(f"User Get Post/Favorite API return an empty response (error {consecutive_errors}/{self.max_consecutive_errors})")
@@ -340,7 +452,16 @@ class DouyinApi(object):
                     time.sleep(2 + random.uniform(0, 1))
                     continue
 
-                datadict = json.loads(res.text)
+                try:
+                    datadict = json.loads(res.text)
+                except Exception as e:
+                    consecutive_errors += 1
+                    logger.warning(f"Failed to parse User Posts response JSON: {e} (error {consecutive_errors}/{self.max_consecutive_errors})")
+                    if consecutive_errors >= self.max_consecutive_errors:
+                        logger.error("Max consecutive errors reached, stopping.")
+                        break
+                    time.sleep(2 + random.uniform(0, 1))
+                    continue
 
                 if datadict is None or datadict["status_code"] != 0:
                     consecutive_errors += 1
@@ -420,6 +541,7 @@ class DouyinApi(object):
     def getLiveInfoApi(self, web_rid: str):
         start = time.time()
         while True:
+            response = None
             try:
                 detail_params = (
                     f'aid=6383&device_platform=web&web_rid={web_rid}&channel=channel_pc_web&pc_client_type=1'
@@ -500,6 +622,7 @@ class DouyinApi(object):
 
         start = time.time()
         while True:
+            response = None
             try:
                 mix_params = f'mix_id={mix_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX + utils.getXbogus(mix_params)
@@ -585,6 +708,7 @@ class DouyinApi(object):
 
         start = time.time()
         while True:
+            response = None
             try:
                 mix_list_params = f'sec_user_id={sec_uid}&count={count}&cursor={cursor}&{self._COMMON_PARAMS}'
                 url = self.urls.USER_MIX_LIST + utils.getXbogus(mix_list_params)
@@ -653,6 +777,7 @@ class DouyinApi(object):
 
         start = time.time()  # Start time
         while True:
+            response = None
             try:
                 music_params = f'music_id={music_id}&cursor={cursor}&count={count}&{self._COMMON_PARAMS}'
                 url = self.urls.MUSIC + utils.getXbogus(music_params)

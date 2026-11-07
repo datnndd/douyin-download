@@ -327,6 +327,41 @@ class TestFeature6PreviewExtraction:
         assert note_dict.get("awemeType") == 1
         assert len(note_dict.get("images", [])) == 2
 
+    def test_aweme_waf_fallback_via_share_page(self, monkeypatch):
+        """When Douyin WAF 403 ArgusSecurity is triggered on POST_DETAIL, cleanly falls back to share page."""
+        api = DouyinApi()
+
+        orig_get = api.session.get
+        def mock_waf_get(url, *args, **kwargs):
+            if "/aweme/v1/web/aweme/detail/" in url:
+                from tests.conftest import MockHttpResponse
+                return MockHttpResponse(url, 403, content=b"Blocked by ArgusSecurityPlugin Uifid Not Found")
+            return orig_get(url, *args, **kwargs)
+
+        monkeypatch.setattr(api.session, "get", mock_waf_get)
+        data = api.getAwemeInfoApi("7488893440932039970")
+        assert data is not None
+        assert data.get("aweme_id") == "7488893440932039970"
+        assert data.get("desc") == "Test Douyin Video Description"
+
+    def test_settings_cookie_is_enriched_for_web_requests(self, monkeypatch, tmp_path):
+        """The UI echoes settings.raw_cookie; web requests still need auxiliary tokens."""
+        from src.web.core.config import ConfigManager
+        from src.web.services.douyin_service import DouyinService
+
+        manager = ConfigManager(tmp_path / "missing-config.yaml")
+        manager._settings.raw_cookie = "sessionid=configured"
+        manager._settings.cookies = {"sessionid": "configured"}
+        monkeypatch.setattr(
+            manager, "_load_auxiliary_security_cookies", lambda: {"UIFID": "aux-token"}
+        )
+        monkeypatch.setattr(ConfigManager, "get_instance", lambda *args, **kwargs: manager)
+
+        service = DouyinService(database_path=None)
+        api = service._get_api("sessionid=configured")
+        assert "UIFID=aux-token" in api._get_headers()["Cookie"]
+        assert service._get_api("sessionid=custom")._get_headers()["Cookie"] == "sessionid=custom"
+
     def test_preview_api_endpoint_contract(self, api_client):
         """Web API /api/parse returns full preview schema matching contract."""
         resp = api_client.post("/api/parse", json={"url": "https://v.douyin.com/iWhQezyaUco/"})

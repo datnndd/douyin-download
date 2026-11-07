@@ -620,6 +620,14 @@ class ConfigManager:
                 return format_cookie_dict(active_cookies)
             return self._settings.raw_cookie or ""
 
+    def resolve_cookie_header(self, supplied_cookie: Optional[str]) -> str:
+        """Enrich the configured cookie echoed by the UI; retain distinct request cookies."""
+        with self._settings_lock:
+            configured_cookie = self._settings.raw_cookie or format_cookie_dict(self._settings.cookies)
+            if supplied_cookie and supplied_cookie != configured_cookie:
+                return supplied_cookie
+            return self.get_cookie_header()
+
     def apply_to_douyin_headers(self) -> None:
         """Hot-reload cookies into global douyin_headers dict if available."""
         cookie_str = self.get_cookie_header()

@@ -167,6 +167,12 @@ class DouyinService:
                 logger.debug(f"Could not load cookie from ConfigManager: {e}")
                 active_cookie = None
 
+        try:
+            from src.web.core.config import ConfigManager
+            active_cookie = ConfigManager.get_instance().resolve_cookie_header(active_cookie) or None
+        except Exception as e:
+            logger.debug(f"Could not enrich configured cookie: {e}")
+
         if active_cookie:
             from src.douyin import douyin_headers
             douyin_headers["Cookie"] = active_cookie

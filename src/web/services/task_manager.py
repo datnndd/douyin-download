@@ -683,8 +683,10 @@ class TaskManager:
 
         # Fallback to direct DouyinApi if douyin_service wrapper not supplied
         from src.douyin.douyinapi import DouyinApi
+        from src.web.core.config import ConfigManager
 
-        api = DouyinApi()
+        eff_cookie = req.cookie or ConfigManager.get_instance().get_cookie_header() or None
+        api = DouyinApi(cookie=eff_cookie)
         url = req.url
         key_type = req.key_type
         key = req.key

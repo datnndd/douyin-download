@@ -240,6 +240,23 @@ def mock_network_dispatch(url: str, *args, **kwargs) -> MockHttpResponse:
         }
         return MockHttpResponse(url_str, 200, json_data=reflow_data)
 
+    # 2.5 Reflow Share Video Page (WAF Fallback)
+    if "/share/video/" in url_str:
+        aweme_id_match = re.search(r"share/video/(\d+)", url_str)
+        aweme_id = aweme_id_match.group(1) if aweme_id_match else "7488893440932039970"
+        detail = create_mock_aweme_detail(aweme_id=aweme_id)
+        router_data = {
+            "loaderData": {
+                "video_(id)/page": {
+                    "videoInfoRes": {
+                        "item_list": [detail]
+                    }
+                }
+            }
+        }
+        html_content = f'<html><script>window._ROUTER_DATA = {json.dumps(router_data)};</script></html>'
+        return MockHttpResponse(url_str, 200, content=html_content.encode("utf-8"))
+
     # 3. Aweme Detail API (Single Video/Note)
     if "/aweme/v1/web/aweme/detail/" in url_str:
         aweme_id_match = re.search(r"aweme_id=(\d+)", url_str)

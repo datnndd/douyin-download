@@ -92,7 +92,9 @@ class TrackerService:
         inspects user posts to establish the latest non-pinned video baseline,
         and persists the creator in the database.
         """
-        api = DouyinApi(database_path=self.db_path, cookie=cookie)
+        from src.web.core.config import ConfigManager
+        eff_cookie = cookie or ConfigManager.get_instance().get_cookie_header() or None
+        api = DouyinApi(database_path=self.db_path, cookie=eff_cookie)
 
         # 1. Resolve sec_uid if not provided directly
         if not sec_uid:
@@ -249,7 +251,9 @@ class TrackerService:
             r["aweme_id"] for r in self.database.get_pending_videos(sec_uid)
         }
 
-        api = DouyinApi(database_path=self.db_path, cookie=cookie)
+        from src.web.core.config import ConfigManager
+        eff_cookie = cookie or ConfigManager.get_instance().get_cookie_header() or None
+        api = DouyinApi(database_path=self.db_path, cookie=eff_cookie)
         new_videos: List[Dict[str, Any]] = []
         newest_detected_id: Optional[str] = None
         newest_detected_time: Optional[int] = None
@@ -332,9 +336,12 @@ class TrackerService:
         new_videos_detected = 0
         creators_with_new = 0
 
+        from src.web.core.config import ConfigManager
+        eff_cookie = cookie or ConfigManager.get_instance().get_cookie_header() or None
+
         for c in creators:
             try:
-                _, added = self.check_creator_updates(c.sec_uid, cookie=cookie)
+                _, added = self.check_creator_updates(c.sec_uid, cookie=eff_cookie)
                 total_checked += 1
                 if added > 0:
                     new_videos_detected += added
@@ -533,7 +540,17 @@ class TrackerService:
             logger.warning(f"Empty response when fetching feed page for {sec_uid}")
             return []
 
-        datadict = json.loads(response.text)
+        if response.status_code in (403, 429) or "ArgusSecurity" in response.text:
+            logger.warning(
+                f"Douyin WAF risk control triggered on creator feed {sec_uid} (HTTP {response.status_code})"
+            )
+            return []
+
+        try:
+            datadict = json.loads(response.text)
+        except Exception as e:
+            logger.warning(f"Failed to parse feed JSON for {sec_uid}: {e}")
+            return []
         if not datadict or datadict.get("status_code") != 0:
             logger.warning(f"Non-zero status when fetching feed for {sec_uid}: {datadict.get('status_code') if datadict else None}")
             return []
